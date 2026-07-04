@@ -313,19 +313,19 @@ const REF = {
 const $ = id => document.getElementById(id);
 const state = { stat:ALL, nest:'All', rarity:'Legend', q:'', sort:{key:'no',dir:1} };
 
-// ---- view tabs ----
-document.querySelectorAll('.tab').forEach(t=>{
-  t.onclick = ()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    const v = t.dataset.view;
-    $('cardsView').classList.toggle('hidden', v!=='cards');
-    $('refView').classList.toggle('hidden', v!=='ref');
-    $('charsView').classList.toggle('hidden', v!=='chars');
-    if(v==='ref') renderRef();
-    if(v==='chars') renderChars();
-  };
-});
+// ---- view tabs (remembers the last-opened tab per browser) ----
+const TAB_KEY = 'dn-active-tab';
+function activateTab(v){
+  if(!['cards','ref','chars'].includes(v)) v='cards';
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active', x.dataset.view===v));
+  $('cardsView').classList.toggle('hidden', v!=='cards');
+  $('refView').classList.toggle('hidden', v!=='ref');
+  $('charsView').classList.toggle('hidden', v!=='chars');
+  if(v==='ref') renderRef();
+  if(v==='chars') renderChars();
+  try{ localStorage.setItem(TAB_KEY, v); }catch(e){}
+}
+document.querySelectorAll('.tab').forEach(t=>{ t.onclick = ()=>activateTab(t.dataset.view); });
 
 // ---- populate controls ----
 function opt(v,t){const o=document.createElement('option');o.value=v;o.textContent=t||v;return o;}
@@ -766,6 +766,11 @@ applyDailyReset();                       // reset DQ if we've crossed 08:00 sinc
 setInterval(applyDailyReset, 60000);     // and keep checking while the page stays open
 
 render();
+
+// restore the tab the user last had open
+let savedTab='cards';
+try{ savedTab=localStorage.getItem(TAB_KEY)||'cards'; }catch(e){}
+activateTab(savedTab);
 </script>
 </body>
 </html>
