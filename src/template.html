@@ -157,12 +157,12 @@
   .btn.ghost:hover{background:rgba(231,189,94,.08)}
   .btn.danger{border-color:#7a2a22;color:#ff9a8f;background:transparent}
   .btn.danger:hover{background:rgba(192,57,43,.12)}
-  /* let the roster break out of the 1100px column so every column fits on screen */
-  #charsView{position:relative;left:50%;transform:translateX(-50%);width:96vw;max-width:1480px}
+  /* table hugs its content (no stretching) so checkbox columns stay narrow */
   .ctable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;
-    box-shadow:0 8px 26px rgba(0,0,0,.4)}
-  table.ctable{border-radius:0;border:none;box-shadow:none;width:100%;table-layout:auto}
+    box-shadow:0 8px 26px rgba(0,0,0,.4);width:fit-content;max-width:100%}
+  table.ctable{border-radius:0;border:none;box-shadow:none;width:auto;table-layout:auto}
   table.ctable thead th{white-space:nowrap;text-align:center;padding:8px 8px;font-size:11px}
+  table.ctable thead th.wkh{padding:8px 4px;font-size:10.5px}
   table.ctable th.grp{color:var(--gold2);border-bottom:1px solid var(--line2)}
   table.ctable thead th.wk{background:#20180d;color:var(--gold2)}
   table.ctable tbody td{padding:0;border-bottom:1px solid rgba(90,69,38,.30);
@@ -238,6 +238,7 @@
       <button class="btn ghost" id="cExport">⭳ Export</button>
       <button class="btn ghost" id="cImport">⭱ Import</button>
       <input type="file" id="cFile" accept="application/json,.json" hidden>
+      <button class="btn ghost" id="cResetWk">↺ Reset weeklies</button>
       <div class="spacer"></div>
       <span class="csaved" id="csaved">Stored only in this browser (localStorage)</span>
       <button class="btn danger" id="cClear">Clear all</button>
@@ -513,8 +514,9 @@ function charHeaderHTML(){
     const f=F[i];
     if(f.group){
       let j=i; while(j<F.length && F[j].group===f.group) j++;
-      top += `<th class="grp${f.group==='Weekly'?' wk':''}" colspan="${j-i}">${f.group}</th>`;
-      for(let x=i;x<j;x++) bottom += `<th>${F[x].label}</th>`;
+      const wk = f.group==='Weekly';
+      top += `<th class="grp${wk?' wk':''}" colspan="${j-i}">${f.group}</th>`;
+      for(let x=i;x<j;x++) bottom += `<th${wk?' class="wkh"':''}>${F[x].label}</th>`;
       i=j;
     } else {
       top += `<th rowspan="2"${i===0?' class="sticky"':''}>${f.label}</th>`;
@@ -566,6 +568,14 @@ $('cExport').onclick=()=>{
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='dn-character-details.json'; document.body.appendChild(a); a.click();
   a.remove(); URL.revokeObjectURL(a.href);
+};
+$('cResetWk').onclick=()=>{
+  if(!CHARS.length) return;
+  if(confirm('Uncheck all weekly activities for every character? (other data is kept)')){
+    const wk=CHAR_FIELDS.filter(f=>f.type==='check').map(f=>f.k);
+    CHARS.forEach(c=>wk.forEach(k=>{ c[k]=false; }));
+    saveChars(); renderChars();
+  }
 };
 $('cImport').onclick=()=>$('cFile').click();
 $('cFile').onchange=e=>{
