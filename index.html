@@ -158,11 +158,14 @@
   .btn.danger{border-color:#7a2a22;color:#ff9a8f;background:transparent}
   .btn.danger:hover{background:rgba(192,57,43,.12)}
   /* table hugs its content (no stretching) so checkbox columns stay narrow */
+  /* break the roster out of the 1100px column so it uses the screen width */
+  #charsView{width:min(1480px,94vw);margin-left:50%;transform:translateX(-50%)}
   .ctable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;
-    box-shadow:0 8px 26px rgba(0,0,0,.4);width:fit-content;max-width:100%}
-  table.ctable{border-radius:0;border:none;box-shadow:none;table-layout:fixed}
-  table.ctable thead th{white-space:normal;text-align:center;padding:8px 6px;font-size:11px;line-height:1.2}
-  table.ctable thead th.wkh{padding:8px 2px;font-size:10px}
+    box-shadow:0 8px 26px rgba(0,0,0,.4);max-width:100%}
+  table.ctable{border-radius:0;border:none;box-shadow:none;table-layout:fixed;width:100%}
+  table.ctable thead th{white-space:normal;text-align:center;padding:9px 6px;font-size:11.5px;line-height:1.25;
+    border-right:1px solid rgba(90,69,38,.25)}
+  table.ctable thead th.wkh{padding:9px 3px;font-size:10.5px}
   table.ctable th.grp{color:var(--gold2);border-bottom:1px solid var(--line2)}
   table.ctable thead th.wk{background:#20180d;color:var(--gold2)}
   table.ctable tbody td{padding:0;border-bottom:1px solid rgba(90,69,38,.30);
@@ -541,10 +544,18 @@ function charRowHTML(c,i){
   tds += `<td class="act"><button class="xbtn" data-del="${i}" title="Delete character">✕</button></td>`;
   return `<tr>${tds}</tr>`;
 }
-function colW(f){ return f.type==='check' ? 36 : f.type==='text' ? (f.k==='nickname'?118:72) : 46; }
+// relative column widths (used as proportions since the table is width:100%)
+function colW(f){
+  if(f.type==='check') return 48;
+  if(f.k==='nickname') return 140;
+  if(f.k==='voucher')  return 96;
+  if(f.k==='jakard')   return 78;
+  if(f.type==='text')  return 80;
+  return 56; // numbers
+}
 function charColgroup(){
   const cols = CHAR_FIELDS.map(f=>`<col style="width:${colW(f)}px">`).join('');
-  return `<colgroup>${cols}<col style="width:36px"></colgroup>`;
+  return `<colgroup>${cols}<col style="width:44px"></colgroup>`;
 }
 function renderChars(){
   const area=$('ctableArea'); if(!area) return;
@@ -554,9 +565,8 @@ function renderChars(){
       + 'Everything you type saves automatically — in <b>this browser only</b>.</div>';
     return;
   }
-  const total = CHAR_FIELDS.reduce((s,f)=>s+colW(f),0) + 36;
   const rows=CHARS.map(charRowHTML).join('');
-  area.innerHTML=`<div class="ctable-wrap"><table class="ctable" style="width:${total}px">`
+  area.innerHTML=`<div class="ctable-wrap"><table class="ctable">`
     +`${charColgroup()}${charHeaderHTML()}<tbody>${rows}</tbody></table></div>`;
 }
 
