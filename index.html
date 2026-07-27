@@ -152,6 +152,25 @@
     color:var(--gold);border:1px solid var(--gold-deep);border-radius:9px;padding:8px 14px;
     background:linear-gradient(180deg,rgba(231,189,94,.12),rgba(231,189,94,.03))}
   .goldtotal b{color:#fff2cf;font-variant-numeric:tabular-nums}
+  /* cloud sync bar */
+  .syncbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:2px 2px 16px;
+    padding:9px 14px;border:1px solid var(--line);border-radius:10px;
+    background:linear-gradient(180deg,rgba(90,140,200,.06),rgba(0,0,0,0))}
+  .syncdot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--mut)}
+  .syncdot[data-state="off"]{background:#6b6252}
+  .syncdot[data-state="ok"]{background:#57c46a;box-shadow:0 0 8px rgba(87,196,106,.7)}
+  .syncdot[data-state="busy"]{background:var(--gold);box-shadow:0 0 8px rgba(231,189,94,.7)}
+  .syncdot[data-state="err"]{background:#ff5a4d;box-shadow:0 0 8px rgba(255,90,77,.7)}
+  .syncstatus{color:var(--mut);font-size:12px}
+  .syncpanel{margin:-8px 2px 16px;padding:12px 14px;border:1px solid var(--line2);border-radius:10px;
+    background:var(--panel)}
+  .syncpanel[hidden]{display:none}
+  .syncrow{display:flex;gap:8px;flex-wrap:wrap}
+  .syncrow input{flex:1;min-width:240px;background:#120d07;color:var(--txt);border:1px solid var(--line2);
+    border-radius:8px;padding:9px 11px;font-size:13px;outline:none}
+  .syncrow input:focus{border-color:var(--gold)}
+  .synchelp{color:var(--mut);font-size:11.5px;line-height:1.7;margin-top:10px}
+  .synchelp code{background:var(--panel2);color:var(--gold2);padding:1px 6px;border-radius:5px}
   .btn{font-family:var(--serif);cursor:pointer;border-radius:9px;padding:9px 16px;
     font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
     border:1px solid var(--gold-deep);color:#1a1206;
@@ -274,6 +293,30 @@
       <span class="csaved" id="csaved">Stored only in this browser (localStorage)</span>
       <button class="btn danger" id="cClear">Clear all</button>
     </div>
+
+    <!-- optional Google Sheet sync (local-first; connect to sync across devices) -->
+    <div class="syncbar">
+      <span class="syncdot" id="syncDot" data-state="off"></span>
+      <span class="syncstatus" id="syncStatus">Local only — connect a Google Sheet to sync across devices.</span>
+      <div class="spacer"></div>
+      <button class="btn ghost" id="syncNow" hidden>⟳ Sync now</button>
+      <button class="btn ghost" id="syncConnect">☁ Connect Google Sheet</button>
+      <button class="btn ghost" id="syncDisconnect" hidden>Disconnect</button>
+    </div>
+    <div class="syncpanel" id="syncPanel" hidden>
+      <div class="syncrow">
+        <input id="syncUrl" type="text" placeholder="Paste your Apps Script Web App URL (ends with /exec)" autocomplete="off">
+        <button class="btn" id="syncSave">Connect</button>
+        <button class="btn ghost" id="syncCancel">Cancel</button>
+      </div>
+      <div class="synchelp">
+        Need a URL? Open your Google Sheet → <b>Extensions ▸ Apps Script</b>, paste the script from
+        <code>google-apps-script.gs</code>, then <b>Deploy ▸ New deployment ▸ Web app</b>
+        (Execute as: <b>Me</b>, Access: <b>Anyone</b>), and copy the <code>/exec</code> URL.
+        Share that URL only with people you want to edit this roster.
+      </div>
+    </div>
+
     <div id="ctableArea"></div>
   </section>
 </div>
@@ -535,10 +578,13 @@ let savedTimer=null;
 function saveChars(){
   try{ localStorage.setItem(CHAR_KEY, JSON.stringify(CHARS)); }
   catch(e){ const el=$('csaved'); if(el) el.textContent='⚠ Could not save (storage full/blocked)'; return; }
-  const el=$('csaved'); if(!el) return;
-  el.textContent='✓ Saved to this browser';
-  clearTimeout(savedTimer);
-  savedTimer=setTimeout(()=>{ el.textContent='Stored only in this browser (localStorage)'; },1500);
+  const el=$('csaved');
+  if(el){
+    el.textContent='✓ Saved to this browser';
+    clearTimeout(savedTimer);
+    savedTimer=setTimeout(()=>{ el.textContent='Stored only in this browser (localStorage)'; },1500);
+  }
+  if(typeof SHEET_URL!=='undefined' && SHEET_URL) schedulePush();   // mirror to the connected sheet
 }
 function esc(v){ return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
@@ -762,6 +808,73 @@ $('ctableArea').addEventListener('click',    e=>{ const th=e.target.closest('th[
 document.addEventListener('click',()=>{ tipPinned=false; hideTip(); });
 window.addEventListener('scroll',hideTip,true);
 
+// ===== optional Google Sheet sync (Apps Script web app) — local stays the default =====
+const SHEET_KEY='dn-sheet-url';
+let SHEET_URL=''; try{ SHEET_URL=localStorage.getItem(SHEET_KEY)||''; }catch(e){}
+let pushTimer=null;
+
+function setSync(state,msg){ const d=$('syncDot'),s=$('syncStatus'); if(d)d.dataset.state=state; if(s&&msg!=null)s.textContent=msg; }
+function updateSyncUI(){
+  const on=!!SHEET_URL;
+  $('syncConnect').hidden=on; $('syncDisconnect').hidden=!on; $('syncNow').hidden=!on;
+  if(on) setSync('ok','Connected — changes sync to your sheet automatically.');
+  else setSync('off','Local only — connect a Google Sheet to sync across devices.');
+}
+function timeStr(){ const d=new Date(),p=n=>(n<10?'0':'')+n; return p(d.getHours())+':'+p(d.getMinutes()); }
+
+// map between CHARS and a human-readable sheet table using the field schema
+function charsToPayload(){
+  return { header: CHAR_FIELDS.map(f=>f.label),
+           rows: CHARS.map(c=>CHAR_FIELDS.map(f=> f.type==='check' ? !!c[f.k] : (c[f.k]==null?'':c[f.k]))) };
+}
+function payloadToChars(data){
+  if(!data||!Array.isArray(data.rows)) return null;
+  const header=data.header||CHAR_FIELDS.map(f=>f.label);
+  const fieldFor=header.map(h=>CHAR_FIELDS.find(f=>f.label===h)||null);
+  return data.rows.map(row=>{ const c={};
+    fieldFor.forEach((f,idx)=>{ if(!f) return; const v=row[idx];
+      c[f.k]= f.type==='check' ? (v===true||v==='TRUE'||v==='true'||v===1||v==='1') : (v==null?'':String(v)); });
+    return c; });
+}
+function sheetGet(){ return fetch(SHEET_URL,{method:'GET'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }); }
+function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can't answer
+  return fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
+}
+function schedulePush(){ if(!SHEET_URL) return; clearTimeout(pushTimer); setSync('busy','Saving to sheet…'); pushTimer=setTimeout(pushNow,900); }
+function pushNow(){ if(!SHEET_URL) return Promise.resolve();
+  setSync('busy','Saving to sheet…');
+  return sheetPost(Object.assign({action:'save'},charsToPayload()))
+    .then(()=>setSync('ok','Synced '+timeStr()))
+    .catch(e=>setSync('err','Sync failed — saved locally. '+(e.message||'')));
+}
+function pullNow(silent){ if(!SHEET_URL) return Promise.resolve();
+  setSync('busy','Loading from sheet…');
+  return sheetGet().then(data=>{ const arr=payloadToChars(data);
+      if(arr){ CHARS=arr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} renderChars(); updateGoldTotal(); }
+      setSync('ok','Synced '+timeStr()); })
+    .catch(e=>{ setSync('err','Could not load from sheet.'); if(!silent) alert('Could not read the sheet. Check the URL and that the web app access is set to "Anyone".'); });
+}
+
+$('syncConnect').onclick=()=>{ $('syncPanel').hidden=false; $('syncUrl').value=SHEET_URL; $('syncUrl').focus(); };
+$('syncCancel').onclick=()=>{ $('syncPanel').hidden=true; };
+$('syncNow').onclick=()=>pullNow(false);
+$('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
+$('syncSave').onclick=()=>{
+  const url=$('syncUrl').value.trim();
+  if(!/\/exec(\?|$)/.test(url)){ if(!confirm("That does not look like an Apps Script /exec URL. Use it anyway?")) return; }
+  SHEET_URL=url; try{localStorage.setItem(SHEET_KEY,url);}catch(e){}
+  $('syncPanel').hidden=true; updateSyncUI(); setSync('busy','Connecting…');
+  sheetGet().then(data=>{ const arr=payloadToChars(data);
+    if(arr && arr.length){
+      const load=confirm("This sheet already has "+arr.length+" character(s).\n\nOK = load the sheet onto this device (replaces local).\nCancel = upload this device's data to the sheet (replaces the sheet).");
+      if(load){ CHARS=arr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} renderChars(); updateGoldTotal(); setSync('ok','Synced '+timeStr()); }
+      else pushNow();
+    } else pushNow();   // empty sheet -> seed it from this device
+  }).catch(()=>setSync('err','Connected, but could not reach the sheet. Check the deployment access.'));
+};
+updateSyncUI();
+
 applyDailyReset();                       // reset DQ if we've crossed 08:00 since last visit
 setInterval(applyDailyReset, 60000);     // and keep checking while the page stays open
 
@@ -771,6 +884,9 @@ render();
 let savedTab='cards';
 try{ savedTab=localStorage.getItem(TAB_KEY)||'cards'; }catch(e){}
 activateTab(savedTab);
+
+// if connected, refresh from the sheet on load (cloud is the shared source of truth)
+if(SHEET_URL) pullNow(true);
 </script>
 </body>
 </html>
