@@ -172,6 +172,25 @@
   .syncrow input:focus{border-color:var(--gold)}
   .synchelp{color:var(--mut);font-size:11.5px;line-height:1.7;margin-top:10px}
   .synchelp code{background:var(--panel2);color:var(--gold2);padding:1px 6px;border-radius:5px}
+  /* guild storage */
+  #storageView{max-width:640px}
+  .stools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+  .stwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 26px rgba(0,0,0,.4)}
+  table.sttable{width:100%;border-collapse:collapse;table-layout:fixed;
+    background:linear-gradient(180deg,#171009,#120d07)}
+  table.sttable thead th{background:linear-gradient(180deg,#251b0e,#1b130a);color:var(--gold);
+    font-family:var(--serif);text-transform:uppercase;letter-spacing:1px;font-size:11.5px;
+    text-align:left;padding:10px 13px;border-bottom:1px solid var(--line2)}
+  table.sttable thead th.amt{text-align:center}
+  table.sttable tbody td{padding:0;border-bottom:1px solid rgba(150,112,58,.5)}
+  table.sttable tbody tr:last-child td{border-bottom:none}
+  table.sttable tbody td input{width:100%;background:transparent;border:none;color:var(--txt);
+    padding:10px 13px;font-size:14px;outline:none}
+  table.sttable td.stamt input{text-align:center;font-variant-numeric:tabular-nums}
+  table.sttable td input:focus{background:rgba(231,189,94,.10);box-shadow:inset 0 0 0 1px var(--gold)}
+  table.sttable td.stact{text-align:center;padding:0 4px}
+  table.sttable .xbtn{opacity:.35}
+  table.sttable tbody tr:hover .xbtn{opacity:.9}
   .btn{font-family:var(--serif);cursor:pointer;border-radius:9px;padding:9px 16px;
     font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
     border:1px solid var(--gold-deep);color:#1a1206;
@@ -248,6 +267,7 @@
     <button class="tab active" data-view="cards">Monster Card DB</button>
     <button class="tab" data-view="ref">Card Box Odds</button>
     <button class="tab" data-view="chars">Character Details</button>
+    <button class="tab" data-view="storage">Guild Storage</button>
   </nav>
 </header>
 
@@ -321,6 +341,18 @@
 
     <div id="ctableArea"></div>
   </section>
+
+  <!-- ============ GUILD STORAGE VIEW ============ -->
+  <section id="storageView" class="hidden">
+    <div class="stools">
+      <button class="btn" id="stAdd">＋ Add item</button>
+      <span class="goldtotal" id="stTotal">0 items</span>
+      <div class="spacer"></div>
+      <span class="csaved" id="stSaved">Stored in this browser (localStorage)</span>
+      <button class="btn danger" id="stClear">Clear all</button>
+    </div>
+    <div id="stTableArea"></div>
+  </section>
 </div>
 
 <script>
@@ -361,13 +393,15 @@ const state = { stat:ALL, nest:'All', rarity:'Legend', q:'', sort:{key:'no',dir:
 // ---- view tabs (remembers the last-opened tab per browser) ----
 const TAB_KEY = 'dn-active-tab';
 function activateTab(v){
-  if(!['cards','ref','chars'].includes(v)) v='cards';
+  if(!['cards','ref','chars','storage'].includes(v)) v='cards';
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active', x.dataset.view===v));
   $('cardsView').classList.toggle('hidden', v!=='cards');
   $('refView').classList.toggle('hidden', v!=='ref');
   $('charsView').classList.toggle('hidden', v!=='chars');
+  $('storageView').classList.toggle('hidden', v!=='storage');
   if(v==='ref') renderRef();
   if(v==='chars') renderChars();
+  if(v==='storage') renderStore();
   try{ localStorage.setItem(TAB_KEY, v); }catch(e){}
 }
 document.querySelectorAll('.tab').forEach(t=>{ t.onclick = ()=>activateTab(t.dataset.view); });
@@ -809,6 +843,59 @@ $('ctableArea').addEventListener('mouseout', e=>{ const th=e.target.closest('th[
 $('ctableArea').addEventListener('click',    e=>{ const th=e.target.closest('th[data-tip]'); if(th){ e.stopPropagation(); tipPinned=true; showTip(th); } });
 document.addEventListener('click',()=>{ tipPinned=false; hideTip(); });
 window.addEventListener('scroll',hideTip,true);
+
+// ===== Guild Storage: a simple 2-column (Item / Amount) list, add/remove rows =====
+const STORE_KEY='dn-guild-storage-v1';
+let STORE=loadStore();
+function loadStore(){ try{ const r=localStorage.getItem(STORE_KEY); const d=r?JSON.parse(r):[]; return Array.isArray(d)?d:[]; }catch(e){ return []; } }
+let stSavedTimer=null;
+function saveStore(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(STORE)); }
+  catch(e){ const el=$('stSaved'); if(el) el.textContent='⚠ Could not save (storage full/blocked)'; return; }
+  const el=$('stSaved'); if(el){ el.textContent='✓ Saved to this browser'; clearTimeout(stSavedTimer);
+    stSavedTimer=setTimeout(()=>{ el.textContent='Stored in this browser (localStorage)'; },1500); }
+}
+function updateStoreTotal(){
+  const el=$('stTotal'); if(!el) return;
+  let sum=0; STORE.forEach(r=>{ const n=parseFloat(String(r.amount==null?'':r.amount).replace(/[^0-9.\-]/g,'')); if(!isNaN(n)) sum+=n; });
+  el.innerHTML=STORE.length+' item'+(STORE.length===1?'':'s')+' · total <b>'+sum.toLocaleString()+'</b>';
+}
+function storeRowHTML(r,i){
+  return `<tr class="strow">
+    <td><input data-i="${i}" data-k="item" type="text" value="${esc(r.item==null?'':r.item)}" placeholder="Item name"></td>
+    <td class="stamt"><input data-i="${i}" data-k="amount" type="text" inputmode="numeric" value="${esc(r.amount==null?'':r.amount)}" placeholder="0"></td>
+    <td class="stact"><button class="xbtn" data-del="${i}" title="Remove item">✕</button></td>
+  </tr>`;
+}
+function renderStore(){
+  const area=$('stTableArea'); if(!area) return;
+  updateStoreTotal();
+  if(!STORE.length){
+    area.innerHTML='<div class="cempty">No items yet.<br>Click <b>＋ Add item</b> to start tracking your guild storage.</div>';
+    return;
+  }
+  const rows=STORE.map(storeRowHTML).join('');
+  area.innerHTML='<div class="stwrap"><table class="sttable"><colgroup>'
+    +'<col style="width:64%"><col style="width:26%"><col style="width:10%"></colgroup>'
+    +'<thead><tr><th>Item</th><th class="amt">Amount</th><th></th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>';
+}
+$('stAdd').onclick=()=>{
+  STORE.push({item:'',amount:''}); saveStore(); renderStore();
+  const last=$('stTableArea').querySelector('tbody tr:last-child input'); if(last) last.focus();
+};
+$('stClear').onclick=()=>{ if(STORE.length && confirm('Remove ALL stored items from this browser? This cannot be undone.')){ STORE=[]; saveStore(); renderStore(); } };
+$('stTableArea').addEventListener('input',e=>{
+  const inp=e.target.closest('input'); if(!inp) return;
+  const i=+inp.dataset.i, k=inp.dataset.k;
+  if(STORE[i]){ STORE[i][k]=inp.value; saveStore(); if(k==='amount') updateStoreTotal(); }
+});
+$('stTableArea').addEventListener('click',e=>{
+  const b=e.target.closest('[data-del]'); if(!b) return;
+  const i=+b.dataset.del, r=STORE[i];
+  if(r && (r.item||r.amount) && !confirm('Remove this item?')) return;
+  STORE.splice(i,1); saveStore(); renderStore();
+});
 
 // ===== optional Google Sheet sync (Apps Script web app) — local stays the default =====
 // Explicit control: Pull (sheet -> this device) and Push (this device -> sheet). No auto-sync.
