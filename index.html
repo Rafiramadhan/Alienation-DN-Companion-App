@@ -864,6 +864,8 @@ function pullNow(){ if(!SHEET_URL) return Promise.resolve();
 $('syncConnect').onclick=()=>{ $('syncPanel').hidden=false; $('syncUrl').value=SHEET_URL; $('syncUrl').focus(); };
 $('syncCancel').onclick=()=>{ $('syncPanel').hidden=true; };
 $('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; syncDirty=false; lastSync=''; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
+// warn before leaving if there are edits not yet pushed to the connected sheet
+window.addEventListener('beforeunload', e=>{ if(SHEET_URL && syncDirty){ e.preventDefault(); e.returnValue=''; } });
 $('syncPush').onclick=()=>pushNow();
 $('syncPull').onclick=()=>{
   if(syncDirty && !confirm("Pull replaces this device's roster with the sheet and discards local changes you have not pushed. Continue?")) return;
