@@ -160,6 +160,7 @@
   .syncdot[data-state="off"]{background:#6b6252}
   .syncdot[data-state="ok"]{background:#57c46a;box-shadow:0 0 8px rgba(87,196,106,.7)}
   .syncdot[data-state="busy"]{background:var(--gold);box-shadow:0 0 8px rgba(231,189,94,.7)}
+  .syncdot[data-state="warn"]{background:#f2a93b;box-shadow:0 0 8px rgba(242,169,59,.7)}
   .syncdot[data-state="err"]{background:#ff5a4d;box-shadow:0 0 8px rgba(255,90,77,.7)}
   .syncstatus{color:var(--mut);font-size:12px}
   .syncpanel{margin:-8px 2px 16px;padding:12px 14px;border:1px solid var(--line2);border-radius:10px;
@@ -299,7 +300,8 @@
       <span class="syncdot" id="syncDot" data-state="off"></span>
       <span class="syncstatus" id="syncStatus">Local only — connect a Google Sheet to sync across devices.</span>
       <div class="spacer"></div>
-      <button class="btn ghost" id="syncNow" hidden>⟳ Sync now</button>
+      <button class="btn ghost" id="syncPull" hidden>⭳ Pull from sheet</button>
+      <button class="btn ghost" id="syncPush" hidden>⭱ Push to sheet</button>
       <button class="btn ghost" id="syncConnect">☁ Connect Google Sheet</button>
       <button class="btn ghost" id="syncDisconnect" hidden>Disconnect</button>
     </div>
@@ -584,7 +586,7 @@ function saveChars(){
     clearTimeout(savedTimer);
     savedTimer=setTimeout(()=>{ el.textContent='Stored only in this browser (localStorage)'; },1500);
   }
-  if(typeof SHEET_URL!=='undefined' && SHEET_URL) schedulePush();   // mirror to the connected sheet
+  if(typeof syncMarkDirty==='function') syncMarkDirty();   // sheet is now behind local until you Push
 }
 function esc(v){ return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
@@ -809,18 +811,22 @@ document.addEventListener('click',()=>{ tipPinned=false; hideTip(); });
 window.addEventListener('scroll',hideTip,true);
 
 // ===== optional Google Sheet sync (Apps Script web app) — local stays the default =====
+// Explicit control: Pull (sheet -> this device) and Push (this device -> sheet). No auto-sync.
 const SHEET_KEY='dn-sheet-url';
 let SHEET_URL=''; try{ SHEET_URL=localStorage.getItem(SHEET_KEY)||''; }catch(e){}
-let pushTimer=null;
+let syncDirty=false, lastSync='';
 
 function setSync(state,msg){ const d=$('syncDot'),s=$('syncStatus'); if(d)d.dataset.state=state; if(s&&msg!=null)s.textContent=msg; }
+function timeStr(){ const d=new Date(),p=n=>(n<10?'0':'')+n; return p(d.getHours())+':'+p(d.getMinutes()); }
 function updateSyncUI(){
   const on=!!SHEET_URL;
-  $('syncConnect').hidden=on; $('syncDisconnect').hidden=!on; $('syncNow').hidden=!on;
-  if(on) setSync('ok','Connected — changes sync to your sheet automatically.');
-  else setSync('off','Local only — connect a Google Sheet to sync across devices.');
+  $('syncPull').hidden=!on; $('syncPush').hidden=!on;
+  $('syncConnect').hidden=on; $('syncDisconnect').hidden=!on;
+  if(!on){ setSync('off','Local only — connect a Google Sheet to sync across devices.'); return; }
+  if(syncDirty) setSync('warn','Local changes not pushed yet — press “Push to sheet”.');
+  else setSync('ok','Connected'+(lastSync?' — last synced '+lastSync:'')+'. Use Pull / Push to sync.');
 }
-function timeStr(){ const d=new Date(),p=n=>(n<10?'0':'')+n; return p(d.getHours())+':'+p(d.getMinutes()); }
+function syncMarkDirty(){ if(!SHEET_URL) return; syncDirty=true; updateSyncUI(); }
 
 // map between CHARS and a human-readable sheet table using the field schema
 function charsToPayload(){
@@ -841,25 +847,28 @@ function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can'
   return fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})
     .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
 }
-function schedulePush(){ if(!SHEET_URL) return; clearTimeout(pushTimer); setSync('busy','Saving to sheet…'); pushTimer=setTimeout(pushNow,900); }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
-  setSync('busy','Saving to sheet…');
+  setSync('busy','Pushing to sheet…');
   return sheetPost(Object.assign({action:'save'},charsToPayload()))
-    .then(()=>setSync('ok','Synced '+timeStr()))
-    .catch(e=>setSync('err','Sync failed — saved locally. '+(e.message||'')));
+    .then(()=>{ syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Pushed to sheet · '+lastSync); })
+    .catch(e=>setSync('err','Push failed — data is still saved locally. '+(e.message||'')));
 }
-function pullNow(silent){ if(!SHEET_URL) return Promise.resolve();
-  setSync('busy','Loading from sheet…');
+function pullNow(){ if(!SHEET_URL) return Promise.resolve();
+  setSync('busy','Pulling from sheet…');
   return sheetGet().then(data=>{ const arr=payloadToChars(data);
       if(arr){ CHARS=arr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} renderChars(); updateGoldTotal(); }
-      setSync('ok','Synced '+timeStr()); })
-    .catch(e=>{ setSync('err','Could not load from sheet.'); if(!silent) alert('Could not read the sheet. Check the URL and that the web app access is set to "Anyone".'); });
+      syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Pulled from sheet · '+lastSync); })
+    .catch(e=>{ setSync('err','Could not read the sheet.'); alert('Could not read the sheet. Check the URL and that the web app access is set to "Anyone".'); });
 }
 
 $('syncConnect').onclick=()=>{ $('syncPanel').hidden=false; $('syncUrl').value=SHEET_URL; $('syncUrl').focus(); };
 $('syncCancel').onclick=()=>{ $('syncPanel').hidden=true; };
-$('syncNow').onclick=()=>pullNow(false);
-$('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
+$('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; syncDirty=false; lastSync=''; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
+$('syncPush').onclick=()=>pushNow();
+$('syncPull').onclick=()=>{
+  if(syncDirty && !confirm("Pull replaces this device's roster with the sheet and discards local changes you have not pushed. Continue?")) return;
+  pullNow();
+};
 $('syncSave').onclick=()=>{
   const url=$('syncUrl').value.trim();
   if(!/\/exec(\?|$)/.test(url)){ if(!confirm("That does not look like an Apps Script /exec URL. Use it anyway?")) return; }
@@ -868,7 +877,7 @@ $('syncSave').onclick=()=>{
   sheetGet().then(data=>{ const arr=payloadToChars(data);
     if(arr && arr.length){
       const load=confirm("This sheet already has "+arr.length+" character(s).\n\nOK = load the sheet onto this device (replaces local).\nCancel = upload this device's data to the sheet (replaces the sheet).");
-      if(load){ CHARS=arr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} renderChars(); updateGoldTotal(); setSync('ok','Synced '+timeStr()); }
+      if(load){ CHARS=arr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} renderChars(); updateGoldTotal(); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
       else pushNow();
     } else pushNow();   // empty sheet -> seed it from this device
   }).catch(()=>setSync('err','Connected, but could not reach the sheet. Check the deployment access.'));
@@ -884,9 +893,6 @@ render();
 let savedTab='cards';
 try{ savedTab=localStorage.getItem(TAB_KEY)||'cards'; }catch(e){}
 activateTab(savedTab);
-
-// if connected, refresh from the sheet on load (cloud is the shared source of truth)
-if(SHEET_URL) pullNow(true);
 </script>
 </body>
 </html>
