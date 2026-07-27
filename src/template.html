@@ -272,6 +272,33 @@
 </header>
 
 <div class="wrap">
+  <!-- ============ SHARED CLOUD SYNC BAR (Character Details + Guild Storage) ============ -->
+  <div id="syncSection" class="hidden">
+    <div class="syncbar">
+      <span class="syncdot" id="syncDot" data-state="off"></span>
+      <span class="syncstatus" id="syncStatus">Local only — connect a Google Sheet to sync across devices.</span>
+      <div class="spacer"></div>
+      <button class="btn ghost" id="syncPull" hidden>⭳ Pull from sheet</button>
+      <button class="btn ghost" id="syncPush" hidden>⭱ Push to sheet</button>
+      <button class="btn ghost" id="syncCopy" hidden>⧉ Copy sheet link</button>
+      <button class="btn ghost" id="syncConnect">☁ Connect Google Sheet</button>
+      <button class="btn ghost" id="syncDisconnect" hidden>Disconnect</button>
+    </div>
+    <div class="syncpanel" id="syncPanel" hidden>
+      <div class="syncrow">
+        <input id="syncUrl" type="text" placeholder="Paste your Apps Script Web App URL (ends with /exec)" autocomplete="off">
+        <button class="btn" id="syncSave">Connect</button>
+        <button class="btn ghost" id="syncCancel">Cancel</button>
+      </div>
+      <div class="synchelp">
+        Need a URL? Open your Google Sheet → <b>Extensions ▸ Apps Script</b>, paste the script from
+        <code>google-apps-script.gs</code>, then <b>Deploy ▸ New deployment ▸ Web app</b>
+        (Execute as: <b>Me</b>, Access: <b>Anyone</b>), and copy the <code>/exec</code> URL.
+        One sheet holds both your roster and guild storage. Share the URL only with people you want to edit them.
+      </div>
+    </div>
+  </div>
+
   <!-- ============ CARD FILTER VIEW ============ -->
   <section id="cardsView">
     <div class="controls">
@@ -313,30 +340,6 @@
       <div class="spacer"></div>
       <span class="csaved" id="csaved">Stored only in this browser (localStorage)</span>
       <button class="btn danger" id="cClear">Clear all</button>
-    </div>
-
-    <!-- optional Google Sheet sync (local-first; connect to sync across devices) -->
-    <div class="syncbar">
-      <span class="syncdot" id="syncDot" data-state="off"></span>
-      <span class="syncstatus" id="syncStatus">Local only — connect a Google Sheet to sync across devices.</span>
-      <div class="spacer"></div>
-      <button class="btn ghost" id="syncPull" hidden>⭳ Pull from sheet</button>
-      <button class="btn ghost" id="syncPush" hidden>⭱ Push to sheet</button>
-      <button class="btn ghost" id="syncConnect">☁ Connect Google Sheet</button>
-      <button class="btn ghost" id="syncDisconnect" hidden>Disconnect</button>
-    </div>
-    <div class="syncpanel" id="syncPanel" hidden>
-      <div class="syncrow">
-        <input id="syncUrl" type="text" placeholder="Paste your Apps Script Web App URL (ends with /exec)" autocomplete="off">
-        <button class="btn" id="syncSave">Connect</button>
-        <button class="btn ghost" id="syncCancel">Cancel</button>
-      </div>
-      <div class="synchelp">
-        Need a URL? Open your Google Sheet → <b>Extensions ▸ Apps Script</b>, paste the script from
-        <code>google-apps-script.gs</code>, then <b>Deploy ▸ New deployment ▸ Web app</b>
-        (Execute as: <b>Me</b>, Access: <b>Anyone</b>), and copy the <code>/exec</code> URL.
-        Share that URL only with people you want to edit this roster.
-      </div>
     </div>
 
     <div id="ctableArea"></div>
@@ -399,6 +402,7 @@ function activateTab(v){
   $('refView').classList.toggle('hidden', v!=='ref');
   $('charsView').classList.toggle('hidden', v!=='chars');
   $('storageView').classList.toggle('hidden', v!=='storage');
+  $('syncSection').classList.toggle('hidden', !(v==='chars'||v==='storage'));
   if(v==='ref') renderRef();
   if(v==='chars') renderChars();
   if(v==='storage') renderStore();
@@ -854,6 +858,7 @@ function saveStore(){
   catch(e){ const el=$('stSaved'); if(el) el.textContent='⚠ Could not save (storage full/blocked)'; return; }
   const el=$('stSaved'); if(el){ el.textContent='✓ Saved to this browser'; clearTimeout(stSavedTimer);
     stSavedTimer=setTimeout(()=>{ el.textContent='Stored in this browser (localStorage)'; },1500); }
+  if(typeof syncMarkDirty==='function') syncMarkDirty();   // sheet is now behind local until you Push
 }
 function updateStoreTotal(){
   const el=$('stTotal'); if(!el) return;
@@ -907,7 +912,7 @@ function setSync(state,msg){ const d=$('syncDot'),s=$('syncStatus'); if(d)d.data
 function timeStr(){ const d=new Date(),p=n=>(n<10?'0':'')+n; return p(d.getHours())+':'+p(d.getMinutes()); }
 function updateSyncUI(){
   const on=!!SHEET_URL;
-  $('syncPull').hidden=!on; $('syncPush').hidden=!on;
+  $('syncPull').hidden=!on; $('syncPush').hidden=!on; $('syncCopy').hidden=!on;
   $('syncConnect').hidden=on; $('syncDisconnect').hidden=!on;
   if(!on){ setSync('off','Local only — connect a Google Sheet to sync across devices.'); return; }
   if(syncDirty) setSync('warn','Local changes not pushed yet — press “Push to sheet”.');
@@ -929,6 +934,24 @@ function payloadToChars(data){
       c[f.k]= f.type==='check' ? (v===true||v==='TRUE'||v==='true'||v===1||v==='1') : (v==null?'':String(v)); });
     return c; });
 }
+// Guild storage <-> sheet table (Item / Amount)
+function storeToPayload(){
+  return { header:['Item','Amount'], rows: STORE.map(r=>[r.item==null?'':r.item, r.amount==null?'':r.amount]) };
+}
+function payloadToStore(data){
+  if(!data||!Array.isArray(data.rows)) return null;
+  const header=data.header||['Item','Amount'];
+  let ii=header.indexOf('Item'), ai=header.indexOf('Amount'); if(ii<0)ii=0; if(ai<0)ai=1;
+  return data.rows.map(row=>({ item: row[ii]==null?'':String(row[ii]), amount: row[ai]==null?'':String(row[ai]) }));
+}
+// apply a pulled {roster, storage} payload to local state
+function applyPulled(data){
+  const cr=payloadToChars(data&&data.roster);
+  if(cr){ CHARS=cr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} }
+  const st=payloadToStore(data&&data.storage);
+  if(st){ STORE=st; try{localStorage.setItem(STORE_KEY,JSON.stringify(STORE));}catch(e){} }
+  renderChars(); updateGoldTotal(); renderStore();
+}
 function sheetGet(){ return fetch(SHEET_URL,{method:'GET'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }); }
 function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can't answer
   return fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})
@@ -936,26 +959,33 @@ function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can'
 }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pushing to sheet…');
-  return sheetPost(Object.assign({action:'save'},charsToPayload()))
+  return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload()})
     .then(()=>{ syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Pushed to sheet · '+lastSync); })
     .catch(e=>setSync('err','Push failed — data is still saved locally. '+(e.message||'')));
 }
 function pullNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pulling from sheet…');
-  return sheetGet().then(data=>{ const arr=payloadToChars(data);
-      if(arr){ CHARS=arr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} renderChars(); updateGoldTotal(); }
+  return sheetGet().then(data=>{ applyPulled(data);
       syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Pulled from sheet · '+lastSync); })
     .catch(e=>{ setSync('err','Could not read the sheet.'); alert('Could not read the sheet. Check the URL and that the web app access is set to "Anyone".'); });
 }
+function copyLink(){
+  const done=()=>setSync('ok','Sheet link copied — paste it on your other device.');
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(SHEET_URL).then(done).catch(()=>fallbackCopy(SHEET_URL,done));
+  else fallbackCopy(SHEET_URL,done);
+}
+function fallbackCopy(text,cb){ const t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0';
+  document.body.appendChild(t); t.focus(); t.select(); try{document.execCommand('copy');}catch(e){} t.remove(); if(cb)cb(); }
 
 $('syncConnect').onclick=()=>{ $('syncPanel').hidden=false; $('syncUrl').value=SHEET_URL; $('syncUrl').focus(); };
 $('syncCancel').onclick=()=>{ $('syncPanel').hidden=true; };
+$('syncCopy').onclick=()=>copyLink();
 $('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; syncDirty=false; lastSync=''; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
 // warn before leaving if there are edits not yet pushed to the connected sheet
 window.addEventListener('beforeunload', e=>{ if(SHEET_URL && syncDirty){ e.preventDefault(); e.returnValue=''; } });
 $('syncPush').onclick=()=>pushNow();
 $('syncPull').onclick=()=>{
-  if(syncDirty && !confirm("Pull replaces this device's roster with the sheet and discards local changes you have not pushed. Continue?")) return;
+  if(syncDirty && !confirm("Pull replaces this device's data (roster + storage) with the sheet and discards local changes you have not pushed. Continue?")) return;
   pullNow();
 };
 $('syncSave').onclick=()=>{
@@ -963,10 +993,12 @@ $('syncSave').onclick=()=>{
   if(!/\/exec(\?|$)/.test(url)){ if(!confirm("That does not look like an Apps Script /exec URL. Use it anyway?")) return; }
   SHEET_URL=url; try{localStorage.setItem(SHEET_KEY,url);}catch(e){}
   $('syncPanel').hidden=true; updateSyncUI(); setSync('busy','Connecting…');
-  sheetGet().then(data=>{ const arr=payloadToChars(data);
-    if(arr && arr.length){
-      const load=confirm("This sheet already has "+arr.length+" character(s).\n\nOK = load the sheet onto this device (replaces local).\nCancel = upload this device's data to the sheet (replaces the sheet).");
-      if(load){ CHARS=arr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} renderChars(); updateGoldTotal(); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
+  sheetGet().then(data=>{
+    const cr=payloadToChars(data&&data.roster), st=payloadToStore(data&&data.storage);
+    const n=(cr?cr.length:0)+(st?st.length:0);
+    if(n){
+      const load=confirm("This sheet already has data ("+(cr?cr.length:0)+" character(s), "+(st?st.length:0)+" storage item(s)).\n\nOK = load the sheet onto this device (replaces local).\nCancel = upload this device's data to the sheet (replaces the sheet).");
+      if(load){ applyPulled(data); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
       else pushNow();
     } else pushNow();   // empty sheet -> seed it from this device
   }).catch(()=>setSync('err','Connected, but could not reach the sheet. Check the deployment access.'));
