@@ -139,6 +139,13 @@ function parse(raw) {
     console.log('Embedded ' + Object.keys(map).length + ' class icons');
   }
 
+  // Embed the Apps Script source so the in-app tutorial can offer one-click copy.
+  if (html.includes('__APPSCRIPT__')) {
+    const p = path.join(ROOT, 'google-apps-script.gs');
+    const code = fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : '';
+    html = html.replace('__APPSCRIPT__', JSON.stringify(code));
+  }
+
   fs.writeFileSync(OUT, html);
 
   const lines = db.cards.reduce((a, c) => a + c.stats.length, 0);

@@ -172,6 +172,16 @@
   .syncrow input:focus{border-color:var(--gold)}
   .synchelp{color:var(--mut);font-size:11.5px;line-height:1.7;margin-top:10px}
   .synchelp code{background:var(--panel2);color:var(--gold2);padding:1px 6px;border-radius:5px}
+  .synctease{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:2px 2px 16px;padding:9px 14px;
+    border:1px dashed var(--line2);border-radius:10px;color:var(--mut);font-size:12.5px}
+  .synctease .teasetxt{flex:1;min-width:200px;line-height:1.5}
+  .synctitle{font-family:var(--serif);color:var(--gold);font-size:14.5px;letter-spacing:.5px;margin-bottom:10px}
+  .syncsteps{margin:0 0 14px;padding-left:20px;color:var(--txt);font-size:12.5px;line-height:2}
+  .syncsteps code{background:var(--panel2);color:var(--gold2);padding:1px 6px;border-radius:5px}
+  .syncsteps b{color:#f3ead7}
+  .linkbtn{background:none;border:none;color:var(--gold);cursor:pointer;font:inherit;text-decoration:underline;
+    text-underline-offset:2px;padding:0}
+  .linkbtn:hover{color:var(--gold2)}
   /* guild storage */
   #storageView{max-width:640px}
   .stools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
@@ -272,29 +282,44 @@
 </header>
 
 <div class="wrap">
-  <!-- ============ SHARED CLOUD SYNC BAR (Character Details + Guild Storage) ============ -->
+  <!-- ============ SHARED CLOUD SYNC (Character Details + Guild Storage) ============ -->
   <div id="syncSection" class="hidden">
-    <div class="syncbar">
+    <!-- teaser: shown by default when not connected -->
+    <div class="synctease" id="syncTease">
+      <span class="teasetxt">☁ Playing on more than one device? You can sync your roster &amp; guild storage to your own Google Sheet — optional, everything works fine locally without it.</span>
+      <button class="btn ghost" id="syncSetup">Want to use a spreadsheet? →</button>
+    </div>
+    <!-- compact status bar: shown when connected -->
+    <div class="syncbar hidden" id="syncBar">
       <span class="syncdot" id="syncDot" data-state="off"></span>
-      <span class="syncstatus" id="syncStatus">Local only — connect a Google Sheet to sync across devices.</span>
+      <span class="syncstatus" id="syncStatus"></span>
       <div class="spacer"></div>
-      <button class="btn ghost" id="syncPull" hidden>⭳ Pull from sheet</button>
-      <button class="btn ghost" id="syncPush" hidden>⭱ Push to sheet</button>
-      <button class="btn ghost" id="syncCopy" hidden>⧉ Copy sheet link</button>
-      <button class="btn ghost" id="syncConnect">☁ Connect Google Sheet</button>
+      <button class="btn ghost" id="syncPull" hidden>⭳ Pull</button>
+      <button class="btn ghost" id="syncPush" hidden>⭱ Push</button>
+      <button class="btn ghost" id="syncCopy" hidden>⧉ Copy link</button>
       <button class="btn ghost" id="syncDisconnect" hidden>Disconnect</button>
     </div>
+    <!-- setup panel: short tutorial + URL box -->
     <div class="syncpanel" id="syncPanel" hidden>
+      <div class="synctitle">Sync with your own Google Sheet</div>
+      <ol class="syncsteps">
+        <li>Create a new, blank <b>Google Sheet</b>.</li>
+        <li>In it: <b>Extensions ▸ Apps Script</b>. Delete the sample code, then paste the script —
+            <button class="linkbtn" id="syncCopyScript">⧉ copy the script</button>
+            (or open <code>google-apps-script.gs</code>). Save.</li>
+        <li><b>Deploy ▸ New deployment ▸ Web app</b> → <b>Execute as: Me</b>, <b>Who has access: Anyone</b> →
+            <b>Deploy</b> and authorise when asked.</li>
+        <li>Copy the <b>Web app URL</b> (it ends with <code>/exec</code>) and paste it below.</li>
+      </ol>
       <div class="syncrow">
-        <input id="syncUrl" type="text" placeholder="Paste your Apps Script Web App URL (ends with /exec)" autocomplete="off">
+        <input id="syncUrl" type="text" placeholder="Paste your Web App URL (…/exec)" autocomplete="off">
         <button class="btn" id="syncSave">Connect</button>
         <button class="btn ghost" id="syncCancel">Cancel</button>
       </div>
       <div class="synchelp">
-        Need a URL? Open your Google Sheet → <b>Extensions ▸ Apps Script</b>, paste the script from
-        <code>google-apps-script.gs</code>, then <b>Deploy ▸ New deployment ▸ Web app</b>
-        (Execute as: <b>Me</b>, Access: <b>Anyone</b>), and copy the <code>/exec</code> URL.
-        One sheet holds both your roster and guild storage. Share the URL only with people you want to edit them.
+        One sheet holds both your roster and guild storage. The link lets anyone who has it read/write your
+        data, so share it only with people you trust. To use it on another device, connect there with the same URL
+        (tip: the <b>Copy link</b> button once connected).
       </div>
     </div>
   </div>
@@ -365,6 +390,7 @@ const RKEY = ['magic','rare','epic','unique','legend'];
 const ALL = '__ALL__';
 const CLASS_ICONS = __CLASSES__;            // { "Class Name": dataURI }
 const CLASS_NAMES = Object.keys(CLASS_ICONS).sort();
+const APPS_SCRIPT = __APPSCRIPT__;          // google-apps-script.gs source (for one-click copy)
 
 // ---- reference tables (from the sheet's side columns) ----
 const REF = {
@@ -912,11 +938,13 @@ function setSync(state,msg){ const d=$('syncDot'),s=$('syncStatus'); if(d)d.data
 function timeStr(){ const d=new Date(),p=n=>(n<10?'0':'')+n; return p(d.getHours())+':'+p(d.getMinutes()); }
 function updateSyncUI(){
   const on=!!SHEET_URL;
-  $('syncPull').hidden=!on; $('syncPush').hidden=!on; $('syncCopy').hidden=!on;
-  $('syncConnect').hidden=on; $('syncDisconnect').hidden=!on;
-  if(!on){ setSync('off','Local only — connect a Google Sheet to sync across devices.'); return; }
-  if(syncDirty) setSync('warn','Local changes not pushed yet — press “Push to sheet”.');
-  else setSync('ok','Connected'+(lastSync?' — last synced '+lastSync:'')+'. Use Pull / Push to sync.');
+  const panelOpen=!$('syncPanel').hidden;
+  $('syncBar').classList.toggle('hidden', !on);
+  $('syncTease').classList.toggle('hidden', on || panelOpen);   // teaser only when idle + not connected
+  $('syncPull').hidden=!on; $('syncPush').hidden=!on; $('syncCopy').hidden=!on; $('syncDisconnect').hidden=!on;
+  if(!on) return;
+  if(syncDirty) setSync('warn','Local changes not pushed yet — press “Push”.');
+  else setSync('ok','Connected'+(lastSync?' — last synced '+lastSync:'')+'.');
 }
 function syncMarkDirty(){ if(!SHEET_URL) return; syncDirty=true; updateSyncUI(); }
 
@@ -969,17 +997,18 @@ function pullNow(){ if(!SHEET_URL) return Promise.resolve();
       syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Pulled from sheet · '+lastSync); })
     .catch(e=>{ setSync('err','Could not read the sheet.'); alert('Could not read the sheet. Check the URL and that the web app access is set to "Anyone".'); });
 }
-function copyLink(){
-  const done=()=>setSync('ok','Sheet link copied — paste it on your other device.');
-  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(SHEET_URL).then(done).catch(()=>fallbackCopy(SHEET_URL,done));
-  else fallbackCopy(SHEET_URL,done);
+function copyText(text,cb){
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(cb).catch(()=>fallbackCopy(text,cb));
+  else fallbackCopy(text,cb);
 }
 function fallbackCopy(text,cb){ const t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0';
   document.body.appendChild(t); t.focus(); t.select(); try{document.execCommand('copy');}catch(e){} t.remove(); if(cb)cb(); }
 
-$('syncConnect').onclick=()=>{ $('syncPanel').hidden=false; $('syncUrl').value=SHEET_URL; $('syncUrl').focus(); };
-$('syncCancel').onclick=()=>{ $('syncPanel').hidden=true; };
-$('syncCopy').onclick=()=>copyLink();
+$('syncSetup').onclick=()=>{ $('syncUrl').value=SHEET_URL; $('syncPanel').hidden=false; updateSyncUI(); $('syncUrl').focus(); };
+$('syncCancel').onclick=()=>{ $('syncPanel').hidden=true; updateSyncUI(); };
+$('syncCopy').onclick=()=>copyText(SHEET_URL, ()=>setSync('ok','Sheet link copied — paste it on your other device.'));
+$('syncCopyScript').onclick=(e)=>{ const b=e.currentTarget, old=b.textContent;
+  copyText(APPS_SCRIPT, ()=>{ b.textContent='✓ copied!'; setTimeout(()=>{ b.textContent=old; },1600); }); };
 $('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; syncDirty=false; lastSync=''; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
 // warn before leaving if there are edits not yet pushed to the connected sheet
 window.addEventListener('beforeunload', e=>{ if(SHEET_URL && syncDirty){ e.preventDefault(); e.returnValue=''; } });
