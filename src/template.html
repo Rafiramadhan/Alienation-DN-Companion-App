@@ -305,8 +305,7 @@
       <ol class="syncsteps">
         <li>Create a new, blank <b>Google Sheet</b>.</li>
         <li>In it: <b>Extensions ▸ Apps Script</b>. Delete the sample code, then paste the script —
-            <button class="linkbtn" id="syncCopyScript">⧉ copy the script</button>
-            (or open <code>google-apps-script.gs</code>). Save.</li>
+            <button class="linkbtn" id="syncCopyScript">⧉ copy the script</button>. Save.</li>
         <li><b>Deploy ▸ New deployment ▸ Web app</b> → <b>Execute as: Me</b>, <b>Who has access: Anyone</b> →
             <b>Deploy</b> and authorise when asked.</li>
         <li>Copy the <b>Web app URL</b> (it ends with <code>/exec</code>) and paste it below.</li>
@@ -943,8 +942,8 @@ function updateSyncUI(){
   $('syncTease').classList.toggle('hidden', on || panelOpen);   // teaser only when idle + not connected
   $('syncPull').hidden=!on; $('syncPush').hidden=!on; $('syncCopy').hidden=!on; $('syncDisconnect').hidden=!on;
   if(!on) return;
-  if(syncDirty) setSync('warn','Local changes not pushed yet — press “Push”.');
-  else setSync('ok','Connected'+(lastSync?' — last synced '+lastSync:'')+'.');
+  if(syncDirty) setSync('warn','Unsaved changes');
+  else setSync('ok','Connected & Synced'+(lastSync?' · last synced '+lastSync:''));
 }
 function syncMarkDirty(){ if(!SHEET_URL) return; syncDirty=true; updateSyncUI(); }
 
@@ -985,17 +984,18 @@ function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can'
   return fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})
     .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
 }
+function errMsg(e){ return (e && e.message) ? e.message : 'unknown error'; }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pushing to sheet…');
   return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload()})
-    .then(()=>{ syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Pushed to sheet · '+lastSync); })
-    .catch(e=>setSync('err','Push failed — data is still saved locally. '+(e.message||'')));
+    .then(()=>{ syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
+    .catch(e=>setSync('err','Push failed: '+errMsg(e)+' — data is still saved locally.'));
 }
 function pullNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pulling from sheet…');
   return sheetGet().then(data=>{ applyPulled(data);
-      syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Pulled from sheet · '+lastSync); })
-    .catch(e=>{ setSync('err','Could not read the sheet.'); alert('Could not read the sheet. Check the URL and that the web app access is set to "Anyone".'); });
+      syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pulled '+lastSync); })
+    .catch(e=>{ const m=errMsg(e); setSync('err','Pull failed: '+m); alert('Pull failed: '+m+'\n\nCheck the URL and that the web app access is set to "Anyone".'); });
 }
 function copyText(text,cb){
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(cb).catch(()=>fallbackCopy(text,cb));
@@ -1030,7 +1030,7 @@ $('syncSave').onclick=()=>{
       if(load){ applyPulled(data); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
       else pushNow();
     } else pushNow();   // empty sheet -> seed it from this device
-  }).catch(()=>setSync('err','Connected, but could not reach the sheet. Check the deployment access.'));
+  }).catch(e=>setSync('err','Could not reach the sheet: '+errMsg(e)+'. Check the deployment access.'));
 };
 updateSyncUI();
 
