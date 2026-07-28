@@ -1268,6 +1268,8 @@ $('syncSave').onclick=()=>{
   }).catch(e=>setSync('err','Could not reach the sheet: '+errMsg(e)+'. Check the deployment access.'));
 };
 updateSyncUI();
+// on load, quietly check the connected sheet's script version (read only; does not touch local data)
+if(SHEET_URL){ sheetGet().then(checkScriptVersion).catch(()=>{}); }
 
 applyDailyReset();                       // reset DQ if we've crossed 08:00 since last visit
 setInterval(applyDailyReset, 60000);     // and keep checking while the page stays open
