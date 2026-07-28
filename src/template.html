@@ -172,6 +172,14 @@
   .syncrow input:focus{border-color:var(--gold)}
   .synchelp{color:var(--mut);font-size:11.5px;line-height:1.7;margin-top:10px}
   .synchelp code{background:var(--panel2);color:var(--gold2);padding:1px 6px;border-radius:5px}
+  .diffhead{color:var(--mut);font-size:12px;line-height:1.6;margin-bottom:12px}
+  .diffsec{margin-bottom:14px}
+  .diffsectitle{font-family:var(--serif);color:var(--gold);font-size:13px;letter-spacing:.5px;
+    text-transform:uppercase;margin-bottom:6px;border-bottom:1px solid var(--line);padding-bottom:4px}
+  .diffadd,.diffrem,.diffchg,.diffnone{font-size:12.5px;line-height:1.6;margin:4px 0}
+  .diffadd b{color:#57c46a} .diffrem b{color:#ff7a6d} .diffchg b{color:var(--gold2)}
+  .diffnone{color:var(--mut)}
+  .diffchg ul{margin:4px 0 0;padding-left:18px} .diffchg li{margin:2px 0}
   .syncwarn{margin:-8px 2px 16px;padding:9px 14px;border:1px solid #7a5a1f;border-radius:10px;
     background:rgba(242,169,59,.10);color:var(--gold2);font-size:12.5px;line-height:1.5}
   .syncwarn[hidden]{display:none}
@@ -336,10 +344,16 @@
       <span class="syncdot" id="syncDot" data-state="off"></span>
       <span class="syncstatus" id="syncStatus"></span>
       <div class="spacer"></div>
+      <button class="btn ghost" id="syncDiff" hidden>🔍 Review changes</button>
       <button class="btn ghost" id="syncPull" hidden>⭳ Pull</button>
       <button class="btn ghost" id="syncPush" hidden>⭱ Push</button>
       <button class="btn ghost" id="syncCopy" hidden>⧉ Copy link</button>
       <button class="btn ghost" id="syncDisconnect" hidden>Disconnect</button>
+    </div>
+    <!-- local vs sheet diff -->
+    <div class="syncpanel diffpanel" id="diffPanel" hidden>
+      <div class="synctitle">Local vs Google Sheet <button class="linkbtn" id="diffClose" style="float:right">Close</button></div>
+      <div id="diffBody"></div>
     </div>
     <!-- shown when the connected sheet's script is older than this app expects -->
     <div class="syncwarn" id="syncScriptWarn" hidden>
@@ -1150,6 +1164,7 @@ function updateSyncUI(){
   $('syncBar').classList.toggle('hidden', !on);
   $('syncTease').classList.toggle('hidden', on || panelOpen);   // teaser only when idle + not connected
   $('syncPull').hidden=!on; $('syncPush').hidden=!on; $('syncCopy').hidden=!on; $('syncDisconnect').hidden=!on;
+  $('syncDiff').hidden=!on; if(!on) $('diffPanel').hidden=true;
   renderScriptWarn();
   if(!on) return;
   if(syncDirty) setSync('warn','Unsaved changes');
@@ -1249,6 +1264,47 @@ function adoptOrSeedSchema(data){
     if($('colPanel') && !$('colPanel').hidden) renderColManager();
   } else { columnsPush(); }
 }
+// ---- compare local vs sheet (so "Unsaved changes" is explainable) ----
+function cval(v){ if(v===true) return '☑'; if(v===false||v==null||v==='') return ''; return String(v); }
+function diffLists(local, remote, idOf, fields, nameOf){
+  const rem=new Map();
+  remote.forEach(r=>{ const k=idOf(r); if(!rem.has(k)) rem.set(k,[]); rem.get(k).push(r); });
+  const added=[], changed=[], used=new Set();
+  local.forEach(l=>{ const b=rem.get(idOf(l));
+    if(b && b.length){ const r=b.shift(); used.add(r);
+      const fl=[]; fields.forEach(f=>{ const a=cval(r[f.k]), c=cval(l[f.k]); if(a!==c) fl.push(f.label+': '+(a||'—')+' → '+(c||'—')); });
+      if(fl.length) changed.push({name:nameOf(l), fields:fl});
+    } else added.push(nameOf(l));
+  });
+  const removed=[]; remote.forEach(r=>{ if(!used.has(r)) removed.push(nameOf(r)); });
+  return {added, changed, removed};
+}
+function diffSectionHTML(title, d, unit){
+  const parts=[];
+  if(d.added.length)   parts.push('<div class="diffadd"><b>Only on this device ('+d.added.length+')</b> — Push adds them: '+d.added.map(esc).join(', ')+'</div>');
+  if(d.removed.length) parts.push('<div class="diffrem"><b>Only on the sheet ('+d.removed.length+')</b> — Push removes them, Pull keeps them: '+d.removed.map(esc).join(', ')+'</div>');
+  if(d.changed.length) parts.push('<div class="diffchg"><b>Changed ('+d.changed.length+')</b> — sheet → your device<ul>'+
+    d.changed.map(c=>'<li><b>'+esc(c.name)+'</b> — '+c.fields.map(esc).join('; ')+'</li>').join('')+'</ul></div>');
+  if(!parts.length) parts.push('<div class="diffnone">No '+unit+' differences.</div>');
+  return '<div class="diffsec"><div class="diffsectitle">'+title+'</div>'+parts.join('')+'</div>';
+}
+function reviewChanges(){ if(!SHEET_URL) return;
+  setSync('busy','Comparing with sheet…');
+  sheetGet().then(data=>{
+    const remChars=payloadToChars(data&&data.roster)||[];
+    const remStore=payloadToStore(data&&data.storage)||[];
+    const cf=COLUMNS.map(c=>({k:c.k,label:c.label}));
+    const dc=diffLists(CHARS, remChars, c=>String(c.nickname||'').trim().toLowerCase(), cf, c=>c.nickname||'(unnamed)');
+    const ds=diffLists(STORE, remStore, r=>String(r.item||'').trim().toLowerCase(), [{k:'amount',label:'Amount'}], r=>r.item||'(unnamed)');
+    const any=dc.added.length+dc.removed.length+dc.changed.length+ds.added.length+ds.removed.length+ds.changed.length;
+    const head = any
+      ? '<div class="diffhead">Your local data differs from the sheet. <b>⭱ Push</b> saves your device\'s version to the sheet; <b>⭳ Pull</b> discards these and takes the sheet\'s version.</div>'
+      : '<div class="diffhead">✓ Your local data matches the sheet — nothing to push.</div>';
+    $('diffBody').innerHTML = head + diffSectionHTML('Characters', dc, 'character') + diffSectionHTML('Guild Storage', ds, 'storage');
+    $('diffPanel').hidden=false;
+    updateSyncUI();
+  }).catch(e=>setSync('err','Compare failed: '+errMsg(e)));
+}
 function copyText(text,cb){
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(cb).catch(()=>fallbackCopy(text,cb));
   else fallbackCopy(text,cb);
@@ -1265,6 +1321,8 @@ $('syncUpdateScript').onclick=()=>{ $('syncPanel').hidden=false; updateSyncUI();
 $('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; syncDirty=false; lastSync=''; scriptOutdated=false; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
 // warn before leaving if there are edits not yet pushed to the connected sheet
 window.addEventListener('beforeunload', e=>{ if(SHEET_URL && syncDirty){ e.preventDefault(); e.returnValue=''; } });
+$('syncDiff').onclick=()=>reviewChanges();
+$('diffClose').onclick=()=>{ $('diffPanel').hidden=true; };
 $('syncPush').onclick=()=>pushNow();
 $('syncPull').onclick=()=>{
   if(syncDirty && !confirm("Pull replaces this device's data (roster + storage) with the sheet and discards local changes you have not pushed. Continue?")) return;
