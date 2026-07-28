@@ -197,9 +197,9 @@
   .colnamebi{font-weight:600;color:#f3ead7;font-size:13px;min-width:120px}
   .coltype{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold-deep);
     border:1px solid var(--line);border-radius:20px;padding:1px 9px}
-  .colmain .colgrp{background:#120d07;color:var(--txt);border:1px solid var(--line2);border-radius:7px;
-    padding:5px 8px;font-size:12px;outline:none;cursor:pointer}
-  .colmain .colgrp:focus{border-color:var(--gold)}
+  .colmain .colgrp,.colmain .coltypesel{background:#120d07;color:var(--txt);border:1px solid var(--line2);
+    border-radius:7px;padding:5px 8px;font-size:12px;outline:none;cursor:pointer}
+  .colmain .colgrp:focus,.colmain .coltypesel:focus{border-color:var(--gold)}
   .colgrouptag{font-size:10.5px;color:var(--mut);border:1px solid var(--line);border-radius:20px;padding:1px 9px}
   .colopts{flex:1;min-width:160px;background:#120d07;color:var(--txt);border:1px solid var(--line2);
     border-radius:7px;padding:6px 9px;font-size:12.5px;outline:none}
@@ -970,12 +970,20 @@ function renderColManager(){
       ? `<input class="colopts" data-i="${i}" value="${esc((c.options||[]).join(', '))}" placeholder="Dropdown options (comma-separated)">`
       : '';
     const typeLabel = c.type==='num'?'number':c.type==='check'?'checkbox':c.type==='select'?'dropdown':c.type==='class'?'class':'text';
+    const typeCell = custom
+      ? `<select class="coltypesel" data-i="${i}" title="Column type">
+           <option value="text"${c.type==='text'?' selected':''}>text</option>
+           <option value="num"${c.type==='num'?' selected':''}>number</option>
+           <option value="check"${c.type==='check'?' selected':''}>checkbox</option>
+           <option value="select"${c.type==='select'?' selected':''}>dropdown</option>
+         </select>`
+      : `<span class="coltype">${typeLabel}</span>`;
     return `<div class="colrow" data-i="${i}">
       <div class="colreorder">
         <button class="xbtn colmove" data-i="${i}" data-dir="-1" title="Move up"${i===0?' disabled':''}>▲</button>
         <button class="xbtn colmove" data-i="${i}" data-dir="1" title="Move down"${i===COLUMNS.length-1?' disabled':''}>▼</button>
       </div>
-      <div class="colmain">${nameCell}<span class="coltype">${typeLabel}</span>${groupCell}${optsCell}${c.builtin?'<span class="colbuiltin">built-in</span>':''}</div>
+      <div class="colmain">${nameCell}${typeCell}${groupCell}${optsCell}${c.builtin?'<span class="colbuiltin">built-in</span>':''}</div>
       <div class="colactions">
         <label class="colshow"><input type="checkbox" class="colvis" data-i="${i}"${c.hidden?'':' checked'}> shown</label>
         ${custom?`<button class="xbtn coldel" data-i="${i}" title="Delete column">✕</button>`:''}
@@ -1021,11 +1029,21 @@ $('colPanel').addEventListener('input', e=>{
   const op=e.target.closest('.colopts');
   if(op){ const i=+op.dataset.i; if(COLUMNS[i]){ COLUMNS[i].options=op.value.split(',').map(s=>s.trim()).filter(Boolean); saveColumns(); renderChars(); } }
 });
+function typeName(t){ return t==='num'?'Number':t==='check'?'Checkbox':t==='select'?'Dropdown':'Free text'; }
 $('colPanel').addEventListener('change', e=>{
   const vis=e.target.closest('.colvis');
   if(vis){ const i=+vis.dataset.i; if(COLUMNS[i]){ COLUMNS[i].hidden=!vis.checked; saveColumns(); renderChars(); } return; }
   const grp=e.target.closest('.colgrp');
   if(grp){ const i=+grp.dataset.i; if(COLUMNS[i]&&!COLUMNS[i].builtin){ COLUMNS[i].group=grp.value; saveColumns(); renderChars(); } return; }
+  const ts=e.target.closest('.coltypesel');
+  if(ts){ const i=+ts.dataset.i, c=COLUMNS[i]; if(!c||c.builtin) return;
+    const nt=ts.value; if(nt===c.type) return;
+    const hasData=CHARS.some(ch=>ch[c.k]!==undefined && ch[c.k]!=='' && ch[c.k]!==false);
+    if(hasData && !confirm('Change "'+c.label+'" to '+typeName(nt)+'?\n\nThis will clear that column\'s values for all characters.')){ ts.value=c.type; return; }
+    c.type=nt; if(nt==='select' && !c.options) c.options=[];
+    CHARS.forEach(ch=>{ if(nt==='check') ch[c.k]=false; else delete ch[c.k]; });
+    saveColumns(); saveChars(); renderChars(); renderColManager(); return;
+  }
   if(e.target.id==='newColType'){ $('newColOpts').hidden = e.target.value!=='select'; }
 });
 
