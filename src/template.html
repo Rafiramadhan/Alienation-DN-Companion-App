@@ -812,12 +812,32 @@ function colW(f){
   if(f.type==='text')  return 80;
   return 56; // numbers
 }
-function charColgroup(){
-  // fixed px widths; the table gets an explicit total width and scrolls if it exceeds the view
-  const cols = visCols().map(c=>`<col style="width:${colW(c)}px">`).join('');
-  return `<colgroup>${cols}</colgroup>`;
+// per-column width: the type default, but never narrower than the header's longest
+// (non-wrapping) word — headers wrap on spaces, so only the longest word must fit.
+function colBaseW(c){
+  let longest=0; String(c.label).split(/\s+/).forEach(w=>{ if(w.length>longest) longest=w.length; });
+  return Math.max(colW(c), Math.ceil(longest*8+16));
 }
-function charTableWidth(){ return visCols().reduce((s,c)=>s+colW(c),0); }
+// widths for all visible columns, then widen each group so its (single-word) title fits
+function computedWidths(){
+  const cols=visCols(), w=cols.map(colBaseW);
+  let i=0;
+  while(i<cols.length){
+    const g=cols[i].group;
+    if(g){
+      let j=i; while(j<cols.length && cols[j].group===g) j++;
+      const need=Math.ceil(g.length*8+22);          // width the group band needs for its title
+      let cur=0; for(let x=i;x<j;x++) cur+=w[x];
+      if(cur<need){ const add=Math.ceil((need-cur)/(j-i)); for(let x=i;x<j;x++) w[x]+=add; }
+      i=j;
+    } else i++;
+  }
+  return w;
+}
+function charColgroup(){
+  return `<colgroup>${computedWidths().map(w=>`<col style="width:${w}px">`).join('')}</colgroup>`;
+}
+function charTableWidth(){ return computedWidths().reduce((s,w)=>s+w,0); }
 function updateGoldTotal(){
   const el=$('goldTotalVal'); if(!el) return;
   let sum=0;
