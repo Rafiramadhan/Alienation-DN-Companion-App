@@ -172,6 +172,9 @@
   .syncrow input:focus{border-color:var(--gold)}
   .synchelp{color:var(--mut);font-size:11.5px;line-height:1.7;margin-top:10px}
   .synchelp code{background:var(--panel2);color:var(--gold2);padding:1px 6px;border-radius:5px}
+  .syncwarn{margin:-8px 2px 16px;padding:9px 14px;border:1px solid #7a5a1f;border-radius:10px;
+    background:rgba(242,169,59,.10);color:var(--gold2);font-size:12.5px;line-height:1.5}
+  .syncwarn[hidden]{display:none}
   .synctease{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:2px 2px 16px;padding:9px 14px;
     border:1px dashed var(--line2);border-radius:10px;color:var(--mut);font-size:12.5px}
   .synctease .teasetxt{flex:1;min-width:200px;line-height:1.5}
@@ -338,6 +341,11 @@
       <button class="btn ghost" id="syncCopy" hidden>⧉ Copy link</button>
       <button class="btn ghost" id="syncDisconnect" hidden>Disconnect</button>
     </div>
+    <!-- shown when the connected sheet's script is older than this app expects -->
+    <div class="syncwarn" id="syncScriptWarn" hidden>
+      ⚠ Your sheet's sync script looks out of date — newer data (like custom columns) may not save.
+      <button class="linkbtn" id="syncUpdateScript">Update the script →</button>
+    </div>
     <!-- setup panel: short tutorial + URL box -->
     <div class="syncpanel" id="syncPanel" hidden>
       <div class="synctitle">Sync with your own Google Sheet</div>
@@ -359,6 +367,9 @@
         data, so share it only with people you trust. To use it on another device, connect there with the same URL
         (tip: the <b>Copy link</b> button once connected).
       </div>
+      <div class="synchelp"><b>Already set up before?</b> To update the script: copy it above, paste it over your
+        old code in Apps Script and Save, then <b>Deploy ▸ Manage deployments ▸ ✏️ ▸ Version: New version ▸ Deploy</b>.
+        That keeps the same URL, so you don't need to reconnect.</div>
     </div>
   </div>
 
@@ -1124,17 +1135,22 @@ $('stTableArea').addEventListener('click',e=>{
 // ===== optional Google Sheet sync (Apps Script web app) — local stays the default =====
 // Explicit control: Pull (sheet -> this device) and Push (this device -> sheet). No auto-sync.
 const SHEET_KEY='dn-sheet-url';
+const SHEET_SCRIPT_VERSION=2;   // the Apps Script version this app expects
 let SHEET_URL=''; try{ SHEET_URL=localStorage.getItem(SHEET_KEY)||''; }catch(e){}
-let syncDirty=false, lastSync='';
+let syncDirty=false, lastSync='', scriptOutdated=false;
 
 function setSync(state,msg){ const d=$('syncDot'),s=$('syncStatus'); if(d)d.dataset.state=state; if(s&&msg!=null)s.textContent=msg; }
 function timeStr(){ const d=new Date(),p=n=>(n<10?'0':'')+n; return p(d.getHours())+':'+p(d.getMinutes()); }
+// flag when the connected sheet's script is older than this app expects
+function checkScriptVersion(resp){ scriptOutdated = !resp || typeof resp.version!=='number' || resp.version < SHEET_SCRIPT_VERSION; renderScriptWarn(); }
+function renderScriptWarn(){ const el=$('syncScriptWarn'); if(el) el.hidden = !(SHEET_URL && scriptOutdated); }
 function updateSyncUI(){
   const on=!!SHEET_URL;
   const panelOpen=!$('syncPanel').hidden;
   $('syncBar').classList.toggle('hidden', !on);
   $('syncTease').classList.toggle('hidden', on || panelOpen);   // teaser only when idle + not connected
   $('syncPull').hidden=!on; $('syncPush').hidden=!on; $('syncCopy').hidden=!on; $('syncDisconnect').hidden=!on;
+  renderScriptWarn();
   if(!on) return;
   if(syncDirty) setSync('warn','Unsaved changes');
   else setSync('ok','Connected & Synced'+(lastSync?' · last synced '+lastSync:''));
@@ -1205,12 +1221,12 @@ function errMsg(e){ return (e && e.message) ? e.message : 'unknown error'; }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pushing to sheet…');
   return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload(), columns:columnsToPayload()})
-    .then(()=>{ syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
+    .then(r=>{ checkScriptVersion(r); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
     .catch(e=>setSync('err','Push failed: '+errMsg(e)+' — data is still saved locally.'));
 }
 function pullNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pulling from sheet…');
-  return sheetGet().then(data=>{ applyPulled(data);
+  return sheetGet().then(data=>{ checkScriptVersion(data); applyPulled(data);
       syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pulled '+lastSync); })
     .catch(e=>{ const m=errMsg(e); setSync('err','Pull failed: '+m); alert('Pull failed: '+m+'\n\nCheck the URL and that the web app access is set to "Anyone".'); });
 }
@@ -1226,7 +1242,8 @@ $('syncCancel').onclick=()=>{ $('syncPanel').hidden=true; updateSyncUI(); };
 $('syncCopy').onclick=()=>copyText(SHEET_URL, ()=>setSync('ok','Sheet link copied — paste it on your other device.'));
 $('syncCopyScript').onclick=(e)=>{ const b=e.currentTarget, old=b.textContent;
   copyText(APPS_SCRIPT, ()=>{ b.textContent='✓ copied!'; setTimeout(()=>{ b.textContent=old; },1600); }); };
-$('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; syncDirty=false; lastSync=''; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
+$('syncUpdateScript').onclick=()=>{ $('syncPanel').hidden=false; updateSyncUI(); const p=$('syncPanel'); if(p&&p.scrollIntoView) p.scrollIntoView({block:'nearest'}); };
+$('syncDisconnect').onclick=()=>{ if(confirm('Disconnect the sheet? Your data stays on this device.')){ SHEET_URL=''; syncDirty=false; lastSync=''; scriptOutdated=false; try{localStorage.removeItem(SHEET_KEY);}catch(e){} updateSyncUI(); } };
 // warn before leaving if there are edits not yet pushed to the connected sheet
 window.addEventListener('beforeunload', e=>{ if(SHEET_URL && syncDirty){ e.preventDefault(); e.returnValue=''; } });
 $('syncPush').onclick=()=>pushNow();
@@ -1240,6 +1257,7 @@ $('syncSave').onclick=()=>{
   SHEET_URL=url; try{localStorage.setItem(SHEET_KEY,url);}catch(e){}
   $('syncPanel').hidden=true; updateSyncUI(); setSync('busy','Connecting…');
   sheetGet().then(data=>{
+    checkScriptVersion(data);
     const cr=payloadToChars(data&&data.roster), st=payloadToStore(data&&data.storage);
     const n=(cr?cr.length:0)+(st?st.length:0);
     if(n){

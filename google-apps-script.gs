@@ -25,6 +25,7 @@
  * (Optional: set SECRET below; the app would then need to send it.)
  */
 
+var SCRIPT_VERSION = 2;   // bump when this script changes; the app warns if your deployed copy is older
 var SHEETS = { roster: 'Roster', storage: 'Storage', columns: 'Columns' };
 var SECRET = '';   // leave '' for no password
 
@@ -49,7 +50,7 @@ function write_(name, header, rows) {
 }
 
 function all_() {
-  return { roster: read_(SHEETS.roster), storage: read_(SHEETS.storage), columns: read_(SHEETS.columns) };
+  return { version: SCRIPT_VERSION, roster: read_(SHEETS.roster), storage: read_(SHEETS.storage), columns: read_(SHEETS.columns) };
 }
 
 function json_(obj) {
@@ -72,12 +73,12 @@ function doPost(e) {
       if (b.roster)  write_(SHEETS.roster,  b.roster.header  || [], b.roster.rows  || []);
       if (b.storage) write_(SHEETS.storage, b.storage.header || [], b.storage.rows || []);
       if (b.columns) write_(SHEETS.columns, b.columns.header || [], b.columns.rows || []);
-      return json_({ ok: true });
+      return json_({ ok: true, version: SCRIPT_VERSION });
     }
     if (b.action === 'save') {           // single dataset (which: 'roster' | 'storage' | 'columns')
       var name = SHEETS[b.which] || SHEETS.roster;
       write_(name, b.header || [], b.rows || []);
-      return json_({ ok: true });
+      return json_({ ok: true, version: SCRIPT_VERSION });
     }
     return json_(all_());
   } catch (err) {
