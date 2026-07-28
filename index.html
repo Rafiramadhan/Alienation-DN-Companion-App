@@ -713,7 +713,7 @@ function normColumns(arr){
 }
 function loadColumns(){ let s=null; try{ const r=localStorage.getItem(COL_KEY); s=r?JSON.parse(r):null; }catch(e){} return normColumns(s); }
 let COLUMNS = loadColumns();
-function saveColumns(){ try{ localStorage.setItem(COL_KEY, JSON.stringify(COLUMNS)); }catch(e){} if(typeof syncMarkDirty==='function') syncMarkDirty(); }
+function saveColumns(){ try{ localStorage.setItem(COL_KEY, JSON.stringify(COLUMNS)); }catch(e){} if(typeof scheduleColumnsPush==='function') scheduleColumnsPush(); }
 function visCols(){ return COLUMNS.filter(c=>!c.hidden); }
 function slugKey(label){ let base=String(label).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'col'; let k=base,n=2; while(COLUMNS.some(c=>c.k===k)) k=base+'_'+(n++); return k; }
 
@@ -1233,6 +1233,22 @@ function pullNow(){ if(!SHEET_URL) return Promise.resolve();
       syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pulled '+lastSync); })
     .catch(e=>{ const m=errMsg(e); setSync('err','Pull failed: '+m); alert('Pull failed: '+m+'\n\nCheck the URL and that the web app access is set to "Anyone".'); });
 }
+// ---- schema auto-sync (Columns tab only; data direction stays manual) ----
+function columnsPush(){ if(!SHEET_URL) return Promise.resolve();
+  const p=columnsToPayload();
+  return sheetPost({action:'save', which:'columns', header:p.header, rows:p.rows}).catch(()=>{});
+}
+let colPushTimer=null;
+function scheduleColumnsPush(){ if(!SHEET_URL) return; clearTimeout(colPushTimer); colPushTimer=setTimeout(columnsPush,1000); }
+// adopt the sheet's column layout if it has one; otherwise seed the sheet from local
+function adoptOrSeedSchema(data){
+  const cols=payloadToColumns(data&&data.columns);
+  if(cols){
+    COLUMNS=cols; try{localStorage.setItem(COL_KEY,JSON.stringify(COLUMNS));}catch(e){}
+    if($('charsView') && !$('charsView').classList.contains('hidden')) renderChars();
+    if($('colPanel') && !$('colPanel').hidden) renderColManager();
+  } else { columnsPush(); }
+}
 function copyText(text,cb){
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(cb).catch(()=>fallbackCopy(text,cb));
   else fallbackCopy(text,cb);
@@ -1265,14 +1281,17 @@ $('syncSave').onclick=()=>{
     const n=(cr?cr.length:0)+(st?st.length:0);
     if(n){
       const load=confirm("This sheet already has data ("+(cr?cr.length:0)+" character(s), "+(st?st.length:0)+" storage item(s)).\n\nOK = load the sheet onto this device (replaces local).\nCancel = upload this device's data to the sheet (replaces the sheet).");
-      if(load){ applyPulled(data); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
+      if(load){ applyPulled(data);
+        if(!(data&&data.columns&&data.columns.rows&&data.columns.rows.length)) columnsPush();  // seed schema if the sheet had none
+        syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
       else pushNow();
     } else pushNow();   // empty sheet -> seed it from this device
   }).catch(e=>setSync('err','Could not reach the sheet: '+errMsg(e)+'. Check the deployment access.'));
 };
 updateSyncUI();
-// on load, quietly check the connected sheet's script version (read only; does not touch local data)
-if(SHEET_URL){ sheetGet().then(checkScriptVersion).catch(()=>{}); }
+// on load, quietly check the connected sheet's script version and sync the column layout
+// (schema only — the roster/storage data is left for you to Pull/Push explicitly)
+if(SHEET_URL){ sheetGet().then(d=>{ checkScriptVersion(d); adoptOrSeedSchema(d); }).catch(()=>{}); }
 
 applyDailyReset();                       // reset DQ if we've crossed 08:00 since last visit
 setInterval(applyDailyReset, 60000);     // and keep checking while the page stays open
