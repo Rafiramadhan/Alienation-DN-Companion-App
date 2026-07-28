@@ -1165,10 +1165,13 @@ function charsToPayload(){
 function payloadToChars(data){
   if(!data||!Array.isArray(data.rows)) return null;
   const header=data.header||COLUMNS.map(c=>c.k);
-  const colFor=header.map(k=>COLUMNS.find(c=>c.k===k)||null);
+  // match each header cell to a column by KEY or by LABEL — older sheets used labels as
+  // the header row, so this keeps those readable (prevents the data-looks-blank bug).
+  const colFor=header.map(h=>COLUMNS.find(c=>c.k===h)||COLUMNS.find(c=>c.label===h)||null);
   return data.rows.map(row=>{ const o={};
-    header.forEach((k,idx)=>{ if(!k) return; const c=colFor[idx], v=row[idx];
-      o[k]= (c&&c.type==='check') ? (v===true||v==='TRUE'||v==='true'||v===1||v==='1') : (v==null?'':String(v)); });
+    header.forEach((h,idx)=>{ if(h==null||h==='') return; const c=colFor[idx], v=row[idx];
+      const key=c?c.k:String(h);
+      o[key]= (c&&c.type==='check') ? (v===true||v==='TRUE'||v==='true'||v===1||v==='1') : (v==null?'':String(v)); });
     return o; });
 }
 // Column schema <-> sheet table (its own tab)
