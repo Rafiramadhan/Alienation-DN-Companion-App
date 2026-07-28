@@ -182,6 +182,37 @@
   .linkbtn{background:none;border:none;color:var(--gold);cursor:pointer;font:inherit;text-decoration:underline;
     text-underline-offset:2px;padding:0}
   .linkbtn:hover{color:var(--gold2)}
+  /* column manager */
+  .colpanel{margin:2px 2px 16px;padding:14px 16px;border:1px solid var(--line2);border-radius:12px;background:var(--panel)}
+  .colpanel[hidden]{display:none}
+  .colhint{font-family:var(--sans);font-size:11px;color:var(--mut);letter-spacing:0;text-transform:none;margin-left:8px}
+  .colrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(90,69,38,.25)}
+  .colreorder{display:flex;flex-direction:column;gap:1px}
+  .colreorder .xbtn{padding:1px 5px;font-size:10px;line-height:1.1;opacity:.7}
+  .colreorder .xbtn:disabled{opacity:.2;cursor:default}
+  .colmain{flex:1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+  .colmain .colname{background:#120d07;color:var(--txt);border:1px solid var(--line2);border-radius:7px;
+    padding:6px 9px;font-size:13px;outline:none;min-width:120px}
+  .colmain .colname:focus{border-color:var(--gold)}
+  .colnamebi{font-weight:600;color:#f3ead7;font-size:13px;min-width:120px}
+  .coltype{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold-deep);
+    border:1px solid var(--line);border-radius:20px;padding:1px 9px}
+  .colopts{flex:1;min-width:160px;background:#120d07;color:var(--txt);border:1px solid var(--line2);
+    border-radius:7px;padding:6px 9px;font-size:12.5px;outline:none}
+  .colopts:focus{border-color:var(--gold)}
+  .colactions{display:flex;align-items:center;gap:10px}
+  .colshow{display:flex;align-items:center;gap:5px;color:var(--mut);font-size:11.5px;cursor:pointer;user-select:none}
+  .colshow input{accent-color:var(--gold);cursor:pointer}
+  .colbuiltin{font-size:10px;color:var(--mut);opacity:.7}
+  .coldel{color:var(--mut)}
+  .coldel:hover{color:#ff7a6d;background:rgba(192,57,43,.12)}
+  .coladd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;padding-top:12px;
+    border-top:1px solid var(--line2)}
+  .coladd input,.coladd select{background:#120d07;color:var(--txt);border:1px solid var(--line2);
+    border-radius:7px;padding:8px 10px;font-size:13px;outline:none}
+  .coladd input:focus,.coladd select:focus{border-color:var(--gold)}
+  .coladd #newColName{min-width:150px}
+  .coladd #newColOpts{flex:1;min-width:180px}
   /* guild storage */
   #storageView{max-width:640px}
   .stools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
@@ -241,16 +272,18 @@
     font-weight:600;letter-spacing:.3px;line-height:1.35;box-shadow:0 6px 18px rgba(0,0,0,.5);
     pointer-events:none;white-space:nowrap;max-width:280px;text-transform:none}
   .chartip[hidden]{display:none}
-  table.ctable td.sticky .nickcell{display:flex;align-items:center;gap:5px;padding-left:9px}
-  table.ctable td.sticky .nickcell input{flex:1;min-width:0;text-align:left}
-  table.ctable td.sticky .nickcell .xbtn{opacity:0;flex:none;font-size:13px;padding:5px 7px}
-  table.ctable tbody tr:hover .nickcell .xbtn{opacity:.85}
+  table.ctable td .nickcell,table.ctable td .cellflex{display:flex;align-items:center;gap:5px}
+  table.ctable td.sticky .nickcell{padding-left:9px}
+  table.ctable td .nickcell input[type=text]{flex:1;min-width:0;text-align:left}
+  table.ctable td .nickcell select,table.ctable td .cellflex select{flex:1;min-width:0}
+  table.ctable td .nickcell .rowdel{opacity:0;flex:none;font-size:13px;padding:5px 7px;margin-left:auto}
+  table.ctable tbody tr:hover .nickcell .rowdel{opacity:.85}
   .cicon{width:22px;height:22px;flex:none;object-fit:contain}
   .cnoicon{display:inline-block;border:1px dashed var(--line2);border-radius:4px;opacity:.45}
-  table.ctable td.tcls{padding:3px 6px}
-  table.ctable td.tcls select{width:100%;min-width:0;background:#120d07;color:var(--txt);
+  table.ctable td.tcls,table.ctable td.tsel{padding:3px 6px}
+  table.ctable td.tcls select,table.ctable td.tsel select{width:100%;min-width:0;background:#120d07;color:var(--txt);
     border:1px solid var(--line2);border-radius:6px;padding:6px 6px;font-size:12px;outline:none;cursor:pointer}
-  table.ctable td.tcls select:focus{border-color:var(--gold)}
+  table.ctable td.tcls select:focus,table.ctable td.tsel select:focus{border-color:var(--gold)}
   /* per-row glow tinted by the selected class's icon colour */
   table.ctable tr.hasglow{background:linear-gradient(90deg,rgba(var(--c),.26),rgba(var(--c),.07) 65%,transparent 92%)}
   table.ctable tr.hasglow td.sticky{background:linear-gradient(90deg,rgba(var(--c),.36),#171009 78%);
@@ -360,10 +393,17 @@
       <button class="btn ghost" id="cImport">⭱ Import</button>
       <input type="file" id="cFile" accept="application/json,.json" hidden>
       <button class="btn ghost" id="cResetWk">↺ Reset weeklies</button>
+      <button class="btn ghost" id="cCols">⚙ Columns</button>
       <span class="goldtotal" id="goldTotal">Total Gold&nbsp;·&nbsp;<b id="goldTotalVal">0</b></span>
       <div class="spacer"></div>
       <span class="csaved" id="csaved">Stored only in this browser (localStorage)</span>
       <button class="btn danger" id="cClear">Clear all</button>
+    </div>
+
+    <!-- column manager -->
+    <div class="colpanel" id="colPanel" hidden>
+      <div class="synctitle">Manage columns <span class="colhint">reorder, show/hide, rename, or add your own</span></div>
+      <div id="colList"></div>
     </div>
 
     <div id="ctableArea"></div>
@@ -611,8 +651,9 @@ function renderRef(){
 
 /* ============ CHARACTER DETAILS (editable, saved per-browser) ============ */
 const CHAR_KEY = 'dn-char-details-v1';
-// Column model mirrors the "Char Details" sheet. group '' = standalone column.
-const CHAR_FIELDS = [
+// Built-in columns (mirror the "Char Details" sheet). group '' = standalone column.
+// These can be reordered/hidden but not renamed or deleted; users can also add custom columns.
+const BASE_FIELDS = [
   { k:'nickname', label:'Nickname',      group:'',        type:'text'  },
   { k:'cls',      label:'Class',         group:'',        type:'class' },
   { k:'od',       label:'OD',            group:'Bind',    type:'num',   tip:'Ordinary Diamond' },
@@ -636,6 +677,28 @@ const CHAR_FIELDS = [
   { k:'gdnhc',    label:'GDNHC',         group:'Weekly',  type:'check', tip:'Green Dragon Nest Hard Core' },
   { k:'ddnc',     label:'DDNC',          group:'Weekly',  type:'check', tip:'Desert Dragon Nest Classic' }
 ];
+const BASE_MAP = {}; BASE_FIELDS.forEach(f=>BASE_MAP[f.k]=f);
+const CUSTOM_TYPES = ['text','num','check','select'];
+
+// ---- live, ordered, persisted, syncable column schema ----
+const COL_KEY = 'dn-char-columns-v1';
+function defaultColumns(){ return BASE_FIELDS.map(f=>({ k:f.k,label:f.label,type:f.type,group:f.group||'',tip:f.tip,options:f.options||null,hidden:false,builtin:true })); }
+function normColumns(arr){
+  if(!Array.isArray(arr)||!arr.length) return defaultColumns();
+  const seen={}, out=[];
+  arr.forEach(c=>{ if(!c||!c.k||seen[c.k]) return; seen[c.k]=1;
+    const base=BASE_MAP[c.k];
+    if(base) out.push({ k:base.k,label:base.label,type:base.type,group:base.group||'',tip:base.tip,options:base.options||null,hidden:!!c.hidden,builtin:true });
+    else out.push({ k:c.k,label:c.label||c.k,type:CUSTOM_TYPES.indexOf(c.type)>=0?c.type:'text',group:c.group||'Custom',options:Array.isArray(c.options)?c.options:null,hidden:!!c.hidden,builtin:false });
+  });
+  BASE_FIELDS.forEach(f=>{ if(!seen[f.k]) out.push({ k:f.k,label:f.label,type:f.type,group:f.group||'',tip:f.tip,options:f.options||null,hidden:false,builtin:true }); });
+  return out;
+}
+function loadColumns(){ let s=null; try{ const r=localStorage.getItem(COL_KEY); s=r?JSON.parse(r):null; }catch(e){} return normColumns(s); }
+let COLUMNS = loadColumns();
+function saveColumns(){ try{ localStorage.setItem(COL_KEY, JSON.stringify(COLUMNS)); }catch(e){} if(typeof syncMarkDirty==='function') syncMarkDirty(); }
+function visCols(){ return COLUMNS.filter(c=>!c.hidden); }
+function slugKey(label){ let base=String(label).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'col'; let k=base,n=2; while(COLUMNS.some(c=>c.k===k)) k=base+'_'+(n++); return k; }
 
 let CHARS = loadChars();
 function loadChars(){ try{ const r=localStorage.getItem(CHAR_KEY); const d=r?JSON.parse(r):[]; return Array.isArray(d)?d:[]; }catch(e){ return []; } }
@@ -677,7 +740,7 @@ function charLabelTH(f, idx, extraAttr){
   return `<th${attrs}>${lbl}</th>`;
 }
 function charHeaderHTML(){
-  const F=CHAR_FIELDS; let top='<tr>', bottom='<tr>', i=0;
+  const F=visCols(); let top='<tr>', bottom='<tr>', i=0;
   while(i<F.length){
     const f=F[i];
     if(f.group){
@@ -696,32 +759,39 @@ function charHeaderHTML(){
   top += '</tr>'; bottom += '</tr>';
   return `<thead>${top}${bottom}</thead>`;
 }
+function delBtn(i){ return `<button class="xbtn rowdel" data-del="${i}" title="Delete character">✕</button>`; }
 function charRowHTML(c,i){
-  let tds='';
-  CHAR_FIELDS.forEach((f,idx)=>{
+  const cols=visCols(); let tds='';
+  cols.forEach((f,idx)=>{
+    const first=idx===0;
     if(f.type==='check'){
-      tds += `<td class="tchk"><input type="checkbox" data-i="${i}" data-k="${f.k}"${c[f.k]?' checked':''}></td>`;
+      const box=`<input type="checkbox" data-i="${i}" data-k="${f.k}"${c[f.k]?' checked':''}>`;
+      tds += first ? `<td class="tchk sticky"><div class="nickcell">${box}${delBtn(i)}</div></td>`
+                   : `<td class="tchk">${box}</td>`;
       return;
     }
     if(f.type==='class'){
-      const opts = ['<option value="">— class —</option>'].concat(
-        CLASS_NAMES.map(n=>`<option value="${esc(n)}"${c.cls===n?' selected':''}>${esc(n)}</option>`)).join('');
-      tds += `<td class="tcls"><select class="clssel" data-i="${i}" data-k="cls">${opts}</select></td>`;
-      return;
-    }
-    const cls=[]; if(idx===0) cls.push('sticky'); if(f.type==='num') cls.push('tnum');
-    const val=c[f.k]==null?'':c[f.k];
-    const input=`<input data-i="${i}" data-k="${f.k}" type="text"`
-      + `${f.type==='num'?' inputmode="decimal"':''} value="${esc(val)}">`;
-    if(idx===0){
       const icon = c.cls && CLASS_ICONS[c.cls]
         ? `<img class="cicon" src="${CLASS_ICONS[c.cls]}" alt="" title="${esc(c.cls)}">`
         : `<span class="cicon cnoicon" title="No class selected"></span>`;
-      tds += `<td class="${cls.join(' ')}"><div class="nickcell">${icon}${input}`
-           + `<button class="xbtn" data-del="${i}" title="Delete character">✕</button></div></td>`;
-    } else {
-      tds += `<td class="${cls.join(' ')}">${input}</td>`;
+      const opts = ['<option value="">— class —</option>'].concat(
+        CLASS_NAMES.map(n=>`<option value="${esc(n)}"${c.cls===n?' selected':''}>${esc(n)}</option>`)).join('');
+      const sel=`<select class="clssel" data-i="${i}" data-k="cls">${opts}</select>`;
+      tds += `<td class="tcls${first?' sticky':''}"><div class="${first?'nickcell':'cellflex'}">${icon}${sel}${first?delBtn(i):''}</div></td>`;
+      return;
     }
+    if(f.type==='select'){
+      const opts=['<option value="">—</option>'].concat(
+        (f.options||[]).map(o=>`<option value="${esc(o)}"${c[f.k]===o?' selected':''}>${esc(o)}</option>`)).join('');
+      const sel=`<select class="gsel" data-i="${i}" data-k="${f.k}">${opts}</select>`;
+      tds += `<td class="tsel${first?' sticky':''}">${first?`<div class="nickcell">${sel}${delBtn(i)}</div>`:sel}</td>`;
+      return;
+    }
+    const val=c[f.k]==null?'':c[f.k];
+    const input=`<input data-i="${i}" data-k="${f.k}" type="text"${f.type==='num'?' inputmode="decimal"':''} value="${esc(val)}">`;
+    const cls=(first?'sticky ':'')+(f.type==='num'?'tnum':'');
+    tds += first ? `<td class="${cls.trim()}"><div class="nickcell">${input}${delBtn(i)}</div></td>`
+                 : `<td class="${cls.trim()}">${input}</td>`;
   });
   return `<tr class="crow" data-i="${i}">${tds}</tr>`;
 }
@@ -729,6 +799,7 @@ function charRowHTML(c,i){
 function colW(f){
   if(f.type==='check') return 48;
   if(f.type==='class') return 116;
+  if(f.type==='select') return 110;
   if(f.k==='nickname') return 150;
   if(f.k==='voucher')  return 96;
   if(f.k==='jakard')   return 78;
@@ -736,7 +807,7 @@ function colW(f){
   return 56; // numbers
 }
 function charColgroup(){
-  const ws = CHAR_FIELDS.map(colW);
+  const ws = visCols().map(colW);
   const sum = ws.reduce((a,b)=>a+b,0);                  // normalize to 100% so no leftover column
   const cols = ws.map(w=>`<col style="width:${(w/sum*100).toFixed(3)}%">`).join('');
   return `<colgroup>${cols}</colgroup>`;
@@ -816,7 +887,7 @@ $('cExport').onclick=()=>{
 $('cResetWk').onclick=()=>{
   if(!CHARS.length) return;
   if(confirm('Uncheck all weekly activities for every character? (other data is kept)')){
-    const wk=CHAR_FIELDS.filter(f=>f.type==='check').map(f=>f.k);
+    const wk=COLUMNS.filter(f=>f.type==='check'&&f.group==='Weekly').map(f=>f.k);
     CHARS.forEach(c=>wk.forEach(k=>{ c[k]=false; }));
     saveChars(); renderChars();
   }
@@ -851,6 +922,73 @@ $('ctableArea').addEventListener('click',e=>{
   const i=+b.dataset.del;
   const nm=(CHARS[i]&&CHARS[i].nickname)?` "${CHARS[i].nickname}"`:'';
   if(confirm(`Delete character${nm}?`)){ CHARS.splice(i,1); saveChars(); renderChars(); }
+});
+
+// ---- column manager (add / edit / delete / reorder / hide) ----
+function renderColManager(){
+  const area=$('colList'); if(!area) return;
+  const rows=COLUMNS.map((c,i)=>{
+    const custom=!c.builtin;
+    const nameCell = custom
+      ? `<input class="colname" data-i="${i}" value="${esc(c.label)}" placeholder="Column name">`
+      : `<span class="colnamebi">${esc(c.label)}</span>`;
+    const optsCell = (custom && c.type==='select')
+      ? `<input class="colopts" data-i="${i}" value="${esc((c.options||[]).join(', '))}" placeholder="Dropdown options (comma-separated)">`
+      : '';
+    const typeLabel = c.type==='num'?'number':c.type==='check'?'checkbox':c.type==='select'?'dropdown':c.type==='class'?'class':'text';
+    return `<div class="colrow" data-i="${i}">
+      <div class="colreorder">
+        <button class="xbtn colmove" data-i="${i}" data-dir="-1" title="Move up"${i===0?' disabled':''}>▲</button>
+        <button class="xbtn colmove" data-i="${i}" data-dir="1" title="Move down"${i===COLUMNS.length-1?' disabled':''}>▼</button>
+      </div>
+      <div class="colmain">${nameCell}<span class="coltype">${typeLabel}</span>${optsCell}${c.builtin?'<span class="colbuiltin">built-in</span>':''}</div>
+      <div class="colactions">
+        <label class="colshow"><input type="checkbox" class="colvis" data-i="${i}"${c.hidden?'':' checked'}> shown</label>
+        ${custom?`<button class="xbtn coldel" data-i="${i}" title="Delete column">✕</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  area.innerHTML = rows + `
+    <div class="coladd">
+      <input id="newColName" placeholder="New column name">
+      <select id="newColType">
+        <option value="text">Free text</option>
+        <option value="num">Number</option>
+        <option value="check">Checkbox</option>
+        <option value="select">Dropdown</option>
+      </select>
+      <input id="newColOpts" placeholder="Dropdown options (comma-separated)" hidden>
+      <button class="btn" id="newColAdd">＋ Add column</button>
+    </div>`;
+}
+$('cCols').onclick=()=>{ const p=$('colPanel'); p.hidden=!p.hidden; if(!p.hidden) renderColManager(); };
+$('colPanel').addEventListener('click', e=>{
+  const mv=e.target.closest('.colmove');
+  if(mv){ const i=+mv.dataset.i, j=i+(+mv.dataset.dir); if(j<0||j>=COLUMNS.length) return;
+    const t=COLUMNS[i]; COLUMNS[i]=COLUMNS[j]; COLUMNS[j]=t; saveColumns(); renderChars(); renderColManager(); return; }
+  const del=e.target.closest('.coldel');
+  if(del){ const i=+del.dataset.i, c=COLUMNS[i]; if(!c||c.builtin) return;
+    if(confirm('Delete column "'+c.label+'"? Its data will be removed from every character.')){
+      const k=c.k; COLUMNS.splice(i,1); CHARS.forEach(ch=>{ delete ch[k]; });
+      saveColumns(); saveChars(); renderChars(); renderColManager(); } return; }
+  if(e.target.closest('#newColAdd')){
+    const name=$('newColName').value.trim(); if(!name){ $('newColName').focus(); return; }
+    const type=$('newColType').value;
+    const opts = type==='select' ? $('newColOpts').value.split(',').map(s=>s.trim()).filter(Boolean) : null;
+    COLUMNS.push({ k:slugKey(name), label:name, type, group:'Custom', options:opts, hidden:false, builtin:false });
+    saveColumns(); renderChars(); renderColManager();
+  }
+});
+$('colPanel').addEventListener('input', e=>{
+  const nm=e.target.closest('.colname');
+  if(nm){ const i=+nm.dataset.i; if(COLUMNS[i]&&!COLUMNS[i].builtin){ COLUMNS[i].label=nm.value; saveColumns(); renderChars(); } return; }
+  const op=e.target.closest('.colopts');
+  if(op){ const i=+op.dataset.i; if(COLUMNS[i]){ COLUMNS[i].options=op.value.split(',').map(s=>s.trim()).filter(Boolean); saveColumns(); renderChars(); } }
+});
+$('colPanel').addEventListener('change', e=>{
+  const vis=e.target.closest('.colvis');
+  if(vis){ const i=+vis.dataset.i; if(COLUMNS[i]){ COLUMNS[i].hidden=!vis.checked; saveColumns(); renderChars(); } return; }
+  if(e.target.id==='newColType'){ $('newColOpts').hidden = e.target.value!=='select'; }
 });
 
 // ---- fast custom tooltips for the abbreviation headers ----
@@ -947,19 +1085,39 @@ function updateSyncUI(){
 }
 function syncMarkDirty(){ if(!SHEET_URL) return; syncDirty=true; updateSyncUI(); }
 
-// map between CHARS and a human-readable sheet table using the field schema
+// Roster <-> sheet table. Header row = column keys (stable across custom columns).
 function charsToPayload(){
-  return { header: CHAR_FIELDS.map(f=>f.label),
-           rows: CHARS.map(c=>CHAR_FIELDS.map(f=> f.type==='check' ? !!c[f.k] : (c[f.k]==null?'':c[f.k]))) };
+  return { header: COLUMNS.map(c=>c.k),
+           rows: CHARS.map(ch=>COLUMNS.map(c=> c.type==='check' ? !!ch[c.k] : (ch[c.k]==null?'':ch[c.k]))) };
 }
 function payloadToChars(data){
   if(!data||!Array.isArray(data.rows)) return null;
-  const header=data.header||CHAR_FIELDS.map(f=>f.label);
-  const fieldFor=header.map(h=>CHAR_FIELDS.find(f=>f.label===h)||null);
-  return data.rows.map(row=>{ const c={};
-    fieldFor.forEach((f,idx)=>{ if(!f) return; const v=row[idx];
-      c[f.k]= f.type==='check' ? (v===true||v==='TRUE'||v==='true'||v===1||v==='1') : (v==null?'':String(v)); });
-    return c; });
+  const header=data.header||COLUMNS.map(c=>c.k);
+  const colFor=header.map(k=>COLUMNS.find(c=>c.k===k)||null);
+  return data.rows.map(row=>{ const o={};
+    header.forEach((k,idx)=>{ if(!k) return; const c=colFor[idx], v=row[idx];
+      o[k]= (c&&c.type==='check') ? (v===true||v==='TRUE'||v==='true'||v===1||v==='1') : (v==null?'':String(v)); });
+    return o; });
+}
+// Column schema <-> sheet table (its own tab)
+function columnsToPayload(){
+  return { header:['key','label','type','group','options','hidden'],
+           rows: COLUMNS.map(c=>[c.k, c.label, c.type, c.group||'', (c.options||[]).join('|'), c.hidden?'TRUE':'FALSE']) };
+}
+function payloadToColumns(data){
+  if(!data||!Array.isArray(data.rows)||!data.rows.length) return null;
+  const h=data.header||['key','label','type','group','options','hidden'];
+  const ki=h.indexOf('key'),li=h.indexOf('label'),ti=h.indexOf('type'),gi=h.indexOf('group'),oi=h.indexOf('options'),hi=h.indexOf('hidden');
+  if(ki<0) return null;
+  const arr=data.rows.map(r=>({
+    k:String(r[ki]||'').trim(),
+    label: li>=0?r[li]:'',
+    type: ti>=0?String(r[ti]):'text',
+    group: gi>=0?String(r[gi]||''):'',
+    options: (oi>=0 && r[oi]!=null && String(r[oi])!=='') ? String(r[oi]).split('|') : null,
+    hidden: hi>=0 && (r[hi]===true || String(r[hi]).toUpperCase()==='TRUE')
+  })).filter(c=>c.k);
+  return normColumns(arr);
 }
 // Guild storage <-> sheet table (Item / Amount)
 function storeToPayload(){
@@ -971,13 +1129,16 @@ function payloadToStore(data){
   let ii=header.indexOf('Item'), ai=header.indexOf('Amount'); if(ii<0)ii=0; if(ai<0)ai=1;
   return data.rows.map(row=>({ item: row[ii]==null?'':String(row[ii]), amount: row[ai]==null?'':String(row[ai]) }));
 }
-// apply a pulled {roster, storage} payload to local state
+// apply a pulled {columns, roster, storage} payload to local state
 function applyPulled(data){
+  const cols=payloadToColumns(data&&data.columns);   // schema first so roster types are known
+  if(cols){ COLUMNS=cols; try{localStorage.setItem(COL_KEY,JSON.stringify(COLUMNS));}catch(e){} }
   const cr=payloadToChars(data&&data.roster);
   if(cr){ CHARS=cr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} }
   const st=payloadToStore(data&&data.storage);
   if(st){ STORE=st; try{localStorage.setItem(STORE_KEY,JSON.stringify(STORE));}catch(e){} }
   renderChars(); updateGoldTotal(); renderStore();
+  if($('colPanel') && !$('colPanel').hidden) renderColManager();
 }
 function sheetGet(){ return fetch(SHEET_URL,{method:'GET'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }); }
 function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can't answer
@@ -987,7 +1148,7 @@ function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can'
 function errMsg(e){ return (e && e.message) ? e.message : 'unknown error'; }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pushing to sheet…');
-  return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload()})
+  return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload(), columns:columnsToPayload()})
     .then(()=>{ syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
     .catch(e=>setSync('err','Push failed: '+errMsg(e)+' — data is still saved locally.'));
 }

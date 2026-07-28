@@ -25,7 +25,7 @@
  * (Optional: set SECRET below; the app would then need to send it.)
  */
 
-var SHEETS = { roster: 'Roster', storage: 'Storage' };
+var SHEETS = { roster: 'Roster', storage: 'Storage', columns: 'Columns' };
 var SECRET = '';   // leave '' for no password
 
 function sheet_(name) {
@@ -49,7 +49,7 @@ function write_(name, header, rows) {
 }
 
 function all_() {
-  return { roster: read_(SHEETS.roster), storage: read_(SHEETS.storage) };
+  return { roster: read_(SHEETS.roster), storage: read_(SHEETS.storage), columns: read_(SHEETS.columns) };
 }
 
 function json_(obj) {
@@ -71,10 +71,11 @@ function doPost(e) {
     if (b.action === 'saveAll') {
       if (b.roster)  write_(SHEETS.roster,  b.roster.header  || [], b.roster.rows  || []);
       if (b.storage) write_(SHEETS.storage, b.storage.header || [], b.storage.rows || []);
+      if (b.columns) write_(SHEETS.columns, b.columns.header || [], b.columns.rows || []);
       return json_({ ok: true });
     }
-    if (b.action === 'save') {           // single dataset (which: 'roster' | 'storage')
-      var name = b.which === 'storage' ? SHEETS.storage : SHEETS.roster;
+    if (b.action === 'save') {           // single dataset (which: 'roster' | 'storage' | 'columns')
+      var name = SHEETS[b.which] || SHEETS.roster;
       write_(name, b.header || [], b.rows || []);
       return json_({ ok: true });
     }
