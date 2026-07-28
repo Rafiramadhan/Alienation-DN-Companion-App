@@ -1151,7 +1151,7 @@ $('stTableArea').addEventListener('click',e=>{
 const SHEET_KEY='dn-sheet-url';
 const SHEET_SCRIPT_VERSION=2;   // the Apps Script version this app expects
 let SHEET_URL=''; try{ SHEET_URL=localStorage.getItem(SHEET_KEY)||''; }catch(e){}
-let syncDirty=false, lastSync='', scriptOutdated=false;
+let syncDirty=false, lastSync='', scriptOutdated=false, syncSnapshot=null;
 
 function setSync(state,msg){ const d=$('syncDot'),s=$('syncStatus'); if(d)d.dataset.state=state; if(s&&msg!=null)s.textContent=msg; }
 function timeStr(){ const d=new Date(),p=n=>(n<10?'0':'')+n; return p(d.getHours())+':'+p(d.getMinutes()); }
@@ -1170,7 +1170,18 @@ function updateSyncUI(){
   if(syncDirty) setSync('warn','Unsaved changes');
   else setSync('ok','Connected & Synced'+(lastSync?' · last synced '+lastSync:''));
 }
-function syncMarkDirty(){ if(!SHEET_URL) return; syncDirty=true; updateSyncUI(); }
+// canonical, order-stable signature of the roster + storage for equality checks
+function canonRoster(arr){ return JSON.stringify((arr||[]).map(c=>COLUMNS.map(col=> col.type==='check'
+  ? ((c[col.k]===true||c[col.k]==='TRUE'||c[col.k]==='true')?1:0)
+  : (c[col.k]==null?'':String(c[col.k]))))); }
+function canonStore(arr){ return JSON.stringify((arr||[]).map(r=>[String(r.item==null?'':r.item), String(r.amount==null?'':r.amount)])); }
+function localCanon(){ return canonRoster(CHARS)+''+canonStore(STORE); }
+function remoteCanon(data){ return canonRoster(payloadToChars(data&&data.roster)||[])+''+canonStore(payloadToStore(data&&data.storage)||[]); }
+function setSnapshotLocal(){ syncSnapshot=localCanon(); }
+function setSnapshotRemote(data){ syncSnapshot=remoteCanon(data); }
+function recomputeDirty(){ if(!SHEET_URL||syncSnapshot==null) return; syncDirty=(localCanon()!==syncSnapshot); updateSyncUI(); }
+// called after every local data change: dirty only if local actually differs from the sheet snapshot
+function syncMarkDirty(){ if(!SHEET_URL) return; syncDirty = (syncSnapshot!=null) ? (localCanon()!==syncSnapshot) : true; updateSyncUI(); }
 
 // Roster <-> sheet table. Header row = column keys (stable across custom columns).
 function charsToPayload(){
@@ -1239,13 +1250,13 @@ function errMsg(e){ return (e && e.message) ? e.message : 'unknown error'; }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pushing to sheet…');
   return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload(), columns:columnsToPayload()})
-    .then(r=>{ checkScriptVersion(r); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
+    .then(r=>{ checkScriptVersion(r); setSnapshotLocal(); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
     .catch(e=>setSync('err','Push failed: '+errMsg(e)+' — data is still saved locally.'));
 }
 function pullNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pulling from sheet…');
   return sheetGet().then(data=>{ checkScriptVersion(data); applyPulled(data);
-      syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pulled '+lastSync); })
+      setSnapshotLocal(); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pulled '+lastSync); })
     .catch(e=>{ const m=errMsg(e); setSync('err','Pull failed: '+m); alert('Pull failed: '+m+'\n\nCheck the URL and that the web app access is set to "Anyone".'); });
 }
 // ---- schema auto-sync (Columns tab only; data direction stays manual) ----
@@ -1302,7 +1313,7 @@ function reviewChanges(){ if(!SHEET_URL) return;
       : '<div class="diffhead">✓ Your local data matches the sheet — nothing to push.</div>';
     $('diffBody').innerHTML = head + diffSectionHTML('Characters', dc, 'character') + diffSectionHTML('Guild Storage', ds, 'storage');
     $('diffPanel').hidden=false;
-    updateSyncUI();
+    setSnapshotRemote(data); syncDirty=(any>0); updateSyncUI();   // reconcile the status with what we found
   }).catch(e=>setSync('err','Compare failed: '+errMsg(e)));
 }
 function copyText(text,cb){
@@ -1341,7 +1352,7 @@ $('syncSave').onclick=()=>{
       const load=confirm("This sheet already has data ("+(cr?cr.length:0)+" character(s), "+(st?st.length:0)+" storage item(s)).\n\nOK = load the sheet onto this device (replaces local).\nCancel = upload this device's data to the sheet (replaces the sheet).");
       if(load){ applyPulled(data);
         if(!(data&&data.columns&&data.columns.rows&&data.columns.rows.length)) columnsPush();  // seed schema if the sheet had none
-        syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
+        setSnapshotLocal(); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Loaded from sheet · '+lastSync); }
       else pushNow();
     } else pushNow();   // empty sheet -> seed it from this device
   }).catch(e=>setSync('err','Could not reach the sheet: '+errMsg(e)+'. Check the deployment access.'));
@@ -1349,7 +1360,7 @@ $('syncSave').onclick=()=>{
 updateSyncUI();
 // on load, quietly check the connected sheet's script version and sync the column layout
 // (schema only — the roster/storage data is left for you to Pull/Push explicitly)
-if(SHEET_URL){ sheetGet().then(d=>{ checkScriptVersion(d); adoptOrSeedSchema(d); }).catch(()=>{}); }
+if(SHEET_URL){ sheetGet().then(d=>{ checkScriptVersion(d); adoptOrSeedSchema(d); setSnapshotRemote(d); recomputeDirty(); }).catch(()=>{}); }
 
 applyDailyReset();                       // reset DQ if we've crossed 08:00 since last visit
 setInterval(applyDailyReset, 60000);     // and keep checking while the page stays open
