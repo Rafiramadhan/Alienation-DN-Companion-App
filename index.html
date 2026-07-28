@@ -247,10 +247,12 @@
   .btn.danger:hover{background:rgba(192,57,43,.12)}
   /* table hugs its content (no stretching) so checkbox columns stay narrow */
   /* break the roster out of the 1100px column so it uses the screen width */
-  #charsView{width:min(1480px,94vw);margin-left:50%;transform:translateX(-50%)}
+  #charsView{width:min(1900px,95vw);margin-left:50%;transform:translateX(-50%)}
   .ctable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;
-    box-shadow:0 8px 26px rgba(0,0,0,.4);width:fit-content;max-width:100%;margin:0 auto}
-  table.ctable{border-radius:0;border:none;box-shadow:none;table-layout:fixed}
+    box-shadow:0 8px 26px rgba(0,0,0,.4);width:100%;max-width:100%}
+  /* width:100% fills the view; min-width (set inline = column total) prevents squeezing,
+     so it stretches when there's room and scrolls when there isn't */
+  table.ctable{border-radius:0;border:none;box-shadow:none;table-layout:fixed;width:100%}
   table.ctable thead th{white-space:normal;text-align:center;padding:9px 6px;font-size:11.5px;line-height:1.25;
     border-right:1px solid rgba(90,69,38,.25)}
   table.ctable thead th.wkh{padding:9px 3px;font-size:10.5px}
@@ -832,7 +834,7 @@ function renderChars(){
     return;
   }
   const rows=CHARS.map(charRowHTML).join('');
-  area.innerHTML=`<div class="ctable-wrap"><table class="ctable" style="width:${charTableWidth()}px">`
+  area.innerHTML=`<div class="ctable-wrap"><table class="ctable" style="min-width:${charTableWidth()}px">`
     +`${charColgroup()}${charHeaderHTML()}<tbody>${rows}</tbody></table></div>`;
   applyRowGlows();
 }
