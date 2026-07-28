@@ -197,6 +197,10 @@
   .colnamebi{font-weight:600;color:#f3ead7;font-size:13px;min-width:120px}
   .coltype{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold-deep);
     border:1px solid var(--line);border-radius:20px;padding:1px 9px}
+  .colmain .colgrp{background:#120d07;color:var(--txt);border:1px solid var(--line2);border-radius:7px;
+    padding:5px 8px;font-size:12px;outline:none;cursor:pointer}
+  .colmain .colgrp:focus{border-color:var(--gold)}
+  .colgrouptag{font-size:10.5px;color:var(--mut);border:1px solid var(--line);border-radius:20px;padding:1px 9px}
   .colopts{flex:1;min-width:160px;background:#120d07;color:var(--txt);border:1px solid var(--line2);
     border-radius:7px;padding:6px 9px;font-size:12.5px;outline:none}
   .colopts:focus{border-color:var(--gold)}
@@ -245,8 +249,8 @@
   /* break the roster out of the 1100px column so it uses the screen width */
   #charsView{width:min(1480px,94vw);margin-left:50%;transform:translateX(-50%)}
   .ctable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;
-    box-shadow:0 8px 26px rgba(0,0,0,.4);max-width:100%}
-  table.ctable{border-radius:0;border:none;box-shadow:none;table-layout:fixed;width:100%}
+    box-shadow:0 8px 26px rgba(0,0,0,.4);width:fit-content;max-width:100%;margin:0 auto}
+  table.ctable{border-radius:0;border:none;box-shadow:none;table-layout:fixed}
   table.ctable thead th{white-space:normal;text-align:center;padding:9px 6px;font-size:11.5px;line-height:1.25;
     border-right:1px solid rgba(90,69,38,.25)}
   table.ctable thead th.wkh{padding:9px 3px;font-size:10.5px}
@@ -807,11 +811,11 @@ function colW(f){
   return 56; // numbers
 }
 function charColgroup(){
-  const ws = visCols().map(colW);
-  const sum = ws.reduce((a,b)=>a+b,0);                  // normalize to 100% so no leftover column
-  const cols = ws.map(w=>`<col style="width:${(w/sum*100).toFixed(3)}%">`).join('');
+  // fixed px widths; the table gets an explicit total width and scrolls if it exceeds the view
+  const cols = visCols().map(c=>`<col style="width:${colW(c)}px">`).join('');
   return `<colgroup>${cols}</colgroup>`;
 }
+function charTableWidth(){ return visCols().reduce((s,c)=>s+colW(c),0); }
 function updateGoldTotal(){
   const el=$('goldTotalVal'); if(!el) return;
   let sum=0;
@@ -828,7 +832,7 @@ function renderChars(){
     return;
   }
   const rows=CHARS.map(charRowHTML).join('');
-  area.innerHTML=`<div class="ctable-wrap"><table class="ctable">`
+  area.innerHTML=`<div class="ctable-wrap"><table class="ctable" style="width:${charTableWidth()}px">`
     +`${charColgroup()}${charHeaderHTML()}<tbody>${rows}</tbody></table></div>`;
   applyRowGlows();
 }
@@ -924,7 +928,12 @@ $('ctableArea').addEventListener('click',e=>{
   if(confirm(`Delete character${nm}?`)){ CHARS.splice(i,1); saveChars(); renderChars(); }
 });
 
-// ---- column manager (add / edit / delete / reorder / hide) ----
+// ---- column manager (add / edit / delete / reorder / hide + group) ----
+function groupOptions(sel){
+  const groups=['','Bind','Pandora','Weekly','Custom'];
+  COLUMNS.forEach(c=>{ if(c.group && groups.indexOf(c.group)<0) groups.push(c.group); });
+  return groups.map(g=>`<option value="${esc(g)}"${g===(sel||'')?' selected':''}>${g||'(no group)'}</option>`).join('');
+}
 function renderColManager(){
   const area=$('colList'); if(!area) return;
   const rows=COLUMNS.map((c,i)=>{
@@ -932,6 +941,9 @@ function renderColManager(){
     const nameCell = custom
       ? `<input class="colname" data-i="${i}" value="${esc(c.label)}" placeholder="Column name">`
       : `<span class="colnamebi">${esc(c.label)}</span>`;
+    const groupCell = custom
+      ? `<select class="colgrp" data-i="${i}" title="Group">${groupOptions(c.group)}</select>`
+      : (c.group?`<span class="colgrouptag">${esc(c.group)}</span>`:'');
     const optsCell = (custom && c.type==='select')
       ? `<input class="colopts" data-i="${i}" value="${esc((c.options||[]).join(', '))}" placeholder="Dropdown options (comma-separated)">`
       : '';
@@ -941,7 +953,7 @@ function renderColManager(){
         <button class="xbtn colmove" data-i="${i}" data-dir="-1" title="Move up"${i===0?' disabled':''}>▲</button>
         <button class="xbtn colmove" data-i="${i}" data-dir="1" title="Move down"${i===COLUMNS.length-1?' disabled':''}>▼</button>
       </div>
-      <div class="colmain">${nameCell}<span class="coltype">${typeLabel}</span>${optsCell}${c.builtin?'<span class="colbuiltin">built-in</span>':''}</div>
+      <div class="colmain">${nameCell}<span class="coltype">${typeLabel}</span>${groupCell}${optsCell}${c.builtin?'<span class="colbuiltin">built-in</span>':''}</div>
       <div class="colactions">
         <label class="colshow"><input type="checkbox" class="colvis" data-i="${i}"${c.hidden?'':' checked'}> shown</label>
         ${custom?`<button class="xbtn coldel" data-i="${i}" title="Delete column">✕</button>`:''}
@@ -957,6 +969,7 @@ function renderColManager(){
         <option value="check">Checkbox</option>
         <option value="select">Dropdown</option>
       </select>
+      <select id="newColGroup" title="Group">${groupOptions('')}</select>
       <input id="newColOpts" placeholder="Dropdown options (comma-separated)" hidden>
       <button class="btn" id="newColAdd">＋ Add column</button>
     </div>`;
@@ -974,8 +987,9 @@ $('colPanel').addEventListener('click', e=>{
   if(e.target.closest('#newColAdd')){
     const name=$('newColName').value.trim(); if(!name){ $('newColName').focus(); return; }
     const type=$('newColType').value;
+    const group=$('newColGroup').value;
     const opts = type==='select' ? $('newColOpts').value.split(',').map(s=>s.trim()).filter(Boolean) : null;
-    COLUMNS.push({ k:slugKey(name), label:name, type, group:'Custom', options:opts, hidden:false, builtin:false });
+    COLUMNS.push({ k:slugKey(name), label:name, type, group, options:opts, hidden:false, builtin:false });
     saveColumns(); renderChars(); renderColManager();
   }
 });
@@ -988,6 +1002,8 @@ $('colPanel').addEventListener('input', e=>{
 $('colPanel').addEventListener('change', e=>{
   const vis=e.target.closest('.colvis');
   if(vis){ const i=+vis.dataset.i; if(COLUMNS[i]){ COLUMNS[i].hidden=!vis.checked; saveColumns(); renderChars(); } return; }
+  const grp=e.target.closest('.colgrp');
+  if(grp){ const i=+grp.dataset.i; if(COLUMNS[i]&&!COLUMNS[i].builtin){ COLUMNS[i].group=grp.value; saveColumns(); renderChars(); } return; }
   if(e.target.id==='newColType'){ $('newColOpts').hidden = e.target.value!=='select'; }
 });
 
