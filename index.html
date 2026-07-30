@@ -80,9 +80,8 @@
   select,input{background:#120d07;color:var(--txt);border:1px solid var(--line2);
     border-radius:8px;padding:9px 11px;font-size:14px;outline:none;min-width:150px}
   select:focus,input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(231,189,94,.14)}
-  /* make native dropdown popups dark + readable */
+  /* native dark dropdown popups (color-scheme only; styling <option> forces a light popup in Chrome) */
   select{color-scheme:dark}
-  option{background:#1f1710;color:#ece2cf}
   .field.grow{flex:1;min-width:180px}
   .field.grow input{width:100%}
   ::placeholder{color:#6f6350}
