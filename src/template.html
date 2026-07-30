@@ -312,6 +312,34 @@
   .xbtn:hover{color:#ff7a6d;background:rgba(192,57,43,.12)}
   .cempty{padding:48px 24px;text-align:center;color:var(--mut);font-family:var(--serif);
     letter-spacing:.5px;line-height:1.9;border:1px dashed var(--line2);border-radius:14px}
+  /* blocklist */
+  #blockView{width:min(1400px,95vw);margin-left:50%;transform:translateX(-50%)}
+  .blkfilters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+  .blkfilters input,.blkfilters select{background:#120d07;color:var(--txt);border:1px solid var(--line2);
+    border-radius:8px;padding:9px 11px;font-size:13px;outline:none}
+  .blkfilters input:focus,.blkfilters select:focus{border-color:var(--gold)}
+  .blkfilters #blkSearch{flex:1;min-width:200px}
+  table.blktable{width:100%;border-collapse:collapse;table-layout:fixed;
+    background:linear-gradient(180deg,#171009,#120d07)}
+  .blkwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 26px rgba(0,0,0,.4)}
+  table.blktable thead th{background:linear-gradient(180deg,#251b0e,#1b130a);color:var(--gold);
+    font-family:var(--serif);text-transform:uppercase;letter-spacing:1px;font-size:11.5px;
+    text-align:left;padding:10px 12px;border-bottom:1px solid var(--line2);white-space:nowrap}
+  table.blktable tbody td{padding:0;border-bottom:1px solid rgba(150,112,58,.5);vertical-align:middle}
+  table.blktable tbody tr:last-child td{border-bottom:none}
+  table.blktable tbody td input,table.blktable tbody td select{width:100%;background:transparent;border:none;
+    color:var(--txt);padding:9px 11px;font-size:13.5px;outline:none}
+  table.blktable tbody td select{cursor:pointer}
+  table.blktable tbody td input:focus,table.blktable tbody td select:focus{background:rgba(231,189,94,.10);box-shadow:inset 0 0 0 1px var(--gold)}
+  table.blktable td.blkcls{padding:3px 6px}
+  table.blktable td.blkcls .cellflex{display:flex;align-items:center;gap:5px}
+  table.blktable td.blkcls select{background:#120d07;border:1px solid var(--line2);border-radius:6px;padding:6px 6px;font-size:12px}
+  table.blktable td.blkcat select{background:#120d07;border:1px solid var(--line2);border-radius:6px;padding:6px 6px;font-size:12px;margin:3px 6px;width:calc(100% - 12px)}
+  table.blktable td.blkadded{color:var(--mut);font-size:12px;padding:9px 11px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  table.blktable td.blkact{text-align:center;padding:0 4px}
+  table.blktable .xbtn{opacity:.35}
+  table.blktable tbody tr:hover .xbtn{opacity:.9}
+  .blkcatpill{display:inline-block}
 
   @media(max-width:560px){ h1{font-size:28px} .tab{padding:10px 15px} }
 </style>
@@ -328,6 +356,7 @@
     <button class="tab" data-view="ref">Card Box Odds</button>
     <button class="tab" data-view="chars">Character Details</button>
     <button class="tab" data-view="storage">Guild Storage</button>
+    <button class="tab" data-view="block">Blocklist</button>
   </nav>
 </header>
 
@@ -451,6 +480,28 @@
     </div>
     <div id="stTableArea"></div>
   </section>
+
+  <!-- ============ BLOCKLIST VIEW ============ -->
+  <section id="blockView" class="hidden">
+    <div class="stools">
+      <button class="btn" id="blkAdd">＋ Add entry</button>
+      <span class="goldtotal" id="blkCount">0 entries</span>
+      <div class="spacer"></div>
+      <span class="csaved" id="blkSaved">Stored in this browser (localStorage)</span>
+      <button class="btn danger" id="blkClear">Clear all</button>
+    </div>
+    <div class="blkfilters">
+      <input id="blkSearch" type="text" placeholder="🔍 Search nick or reason…" autocomplete="off">
+      <select id="blkClass" title="Filter by class"></select>
+      <select id="blkCat" title="Filter by category"></select>
+      <select id="blkSort" title="Sort">
+        <option value="new">Newest first</option>
+        <option value="old">Oldest first</option>
+        <option value="nick">Nick A–Z</option>
+      </select>
+    </div>
+    <div id="blkTableArea"></div>
+  </section>
 </div>
 
 <script>
@@ -492,16 +543,18 @@ const state = { stat:ALL, nest:'All', rarity:'Legend', q:'', sort:{key:'no',dir:
 // ---- view tabs (remembers the last-opened tab per browser) ----
 const TAB_KEY = 'dn-active-tab';
 function activateTab(v){
-  if(!['cards','ref','chars','storage'].includes(v)) v='cards';
+  if(!['cards','ref','chars','storage','block'].includes(v)) v='cards';
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active', x.dataset.view===v));
   $('cardsView').classList.toggle('hidden', v!=='cards');
   $('refView').classList.toggle('hidden', v!=='ref');
   $('charsView').classList.toggle('hidden', v!=='chars');
   $('storageView').classList.toggle('hidden', v!=='storage');
-  $('syncSection').classList.toggle('hidden', !(v==='chars'||v==='storage'));
+  $('blockView').classList.toggle('hidden', v!=='block');
+  $('syncSection').classList.toggle('hidden', !(v==='chars'||v==='storage'||v==='block'));
   if(v==='ref') renderRef();
   if(v==='chars') renderChars();
   if(v==='storage') renderStore();
+  if(v==='block') renderBlock();
   try{ localStorage.setItem(TAB_KEY, v); }catch(e){}
 }
 document.querySelectorAll('.tab').forEach(t=>{ t.onclick = ()=>activateTab(t.dataset.view); });
@@ -1146,10 +1199,110 @@ $('stTableArea').addEventListener('click',e=>{
   STORE.splice(i,1); saveStore(); renderStore();
 });
 
+// ===== Blocklist: flagged players (Nick / Class / Category / Reason / Added), filterable =====
+const BLOCK_KEY='dn-blocklist-v1';
+const BLOCK_CATS=['Toxic','Scam','Ninja Loot','Kicker','AFK/Leech','Impersonation','Cheating/Hacks','Botting','RMT','Drama','Skill Issue','Other'];
+let BLOCK=loadBlock();
+function loadBlock(){ try{ const r=localStorage.getItem(BLOCK_KEY); const d=r?JSON.parse(r):[]; return Array.isArray(d)?d.map(normBlock):[]; }catch(e){ return []; } }
+function normBlock(b){ return { id:b.id||('b'+(b.ts||'')+Math.random().toString(36).slice(2,7)), nick:b.nick==null?'':String(b.nick), cls:b.cls==null?'':String(b.cls), cat:b.cat==null?'':String(b.cat), reason:b.reason==null?'':String(b.reason), ts:parseInt(b.ts,10)||0 }; }
+let blkSavedTimer=null;
+function saveBlock(){
+  try{ localStorage.setItem(BLOCK_KEY, JSON.stringify(BLOCK)); }
+  catch(e){ const el=$('blkSaved'); if(el) el.textContent='⚠ Could not save (storage full/blocked)'; return; }
+  const el=$('blkSaved'); if(el){ el.textContent='✓ Saved to this browser'; clearTimeout(blkSavedTimer);
+    blkSavedTimer=setTimeout(()=>{ el.textContent='Stored in this browser (localStorage)'; },1500); }
+  if(typeof syncMarkDirty==='function') syncMarkDirty();
+}
+function blkById(id){ return BLOCK.find(b=>b.id===id); }
+function fmtTs(ts){ if(!ts) return ''; const d=new Date(ts),p=n=>(n<10?'0':'')+n;
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+const blkFilter={q:'',cls:'All',cat:'All',sort:'new'};
+function blockFiltered(){
+  const q=blkFilter.q.toLowerCase();
+  let arr=BLOCK.filter(b=>{
+    if(blkFilter.cls!=='All' && (b.cls||'')!==blkFilter.cls) return false;
+    if(blkFilter.cat!=='All' && (b.cat||'')!==blkFilter.cat) return false;
+    if(q && !((b.nick||'').toLowerCase().includes(q) || (b.reason||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const s=blkFilter.sort;
+  arr.sort((a,b)=> s==='old' ? (a.ts||0)-(b.ts||0) : s==='nick' ? String(a.nick||'').localeCompare(String(b.nick||'')) : (b.ts||0)-(a.ts||0));
+  return arr;
+}
+function blkOptions(list, sel){ return list.map(o=>`<option value="${esc(o)}"${o===sel?' selected':''}>${esc(o)}</option>`).join(''); }
+function refreshBlkFilters(){
+  const cls=$('blkClass'); if(cls){ const present=[...new Set(BLOCK.map(b=>b.cls).filter(Boolean))].sort();
+    cls.innerHTML=blkOptions(['All'].concat(present), blkFilter.cls); }
+  const cat=$('blkCat'); if(cat){ cat.innerHTML=blkOptions(['All'].concat(BLOCK_CATS), blkFilter.cat); }
+}
+function blockRowHTML(b){
+  const icon = b.cls && CLASS_ICONS[b.cls] ? `<img class="cicon" src="${CLASS_ICONS[b.cls]}" alt="" title="${esc(b.cls)}">`
+                                           : `<span class="cicon cnoicon" title="No class"></span>`;
+  const clsOpts=['<option value="">— class —</option>'].concat(CLASS_NAMES.map(n=>`<option value="${esc(n)}"${b.cls===n?' selected':''}>${esc(n)}</option>`)).join('');
+  const catOpts=['<option value="">— category —</option>'].concat(BLOCK_CATS.map(c=>`<option value="${esc(c)}"${b.cat===c?' selected':''}>${esc(c)}</option>`)).join('');
+  return `<tr>
+    <td><input data-id="${b.id}" data-k="nick" type="text" value="${esc(b.nick)}" placeholder="Nickname"></td>
+    <td class="blkcls"><div class="cellflex">${icon}<select data-id="${b.id}" data-k="cls">${clsOpts}</select></div></td>
+    <td class="blkcat"><select data-id="${b.id}" data-k="cat">${catOpts}</select></td>
+    <td><input data-id="${b.id}" data-k="reason" type="text" value="${esc(b.reason)}" placeholder="Reason (free text)"></td>
+    <td class="blkadded">${fmtTs(b.ts)}</td>
+    <td class="blkact"><button class="xbtn" data-del="${b.id}" title="Remove entry">✕</button></td>
+  </tr>`;
+}
+function renderBlock(){
+  const area=$('blkTableArea'); if(!area) return;
+  refreshBlkFilters();
+  const shown=blockFiltered();
+  const cnt=$('blkCount'); if(cnt) cnt.innerHTML='<b>'+shown.length+'</b> / '+BLOCK.length+' entr'+(BLOCK.length===1?'y':'ies');
+  if(!BLOCK.length){ area.innerHTML='<div class="cempty">No blocked players yet.<br>Click <b>＋ Add entry</b> to flag someone.</div>'; return; }
+  if(!shown.length){ area.innerHTML='<div class="cempty">No entries match your filters.</div>'; return; }
+  area.innerHTML='<div class="blkwrap"><table class="blktable"><colgroup>'
+    +'<col style="width:16%"><col style="width:15%"><col style="width:13%"><col style="width:36%"><col style="width:15%"><col style="width:5%"></colgroup>'
+    +'<thead><tr><th>Nick</th><th>Class</th><th>Category</th><th>Reason</th><th>Added</th><th></th></tr></thead>'
+    +'<tbody>'+shown.map(blockRowHTML).join('')+'</tbody></table></div>';
+}
+$('blkAdd').onclick=()=>{
+  BLOCK.push(normBlock({ ts:Date.now() })); saveBlock();
+  blkFilter.sort='new'; if($('blkSort')) $('blkSort').value='new';
+  renderBlock();
+  const first=$('blkTableArea').querySelector('tbody tr input'); if(first) first.focus();
+};
+$('blkClear').onclick=()=>{ if(BLOCK.length && confirm('Remove ALL blocklist entries from this browser? This cannot be undone.')){ BLOCK=[]; saveBlock(); renderBlock(); } };
+$('blkSearch').oninput=e=>{ blkFilter.q=e.target.value; renderBlockTableOnly(); };
+$('blkClass').onchange=e=>{ blkFilter.cls=e.target.value; renderBlockTableOnly(); };
+$('blkCat').onchange=e=>{ blkFilter.cat=e.target.value; renderBlockTableOnly(); };
+$('blkSort').onchange=e=>{ blkFilter.sort=e.target.value; renderBlockTableOnly(); };
+// re-render just the table (keeps focus in the search box)
+function renderBlockTableOnly(){
+  const area=$('blkTableArea'); if(!area) return;
+  const shown=blockFiltered();
+  const cnt=$('blkCount'); if(cnt) cnt.innerHTML='<b>'+shown.length+'</b> / '+BLOCK.length+' entr'+(BLOCK.length===1?'y':'ies');
+  if(!BLOCK.length){ area.innerHTML='<div class="cempty">No blocked players yet.<br>Click <b>＋ Add entry</b> to flag someone.</div>'; return; }
+  if(!shown.length){ area.innerHTML='<div class="cempty">No entries match your filters.</div>'; return; }
+  area.innerHTML='<div class="blkwrap"><table class="blktable"><colgroup>'
+    +'<col style="width:16%"><col style="width:15%"><col style="width:13%"><col style="width:36%"><col style="width:15%"><col style="width:5%"></colgroup>'
+    +'<thead><tr><th>Nick</th><th>Class</th><th>Category</th><th>Reason</th><th>Added</th><th></th></tr></thead>'
+    +'<tbody>'+shown.map(blockRowHTML).join('')+'</tbody></table></div>';
+}
+$('blkTableArea').addEventListener('input',e=>{
+  const el=e.target.closest('[data-id]'); if(!el||el.tagName!=='INPUT') return;
+  const b=blkById(el.dataset.id); if(b){ b[el.dataset.k]=el.value; saveBlock(); }   // no re-render: keep focus
+});
+$('blkTableArea').addEventListener('change',e=>{
+  const el=e.target.closest('select[data-id]'); if(!el) return;
+  const b=blkById(el.dataset.id); if(b){ b[el.dataset.k]=el.value; saveBlock(); renderBlock(); }  // class/category change may affect filters + icon
+});
+$('blkTableArea').addEventListener('click',e=>{
+  const del=e.target.closest('[data-del]'); if(!del) return;
+  const b=blkById(del.dataset.del);
+  if(b && (b.nick||b.reason||b.cls||b.cat) && !confirm('Remove this blocklist entry?')) return;
+  BLOCK=BLOCK.filter(x=>x.id!==del.dataset.del); saveBlock(); renderBlock();
+});
+
 // ===== optional Google Sheet sync (Apps Script web app) — local stays the default =====
 // Explicit control: Pull (sheet -> this device) and Push (this device -> sheet). No auto-sync.
 const SHEET_KEY='dn-sheet-url';
-const SHEET_SCRIPT_VERSION=2;   // the Apps Script version this app expects
+const SHEET_SCRIPT_VERSION=3;   // the Apps Script version this app expects
 let SHEET_URL=''; try{ SHEET_URL=localStorage.getItem(SHEET_KEY)||''; }catch(e){}
 let syncDirty=false, lastSync='', scriptOutdated=false, syncSnapshot=null;
 
@@ -1175,8 +1328,9 @@ function canonRoster(arr){ return JSON.stringify((arr||[]).map(c=>COLUMNS.map(co
   ? ((c[col.k]===true||c[col.k]==='TRUE'||c[col.k]==='true')?1:0)
   : (c[col.k]==null?'':String(c[col.k]))))); }
 function canonStore(arr){ return JSON.stringify((arr||[]).map(r=>[String(r.item==null?'':r.item), String(r.amount==null?'':r.amount)])); }
-function localCanon(){ return canonRoster(CHARS)+''+canonStore(STORE); }
-function remoteCanon(data){ return canonRoster(payloadToChars(data&&data.roster)||[])+''+canonStore(payloadToStore(data&&data.storage)||[]); }
+function canonBlock(arr){ return JSON.stringify((arr||[]).map(b=>[String(b.nick||""),String(b.cls||""),String(b.cat||""),String(b.reason||""),String(b.ts||"")])); }
+function localCanon(){ return canonRoster(CHARS)+''+canonStore(STORE)+''+canonBlock(BLOCK); }
+function remoteCanon(data){ return canonRoster(payloadToChars(data&&data.roster)||[])+''+canonStore(payloadToStore(data&&data.storage)||[])+''+canonBlock(payloadToBlock(data&&data.blocklist)||[]); }
 function setSnapshotLocal(){ syncSnapshot=localCanon(); }
 function setSnapshotRemote(data){ syncSnapshot=remoteCanon(data); }
 function recomputeDirty(){ if(!SHEET_URL||syncSnapshot==null) return; syncDirty=(localCanon()!==syncSnapshot); updateSyncUI(); }
@@ -1230,7 +1384,20 @@ function payloadToStore(data){
   let ii=header.indexOf('Item'), ai=header.indexOf('Amount'); if(ii<0)ii=0; if(ai<0)ai=1;
   return data.rows.map(row=>({ item: row[ii]==null?'':String(row[ii]), amount: row[ai]==null?'':String(row[ai]) }));
 }
-// apply a pulled {columns, roster, storage} payload to local state
+// Blocklist <-> sheet table
+function blockToPayload(){
+  return { header:['nick','cls','cat','reason','ts','id'],
+           rows: BLOCK.map(b=>[b.nick==null?'':b.nick, b.cls==null?'':b.cls, b.cat==null?'':b.cat, b.reason==null?'':b.reason, b.ts||'', b.id||'']) };
+}
+function payloadToBlock(data){
+  if(!data||!Array.isArray(data.rows)) return null;
+  const h=data.header||['nick','cls','cat','reason','ts','id']; const idx=n=>h.indexOf(n);
+  const ni=idx('nick'),ci=idx('cls'),ki=idx('cat'),ri=idx('reason'),ti=idx('ts'),ii=idx('id');
+  return data.rows.map(r=>normBlock({
+    nick:ni>=0?r[ni]:'', cls:ci>=0?r[ci]:'', cat:ki>=0?r[ki]:'', reason:ri>=0?r[ri]:'',
+    ts:ti>=0?r[ti]:0, id:ii>=0?r[ii]:'' }));
+}
+// apply a pulled {columns, roster, storage, blocklist} payload to local state
 function applyPulled(data){
   const cols=payloadToColumns(data&&data.columns);   // schema first so roster types are known
   if(cols){ COLUMNS=cols; try{localStorage.setItem(COL_KEY,JSON.stringify(COLUMNS));}catch(e){} }
@@ -1238,7 +1405,9 @@ function applyPulled(data){
   if(cr){ CHARS=cr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} }
   const st=payloadToStore(data&&data.storage);
   if(st){ STORE=st; try{localStorage.setItem(STORE_KEY,JSON.stringify(STORE));}catch(e){} }
-  renderChars(); updateGoldTotal(); renderStore();
+  const bl=payloadToBlock(data&&data.blocklist);
+  if(bl){ BLOCK=bl; try{localStorage.setItem(BLOCK_KEY,JSON.stringify(BLOCK));}catch(e){} }
+  renderChars(); updateGoldTotal(); renderStore(); renderBlock();
   if($('colPanel') && !$('colPanel').hidden) renderColManager();
 }
 function sheetGet(){ return fetch(SHEET_URL,{method:'GET'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }); }
@@ -1249,7 +1418,7 @@ function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can'
 function errMsg(e){ return (e && e.message) ? e.message : 'unknown error'; }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pushing to sheet…');
-  return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload(), columns:columnsToPayload()})
+  return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload(), columns:columnsToPayload(), blocklist:blockToPayload()})
     .then(r=>{ checkScriptVersion(r); setSnapshotLocal(); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
     .catch(e=>setSync('err','Push failed: '+errMsg(e)+' — data is still saved locally.'));
 }
@@ -1305,13 +1474,16 @@ function reviewChanges(){ if(!SHEET_URL) return;
     const remChars=payloadToChars(data&&data.roster)||[];
     const remStore=payloadToStore(data&&data.storage)||[];
     const cf=COLUMNS.map(c=>({k:c.k,label:c.label}));
+    const remBlock=payloadToBlock(data&&data.blocklist)||[];
     const dc=diffLists(CHARS, remChars, c=>String(c.nickname||'').trim().toLowerCase(), cf, c=>c.nickname||'(unnamed)');
     const ds=diffLists(STORE, remStore, r=>String(r.item||'').trim().toLowerCase(), [{k:'amount',label:'Amount'}], r=>r.item||'(unnamed)');
-    const any=dc.added.length+dc.removed.length+dc.changed.length+ds.added.length+ds.removed.length+ds.changed.length;
+    const db=diffLists(BLOCK, remBlock, b=>String(b.id||''), [{k:'nick',label:'Nick'},{k:'cls',label:'Class'},{k:'cat',label:'Category'},{k:'reason',label:'Reason'}], b=>b.nick||'(unnamed)');
+    const any=dc.added.length+dc.removed.length+dc.changed.length+ds.added.length+ds.removed.length+ds.changed.length
+             +db.added.length+db.removed.length+db.changed.length;
     const head = any
       ? '<div class="diffhead">Your local data differs from the sheet. <b>⭱ Push</b> saves your device\'s version to the sheet; <b>⭳ Pull</b> discards these and takes the sheet\'s version.</div>'
       : '<div class="diffhead">✓ Your local data matches the sheet — nothing to push.</div>';
-    $('diffBody').innerHTML = head + diffSectionHTML('Characters', dc, 'character') + diffSectionHTML('Guild Storage', ds, 'storage');
+    $('diffBody').innerHTML = head + diffSectionHTML('Characters', dc, 'character') + diffSectionHTML('Guild Storage', ds, 'storage') + diffSectionHTML('Blocklist', db, 'blocklist');
     $('diffPanel').hidden=false;
     setSnapshotRemote(data); syncDirty=(any>0); updateSyncUI();   // reconcile the status with what we found
   }).catch(e=>setSync('err','Compare failed: '+errMsg(e)));
