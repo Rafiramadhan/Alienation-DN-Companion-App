@@ -80,6 +80,9 @@
   select,input{background:#120d07;color:var(--txt);border:1px solid var(--line2);
     border-radius:8px;padding:9px 11px;font-size:14px;outline:none;min-width:150px}
   select:focus,input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(231,189,94,.14)}
+  /* make native dropdown popups dark + readable */
+  select{color-scheme:dark}
+  option{background:#1f1710;color:#ece2cf}
   .field.grow{flex:1;min-width:180px}
   .field.grow input{width:100%}
   ::placeholder{color:#6f6350}
@@ -1204,7 +1207,7 @@ const BLOCK_KEY='dn-blocklist-v1';
 const BLOCK_CATS=['Toxic','Scam','Ninja Loot','Kicker','AFK/Leech','Impersonation','Cheating/Hacks','Botting','RMT','Drama','Skill Issue','Other'];
 let BLOCK=loadBlock();
 function loadBlock(){ try{ const r=localStorage.getItem(BLOCK_KEY); const d=r?JSON.parse(r):[]; return Array.isArray(d)?d.map(normBlock):[]; }catch(e){ return []; } }
-function normBlock(b){ return { id:b.id||('b'+(b.ts||'')+Math.random().toString(36).slice(2,7)), nick:b.nick==null?'':String(b.nick), cls:b.cls==null?'':String(b.cls), cat:b.cat==null?'':String(b.cat), reason:b.reason==null?'':String(b.reason), ts:parseInt(b.ts,10)||0 }; }
+function normBlock(b){ return { id:b.id||('b'+(b.ts||'')+Math.random().toString(36).slice(2,7)), nick:b.nick==null?'':String(b.nick), cls:b.cls==null?'':String(b.cls), cat:b.cat==null?'':String(b.cat), ctx:b.ctx==null?'':String(b.ctx), reason:b.reason==null?'':String(b.reason), ts:parseInt(b.ts,10)||0 }; }
 let blkSavedTimer=null;
 function saveBlock(){
   try{ localStorage.setItem(BLOCK_KEY, JSON.stringify(BLOCK)); }
@@ -1222,7 +1225,7 @@ function blockFiltered(){
   let arr=BLOCK.filter(b=>{
     if(blkFilter.cls!=='All' && (b.cls||'')!==blkFilter.cls) return false;
     if(blkFilter.cat!=='All' && (b.cat||'')!==blkFilter.cat) return false;
-    if(q && !((b.nick||'').toLowerCase().includes(q) || (b.reason||'').toLowerCase().includes(q))) return false;
+    if(q && !((b.nick||'').toLowerCase().includes(q) || (b.reason||'').toLowerCase().includes(q) || (b.ctx||'').toLowerCase().includes(q))) return false;
     return true;
   });
   const s=blkFilter.sort;
@@ -1244,23 +1247,24 @@ function blockRowHTML(b){
     <td><input data-id="${b.id}" data-k="nick" type="text" value="${esc(b.nick)}" placeholder="Nickname"></td>
     <td class="blkcls"><div class="cellflex">${icon}<select data-id="${b.id}" data-k="cls">${clsOpts}</select></div></td>
     <td class="blkcat"><select data-id="${b.id}" data-k="cat">${catOpts}</select></td>
+    <td><input data-id="${b.id}" data-k="ctx" type="text" value="${esc(b.ctx)}" placeholder="e.g. DDN party, Trade House…"></td>
     <td><input data-id="${b.id}" data-k="reason" type="text" value="${esc(b.reason)}" placeholder="Reason (free text)"></td>
     <td class="blkadded">${fmtTs(b.ts)}</td>
     <td class="blkact"><button class="xbtn" data-del="${b.id}" title="Remove entry">✕</button></td>
   </tr>`;
 }
-function renderBlock(){
+function renderBlockTableOnly(){
   const area=$('blkTableArea'); if(!area) return;
-  refreshBlkFilters();
   const shown=blockFiltered();
   const cnt=$('blkCount'); if(cnt) cnt.innerHTML='<b>'+shown.length+'</b> / '+BLOCK.length+' entr'+(BLOCK.length===1?'y':'ies');
   if(!BLOCK.length){ area.innerHTML='<div class="cempty">No blocked players yet.<br>Click <b>＋ Add entry</b> to flag someone.</div>'; return; }
   if(!shown.length){ area.innerHTML='<div class="cempty">No entries match your filters.</div>'; return; }
   area.innerHTML='<div class="blkwrap"><table class="blktable"><colgroup>'
-    +'<col style="width:16%"><col style="width:15%"><col style="width:13%"><col style="width:36%"><col style="width:15%"><col style="width:5%"></colgroup>'
-    +'<thead><tr><th>Nick</th><th>Class</th><th>Category</th><th>Reason</th><th>Added</th><th></th></tr></thead>'
+    +'<col style="width:15%"><col style="width:14%"><col style="width:12%"><col style="width:17%"><col style="width:27%"><col style="width:12%"><col style="width:3%"></colgroup>'
+    +'<thead><tr><th>Nick</th><th>Class</th><th>Category</th><th>Context</th><th>Reason</th><th>Added</th><th></th></tr></thead>'
     +'<tbody>'+shown.map(blockRowHTML).join('')+'</tbody></table></div>';
 }
+function renderBlock(){ refreshBlkFilters(); renderBlockTableOnly(); }
 $('blkAdd').onclick=()=>{
   BLOCK.push(normBlock({ ts:Date.now() })); saveBlock();
   blkFilter.sort='new'; if($('blkSort')) $('blkSort').value='new';
@@ -1272,18 +1276,6 @@ $('blkSearch').oninput=e=>{ blkFilter.q=e.target.value; renderBlockTableOnly(); 
 $('blkClass').onchange=e=>{ blkFilter.cls=e.target.value; renderBlockTableOnly(); };
 $('blkCat').onchange=e=>{ blkFilter.cat=e.target.value; renderBlockTableOnly(); };
 $('blkSort').onchange=e=>{ blkFilter.sort=e.target.value; renderBlockTableOnly(); };
-// re-render just the table (keeps focus in the search box)
-function renderBlockTableOnly(){
-  const area=$('blkTableArea'); if(!area) return;
-  const shown=blockFiltered();
-  const cnt=$('blkCount'); if(cnt) cnt.innerHTML='<b>'+shown.length+'</b> / '+BLOCK.length+' entr'+(BLOCK.length===1?'y':'ies');
-  if(!BLOCK.length){ area.innerHTML='<div class="cempty">No blocked players yet.<br>Click <b>＋ Add entry</b> to flag someone.</div>'; return; }
-  if(!shown.length){ area.innerHTML='<div class="cempty">No entries match your filters.</div>'; return; }
-  area.innerHTML='<div class="blkwrap"><table class="blktable"><colgroup>'
-    +'<col style="width:16%"><col style="width:15%"><col style="width:13%"><col style="width:36%"><col style="width:15%"><col style="width:5%"></colgroup>'
-    +'<thead><tr><th>Nick</th><th>Class</th><th>Category</th><th>Reason</th><th>Added</th><th></th></tr></thead>'
-    +'<tbody>'+shown.map(blockRowHTML).join('')+'</tbody></table></div>';
-}
 $('blkTableArea').addEventListener('input',e=>{
   const el=e.target.closest('[data-id]'); if(!el||el.tagName!=='INPUT') return;
   const b=blkById(el.dataset.id); if(b){ b[el.dataset.k]=el.value; saveBlock(); }   // no re-render: keep focus
@@ -1328,7 +1320,7 @@ function canonRoster(arr){ return JSON.stringify((arr||[]).map(c=>COLUMNS.map(co
   ? ((c[col.k]===true||c[col.k]==='TRUE'||c[col.k]==='true')?1:0)
   : (c[col.k]==null?'':String(c[col.k]))))); }
 function canonStore(arr){ return JSON.stringify((arr||[]).map(r=>[String(r.item==null?'':r.item), String(r.amount==null?'':r.amount)])); }
-function canonBlock(arr){ return JSON.stringify((arr||[]).map(b=>[String(b.nick||""),String(b.cls||""),String(b.cat||""),String(b.reason||""),String(b.ts||"")])); }
+function canonBlock(arr){ return JSON.stringify((arr||[]).map(b=>[String(b.nick||""),String(b.cls||""),String(b.cat||""),String(b.ctx||""),String(b.reason||""),String(b.ts||"")])); }
 function localCanon(){ return canonRoster(CHARS)+''+canonStore(STORE)+''+canonBlock(BLOCK); }
 function remoteCanon(data){ return canonRoster(payloadToChars(data&&data.roster)||[])+''+canonStore(payloadToStore(data&&data.storage)||[])+''+canonBlock(payloadToBlock(data&&data.blocklist)||[]); }
 function setSnapshotLocal(){ syncSnapshot=localCanon(); }
@@ -1386,15 +1378,15 @@ function payloadToStore(data){
 }
 // Blocklist <-> sheet table
 function blockToPayload(){
-  return { header:['nick','cls','cat','reason','ts','id'],
-           rows: BLOCK.map(b=>[b.nick==null?'':b.nick, b.cls==null?'':b.cls, b.cat==null?'':b.cat, b.reason==null?'':b.reason, b.ts||'', b.id||'']) };
+  return { header:['nick','cls','cat','ctx','reason','ts','id'],
+           rows: BLOCK.map(b=>[b.nick==null?'':b.nick, b.cls==null?'':b.cls, b.cat==null?'':b.cat, b.ctx==null?'':b.ctx, b.reason==null?'':b.reason, b.ts||'', b.id||'']) };
 }
 function payloadToBlock(data){
   if(!data||!Array.isArray(data.rows)) return null;
-  const h=data.header||['nick','cls','cat','reason','ts','id']; const idx=n=>h.indexOf(n);
-  const ni=idx('nick'),ci=idx('cls'),ki=idx('cat'),ri=idx('reason'),ti=idx('ts'),ii=idx('id');
+  const h=data.header||['nick','cls','cat','ctx','reason','ts','id']; const idx=n=>h.indexOf(n);
+  const ni=idx('nick'),ci=idx('cls'),ki=idx('cat'),xi=idx('ctx'),ri=idx('reason'),ti=idx('ts'),ii=idx('id');
   return data.rows.map(r=>normBlock({
-    nick:ni>=0?r[ni]:'', cls:ci>=0?r[ci]:'', cat:ki>=0?r[ki]:'', reason:ri>=0?r[ri]:'',
+    nick:ni>=0?r[ni]:'', cls:ci>=0?r[ci]:'', cat:ki>=0?r[ki]:'', ctx:xi>=0?r[xi]:'', reason:ri>=0?r[ri]:'',
     ts:ti>=0?r[ti]:0, id:ii>=0?r[ii]:'' }));
 }
 // apply a pulled {columns, roster, storage, blocklist} payload to local state
@@ -1477,7 +1469,7 @@ function reviewChanges(){ if(!SHEET_URL) return;
     const remBlock=payloadToBlock(data&&data.blocklist)||[];
     const dc=diffLists(CHARS, remChars, c=>String(c.nickname||'').trim().toLowerCase(), cf, c=>c.nickname||'(unnamed)');
     const ds=diffLists(STORE, remStore, r=>String(r.item||'').trim().toLowerCase(), [{k:'amount',label:'Amount'}], r=>r.item||'(unnamed)');
-    const db=diffLists(BLOCK, remBlock, b=>String(b.id||''), [{k:'nick',label:'Nick'},{k:'cls',label:'Class'},{k:'cat',label:'Category'},{k:'reason',label:'Reason'}], b=>b.nick||'(unnamed)');
+    const db=diffLists(BLOCK, remBlock, b=>String(b.id||''), [{k:'nick',label:'Nick'},{k:'cls',label:'Class'},{k:'cat',label:'Category'},{k:'ctx',label:'Context'},{k:'reason',label:'Reason'}], b=>b.nick||'(unnamed)');
     const any=dc.added.length+dc.removed.length+dc.changed.length+ds.added.length+ds.removed.length+ds.changed.length
              +db.added.length+db.removed.length+db.changed.length;
     const head = any
