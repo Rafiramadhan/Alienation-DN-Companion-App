@@ -334,10 +334,13 @@
     color:var(--txt);padding:9px 11px;font-size:13.5px;outline:none}
   table.blktable tbody td select{cursor:pointer}
   table.blktable tbody td input:focus,table.blktable tbody td select:focus{background:rgba(231,189,94,.10);box-shadow:inset 0 0 0 1px var(--gold)}
-  table.blktable td.blkcls{padding:3px 6px}
+  table.blktable td.blkcls,table.blktable td.blkcat{padding:3px 6px}
   table.blktable td.blkcls .cellflex{display:flex;align-items:center;gap:5px}
-  table.blktable td.blkcls select{background:#120d07;border:1px solid var(--line2);border-radius:6px;padding:6px 6px;font-size:12px}
-  table.blktable td.blkcat select{background:#120d07;border:1px solid var(--line2);border-radius:6px;padding:6px 6px;font-size:12px;margin:3px 6px;width:calc(100% - 12px)}
+  /* match the Character Details class dropdown exactly */
+  table.blktable td.blkcls select,table.blktable td.blkcat select{flex:1;width:100%;min-width:0;
+    background:#120d07;color:var(--txt);border:1px solid var(--line2);border-radius:6px;
+    padding:6px 6px;font-size:12px;outline:none;cursor:pointer}
+  table.blktable td.blkcls select:focus,table.blktable td.blkcat select:focus{border-color:var(--gold);box-shadow:none}
   table.blktable td.blkadded{color:var(--mut);font-size:12px;padding:9px 11px;white-space:nowrap;font-variant-numeric:tabular-nums}
   table.blktable td.blkact{text-align:center;padding:0 4px}
   table.blktable .xbtn{opacity:.35}
