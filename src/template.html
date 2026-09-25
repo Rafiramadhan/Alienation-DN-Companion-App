@@ -1480,10 +1480,9 @@ window.addEventListener('scroll',hideTip,true);
    coloured by the rarity that character owns it at, plus the Power of Mastery tab.
    Card state lives on the character object as c.cards = { "<card name>": "<tier>" }. */
 
-// The in-game Card window's slot order — 95 slots, named as the game names them (build.js
-// renames the handful the community sheet spells differently, so these match the database
-// directly). Four slots nobody has identified yet read "Monster Card"; they are real slots
-// and can still be tracked. Empty the array to fall back to the sheet's own row order.
+// The in-game Card window's slot order — one entry per card, named as the game names them
+// (build.js renames the handful the community sheet spells differently, so these match the
+// database directly). Empty the array to fall back to the sheet's own row order.
 const CARD_ORDER = [
   'Deputy Umzaka', 'Deputy Umhar', 'General Crimson Ummanba', 'Minotaur Knight',
   'Minotaur Commander', 'Crow Hobgoblin', 'Brother Summoner', 'Ogre Slave',
@@ -1491,14 +1490,13 @@ const CARD_ORDER = [
   'Giant Stone Half Golem', 'Manticore Lord Kram', 'Fearful Death Ray', 'Midnight Death Howl',
   "Five Brothers' Specter", 'Vengeful Ling', 'Obsessed Grunt', 'Wild Hellglaze',
   'Enraged Umhama', 'Prideful Levant', 'Fanatic Blan', 'Judge Apocalypse',
-  'Monster Card', 'Cyclops Berserker', 'Ogre Berserker', 'Minotaur',
-  'Rotting One-eyed Orc', 'Golem Lava', 'Revived Kakari', 'Kakari Returns with Vengeance',
-  'Lizardman Brother Claw', 'Lizardman Brother Tooth', 'Lizardman Brother Tail', 'Scout Captain Norbak',
-  'Golem Moltan', 'Sea Dragon Serpentra', 'Monster Card', 'Shaman Lich Andara',
-  'Golem Toadstool', 'Treacherous Preacher Adolf', 'Vengeful Assassin Bonita', 'Cold-Blooded Magician Rasputin',
-  'Fallen Sage Ballius', 'Resurrected Punisher Brass', 'Archbishop Kazalman', 'Golem Fujinorth',
-  'Monster Card', 'Gatekeeper Quercus', 'Watcher Blanco 04', 'Immoral Ghost',
-  'Slave Leader Constan', 'Gigantes Maha', 'Monster Card', 'Bishop Gaius',
+  'Cyclops Berserker', 'Ogre Berserker', 'Minotaur', 'Rotting One-eyed Orc',
+  'Golem Lava', 'Revived Kakari', 'Kakari Returns with Vengeance', 'Lizardman Brother Claw',
+  'Lizardman Brother Tooth', 'Lizardman Brother Tail', 'Scout Captain Norbak', 'Golem Moltan',
+  'Sea Dragon Serpentra', 'Shaman Lich Andara', 'Golem Toadstool', 'Treacherous Preacher Adolf',
+  'Vengeful Assassin Bonita', 'Cold-Blooded Magician Rasputin', 'Fallen Sage Ballius', 'Resurrected Punisher Brass',
+  'Archbishop Kazalman', 'Golem Fujinorth', 'Gatekeeper Quercus', 'Watcher Blanco 04',
+  'Immoral Ghost', 'Slave Leader Constan', 'Gigantes Maha', 'Bishop Gaius',
   'Golem Morgon', 'White-eyes Krakes', 'Swamp Queen Zabel', 'Sorcerer Karahan',
   'Green Dragon Karahan', 'Experiment No.287 Tenakrun', 'Experiment No.171 Kalamari Dienu', 'Experiment No.172 Kalamari Elube',
   'Experiment No.60 Prototype Omega', 'Little Fairy Queen Lantana', 'Experiment No.665 Giant XXXX', 'Professor K',
@@ -1526,7 +1524,7 @@ const CD_LABEL = {}; CD_TIERS.forEach(t=>CD_LABEL[t.k]=t.label);
 
 const CARD_BY_NAME = {}; DB.cards.forEach(c=>{ CARD_BY_NAME[c.name]=c; });
 // One entry per in-game slot: { key, name, nest, stats }. `key` is what a character's
-// collection is stored under and is unique even for the repeated "Monster Card" slots.
+// collection is stored under; an entry with no matching database card still gets a slot.
 const CARD_SLOTS = (()=>{
   if(!CARD_ORDER.length) return DB.cards.map(c=>({ key:c.name, name:c.name, nest:c.nest, stats:c.stats }));
   let unknown=0;
@@ -1537,9 +1535,14 @@ const CARD_SLOTS = (()=>{
   });
 })();
 const CARD_BY_KEY = {}; CARD_SLOTS.forEach(s=>{ CARD_BY_KEY[s.key]=s; });
-// A collection saved before build.js renamed a card still uses the old key — move it once.
+// A map keyed by card name (a collection or a price list) saved before a rename still uses
+// the old key — move it once. Also drops the four "Monster Card" placeholders that used to
+// sit in CARD_ORDER by mistake.
 const CARD_RENAMES = __NAMEFIX__;    // { "community sheet name": "in-game name" }
 function migrateCards(m){
+  // the list once carried four unnamed "Monster Card" placeholders that turned out to be a
+  // mistake; clear anything recorded against them so they stop reaching the sheet
+  Object.keys(m).forEach(k=>{ if(/^Monster Card \d+$/.test(k)) delete m[k]; });
   for(const from in CARD_RENAMES){
     const to=CARD_RENAMES[from];
     if(m[from]!==undefined){ if(m[to]===undefined) m[to]=m[from]; delete m[from]; }
@@ -1550,9 +1553,15 @@ function migrateCards(m){
 let cmChar=-1, cmPage=0, cmSel='', cmTab='cards', cmQuery='', cmFilter='all';
 
 // ---- per-character card state -------------------------------------------------
+function migrateChar(c){
+  if(!c || c._cmig) return;
+  if(c.cards  && typeof c.cards==='object'  && !Array.isArray(c.cards))  migrateCards(c.cards);
+  if(c.prices && typeof c.prices==='object' && !Array.isArray(c.prices)) migrateCards(c.prices);
+  c._cmig=1;
+}
 function charCards(i){ const c=CHARS[i]; if(!c) return {};
   if(!c.cards || typeof c.cards!=='object' || Array.isArray(c.cards)) c.cards={};
-  if(!c._cmig){ migrateCards(c.cards); c._cmig=1; }
+  migrateChar(c);
   return c.cards; }
 function cardTier(i,name){ const t=charCards(i)[name]; return CD_KEYS.indexOf(t)>=0 ? t : ''; }
 function setCardTier(i,name,tier){
@@ -1627,6 +1636,7 @@ function cardStatTotal(i,stat){
 // ---- what each card cost, per character (gold paid at the trading house) ----
 function charPrices(i){ const c=CHARS[i]; if(!c) return {};
   if(!c.prices || typeof c.prices!=='object' || Array.isArray(c.prices)) c.prices={};
+  migrateChar(c);
   return c.prices; }
 function cardPrice(i,key){ const n=parseFloat(charPrices(i)[key]); return isNaN(n)||n<0 ? 0 : n; }
 function setCardPrice(i,key,v){

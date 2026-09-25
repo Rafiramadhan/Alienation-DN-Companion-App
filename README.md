@@ -57,9 +57,8 @@ uses the **in-game name everywhere**, so `build.js` renames them (`NAME_FIX`) ri
 parsing; `database.csv` stays a faithful copy of the sheet. That map is also embedded in the
 page, so a collection saved under an old name follows the rename.
 
-The collection modal does not use the sheet's order — it lays out the 95 slots of the in-game
-Card window from `CARD_ORDER` in `src/template.html`. The four slots nobody has identified
-yet read “Monster Card” and can still be tracked.
+The collection modal does not use the sheet's order — it lays out the in-game Card window's
+slots from `CARD_ORDER` in `src/template.html`, using the names the game shows.
 
 ## Deploying (GitHub Pages)
 
