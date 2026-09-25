@@ -1,521 +1,508 @@
-Minotaur Nest,,,,,,,,,Unidentified XX Monster Card Pack,,,
-Card No.,Monster Card,Stats,Value for each Rarity,,,,,,Card Rarity,%each draw,,
-1,General Umzaka,Str,1,2,3,4,5,,Magic,34%,,
-,,Crit Resist,10,21,32,43,54,,Rare,40%,,
-,,Crystal of Power,1,2,3,4,5,,Epic,20%,,
-2,General Umhar,Agi,1,2,3,4,5,,Unique,5%,,
-,,Stun Resist,10,21,32,43,54,,Legend,1%,,
-,,Crystal of Power,1,2,3,4,5,,,,,
-3,General Crimson Ummanba,Int,1,2,3,4,5,,Monster Card Box (Lv.40),,,
-,,Vit,1,2,3,4,5,,Card Rarity,%each roll,%every 10th rolls,
-,,Para Resist,15,31,46,62,78,,Magic,34%,-,
-,,Crystal of Power,2,4,6,8,10,,Rare,40%,-,
-,,,,,,,,,Epic,20%,-,
-Cerberus Nest,,,,,,,,,Unique,5%,95%,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,Legend,1%,5%,
-4,Minotaur Knight,Magic Def,14,29,43,58,73,,Sea Dragon Serpentra,0.01%,0.1%,
-,,Paralyze,31,63,95,127,159,,Sea Dragon Serpentra,0.001%,0.01%,
-,,Crystal of Power,4,8,12,16,20,,Monster Card Box (Lv.40) have only Card No.1 - No.37 ,,,
-5,Minotaur Commander,Defense,14,29,43,58,73,,,,,
-,,Stun,31,63,95,127,159,,Mastery LV,Card Stats Increase,Crystal of Power,
-,,Crystal of Power,4,8,12,16,20,,1,5%,40,
-6,Crow Hobgoblin,Attk Power,2,4,6,8,10,,2,10%,5000%,
-,,Crit,24,48,72,96,120,,3,15%,6300%,
-,,Crystal of Power,4,8,12,16,20,,4,20%,7800%,
-7,Brother Summoner,Magic Attk,2,4,6,8,10,,5,25%,9600%,
-,,Paralyze,7,15,23,31,39,,6,30%,11700%,
-,,Max MP,85,171,256,342,428,,7,35%,14100%,
-,,Crystal of Power,4,8,12,16,20,,8,40%,16800%,
-8,Ogre Slave,Str,2,4,6,8,10,,9,45%,19800%,
-,,Magic Def,14,28,43,57,72,,10,50%,23200%,1183
-,,Crystal of Power,4,8,12,16,20,,11,55%,26900%,
-9,Ogre Commander,Agi,2,4,6,8,10,,12,60%,31000%,
-,,Magic Def,14,28,43,57,72,,13,65%,35500%,
-,,Crystal of Power,4,8,12,16,20,,14,70%,40400%,
-10,Cerberus Kakari,Attk Power,4,8,12,16,21,,15,75%,45800%,
-,,Magic Attk,4,8,12,16,21,,16,80%,51600%,
-,,Max HP,121,242,363,484,605,,17,85%,57900%,
-,,Crystal of Power,8,16,24,32,40,,18,90%,64700%,
-,,,,,,,,,19,95%,72100%,
-Manticore Nest,,,,,,,,,20,100%,80000%,6242
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,21,105%,84500%,
-11,Gargoyle Stinger,Int,1,2,3,4,6,,22,110%,89200%,
-,,Max MP,138,276,414,552,691,,23,115%,94100%,
-,,Crystal of Power,6,12,18,24,30,,24,120%,99200%,
-12,Lamia Attacker,Agi,1,3,5,7,9,,25,125%,104500%,10957
-,,Attk Power,2,5,8,11,14,,the lv cap of Card Mastery is increased to lv25 in Cap70,,,
-,,Para Resist,40,81,122,163,204,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-13,Giant Stone Half Golem,Vit,1,2,3,4,5,,,,,
-,,Defense,14,29,44,59,74,,,,,
-,,Crit Resist,32,64,96,128,160,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-14,Manticore Lord Kram,Str,2,4,6,8,10,,,,,
-,,Attk Power,5,11,16,22,28,,,,,
-,,Paralyze,64,129,193,258,323,,,,,
-,,Max HP,81,163,245,327,409,,,,,
-,,Crystal of Power,12,24,36,48,60,,,,,
-,,,,,,,,,,,,
-Apocalypse Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-15,Fearful Death Ray,Magic Attk,2,5,8,11,14,,,,,
-,,Crit,16,33,49,66,83,,,,,
-,,Max MP,76,152,228,304,381,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-16,Midnight Death Howl,Str,1,3,4,6,8,,,,,
-,,Crit,13,27,40,54,68,,,,,
-,,Stun,40,80,120,160,200,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-17,Five Brothers' Specter,Attk Power,2,5,8,11,14,,,,,
-,,Crit,14,28,43,57,72,,,,,
-,,Paralyze,40,80,120,160,200,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-18,Vengeful Ling,Agi,1,3,4,6,8,,,,,
-,,Int,1,2,3,4,6,,,,,
-,,Stun,43,86,129,172,216,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-19,Obsessed Grunt,Str,1,3,4,6,8,,,,,
-,,Magic Def,12,24,37,49,62,,,,,
-,,Stun,40,80,120,160,200,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-20,Wild Hellglaze,Agi,1,3,4,6,8,,,,,
-,,Crit,14,28,42,56,70,,,,,
-,,Max MP,84,168,252,336,420,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-21,Enraged Umhama,Agi,1,3,4,6,8,,,,,
-,,Crit,18,36,54,72,91,,,,,
-,,Stun Resist,30,61,92,123,154,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-22,Prideful Levant,Str,1,3,4,6,8,,,,,
-,,Max HP,67,134,201,268,336,,,,,
-,,Max MP,72,144,216,288,360,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-23,Fanatic Blan,Magic Def,8,17,25,34,43,,,,,
-,,Crit Resist,72,144,216,288,361,,,,,
-,,Crystal of Power,6,12,18,24,30,,,,,
-24,Judge Apocalypse,Agi,2,4,6,8,10,,,,,
-,,Int,1,3,4,6,8,,,,,
-,,Magic Attk,5,11,16,22,28,,,,,
-,,Stun,73,147,220,294,368,,,,,
-,,Crystal of Power,12,24,36,48,60,,,,,
-,,,,,,,,,,,,
-Sea Dragon Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-25,Cyclops Berserker,Vit,3,6,10,13,17,,,,,
-,,Attk Power,4,9,14,19,24,,,,,
-,,Paralyze,148,296,445,593,742,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-26,Ogre Berserker,Agi,4,9,14,19,24,,,,,
-,,Magic Def,49,99,148,198,248,,,,,
-,,Max MP,198,396,594,792,990,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-27,Minotaur,Vit,2,5,8,11,14,,,,,
-,,Int,3,7,10,14,18,,,,,
-,,Stun,128,256,384,512,641,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-28,Rotting One-eyed Orc,Agi,3,6,9,12,16,,,,,
-,,Str,4,9,14,19,24,,,,,
-,,Magic Def,28,57,86,115,144,,,,,
-,,MP Recovery,1,2,3,4,5,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-29,Golem Lava,Vit,1,2,4,5,7,,,,,
-,,Magic Attk,4,9,14,19,24,,,,,
-,,Defense,39,78,118,157,197,,,,,
-,,Stun Resist,111,223,335,447,559,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-30,Revived Kakari,Str,4,9,14,19,24,,,,,
-,,Attk Power,4,9,14,19,24,,,,,
-,,Magic Attk,4,9,14,19,24,,,,,
-,,Crit,42,85,127,170,213,,,,,
-,,Stun,39,79,118,158,198,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-31,Kakari Returns with Vengeance,Attk Power,4,9,14,19,24,,,,,
-,,Magic Attk,4,9,14,19,24,,,,,
-,,Defense,44,89,134,179,224,,,,,
-,,Magic Def,44,89,134,179,224,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-32,Lizardman Brother Claw,Str,4,9,14,19,24,,,,,
-,,Attk Power,4,9,14,19,24,,,,,
-,,Para Resist,67,135,203,271,339,,,,,
-,,Crit Resist,67,135,203,271,339,,,,,
-,,Max HP,54,109,164,219,274,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-33,Lizardman Brother Tooth,Agi,4,9,14,19,24,,,,,
-,,Magic Attk,4,9,14,19,24,,,,,
-,,Para Resist,67,135,203,271,339,,,,,
-,,Stun Resist,67,135,203,271,339,,,,,
-,,Max HP,54,109,164,219,274,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-34,Lizardman Brother Tail,Int,3,7,10,14,18,,,,,
-,,Magic Attk,4,9,14,19,24,,,,,
-,,Crit Resist,67,135,203,271,339,,,,,
-,,Stun Resist,67,135,203,271,339,,,,,
-,,Max HP,54,109,164,219,274,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-35,Scout Captain Norbak,Agi,3,6,9,12,16,,,,,
-,,Attk Power,7,14,21,28,36,,,,,
-,,Para Resist,78,156,234,312,390,,,,,
-,,MP Recovery,1,2,3,4,5,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-36,Golem Moltan,Vit,1,2,4,5,7,,,,,
-,,Magic Attk,7,14,21,28,36,,,,,
-,,Defense,28,56,85,113,142,,,,,
-,,Crit Resist,34,69,104,139,174,,,,,
-,,Max MP,175,351,527,703,879,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-37,Sea Dragon Serpentra,Attk Power,14,28,42,56,70,,,,,
-,,Magic Attk,14,28,42,56,70,,,,,
-,,Str,9,18,28,37,47,,,,,
-,,Agi,9,18,28,37,47,,,,,
-,,Int,7,14,21,28,35,,,,,
-,,Vit,5,11,17,23,29,,,,,
-,,Final Damage,8,16,24,32,40,,,,,
-,,Crystal of Power,36,72,108,144,180,,,,,
-,,,,,,,,,,,,
-Archbishop Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-38,Shaman Lich Andara,Crit,23,47,71,95,119,,,,,
-,,Max HP,89,178,267,356,446,,,,,
-,,Max MP,95,191,286,382,478,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-39,Golem Toadstool,Vit,1,2,4,5,7,,,,,
-,,Defense,19,39,59,79,99,,,,,
-,,Crit Resist,15,31,46,62,78,,,,,
-,,Max HP,81,163,245,327,409,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-40,Treacherous Preacher Adolf,Magic Def,19,39,59,79,99,,,,,
-,,Crit,20,41,61,82,103,,,,,
-,,Para Resist,52,104,156,208,260,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-41,Vengeful Assassin Bonita,Agi,2,4,6,8,10,,,,,
-,,Crit,26,53,79,106,133,,,,,
-,,Crit Resist,53,107,160,214,268,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-42,Cold-Blooded Magician Rasputin,Int,1,3,4,6,8,,,,,
-,,Magic Attk,2,5,8,11,14,,,,,
-,,Paralyze,22,44,66,88,110,,,,,
-,,Para Resist,22,44,66,88,110,,,,,
-,,Max MP,88,176,264,352,440,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-43,Fallen Sage Ballius,Vit,1,2,4,5,7,,,,,
-,,Attk Power,2,5,8,11,14,,,,,
-,,Magic Attk,2,5,8,11,14,,,,,
-,,Crit Resist,28,56,84,112,140,,,,,
-,,Max MP,58,117,175,234,293,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-44,Resurrected Punisher Brass,Str,2,4,6,8,10,,,,,
-,,Defense,9,18,28,37,47,,,,,
-,,Magic Def,9,18,28,37,47,,,,,
-,,Crit Resist,10,20,30,40,50,,,,,
-,,Max HP,111,222,333,444,555,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-45,Archbishop Kazalman,Int,2,5,8,11,14,,,,,
-,,Magic Attk,6,13,20,27,34,,,,,
-,,Crit Resist,47,94,141,188,235,,,,,
-,,Max HP,47,94,141,188,235,,,,,
-,,MP Recovery,1,2,3,4,5,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-46,Golem Fujinorth,Str,3,7,10,14,18,,,,,
-,,Attk Power,6,13,20,27,34,,,,,
-,,Defense,24,49,74,99,124,,,,,
-,,Crit,27,54,82,109,137,,,,,
-,,Stun Resist,55,111,166,222,278,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Gigantes Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-47,Gatekeeper Quercus,Agi,1,3,5,7,9,,,,,
-,,Vit,1,2,3,4,6,,,,,
-,,Attk Power,3,6,10,13,17,,,,,
-,,Defense,23,46,70,93,117,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-48,Watcher Blanco 04,Int,1,2,4,5,7,,,,,
-,,Magic Def,13,27,40,54,68,,,,,
-,,Max HP,155,310,465,620,775,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-49,Immoral Ghost,Int,1,2,4,5,7,,,,,
-,,Magic Attk,3,6,10,13,17,,,,,
-,,Magic Def,18,37,55,74,93,,,,,
-,,Crit Resist,39,78,118,157,197,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-50,Slave Leader Constan,Agi,2,4,6,8,10,,,,,
-,,Magic Def,11,23,35,47,59,,,,t,
-,,Crit,17,34,51,68,86,,,,,
-,,Stun Resist,48,96,145,193,242,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-51,Gigantes Maha,Str,3,7,10,14,18,,,,,
-,,Vit,2,5,8,11,14,,,,,
-,,Defense,24,49,73,98,123,,,,,
-,,Max HP,95,190,286,381,477,,,,,
-,,Max MP,102,204,306,408,511,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Green Dragon Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-52,Bishop Gaius,Int,4,8,13,17,22,,,,,
-,,Vit,3,6,9,12,16,,,,,
-,,Magic Def,39,78,117,156,196,,,,,
-,,Paralyze,37,74,112,149,187,,,,,
-,,Para Resist,37,74,112,149,187,,,,,
-,,Max MP,175,351,527,703,879,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-53,Golem Morgon,Vit,3,6,9,12,16,,,,,
-,,Attk Power,12,25,38,51,64,,,,,
-,,Defense,56,112,168,224,280,,,,,
-,,Stun,101,202,304,405,507,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-54,White-eyes Krakes,Magic Attk,8,16,24,32,40,,,,,
-,,Crit,41,82,123,164,205,,,,,
-,,Paralyze,141,282,423,564,706,,,,,
-,,Max HP,246,492,738,984,1231,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-55,Swamp Queen Zabel,Str,7,14,21,28,36,,,,,
-,,Agi,7,14,21,28,36,,,,,
-,,Attk Power,10,20,31,41,52,,,,,
-,,Para Resist,111,222,333,444,556,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-56,Sorcerer Karahan,Int,6,13,20,27,34,,,,,
-,,Magic Attk,10,20,31,41,52,,,,,
-,,Stun Resist,103,207,311,415,519,,,,,
-,,MP Recovery,1,2,3,4,5,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-57,Green Dragon Karahan,Attk Power,20,40,60,80,100,,,,,
-,,Magic Attk,20,40,60,80,100,,,,,
-,,Str,14,28,42,56,70,,,,,
-,,Agi,14,28,42,56,70,,,,,
-,,Int,10,20,31,41,52,,,,,
-,,Vit,8,16,25,33,42,,,,,
-,,Final Damage,12,24,36,48,60,,,,,
-,,Crystal of Power,54,108,162,216,270,,,,,
-,,,,,,,,,,,,
-Professor K Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-58,Experiment No.287 Taylor Nakulun,Crit,31,63,94,126,158,,,,,
-,,Max HP,94,188,282,376,471,,,,,
-,,Max MP,101,202,303,404,505,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-59,Experiment No.171 Calamari Dienu,Int,1,3,5,7,9,,,,,
-,,Magic Def,34,68,102,136,170,,,,,
-,,Max HP,115,231,347,463,579,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-60,Experiment No.172 Calamari Ailuf,Crit,16,33,50,67,84,,,,,
-,,Magic Def,26,52,79,105,132,,,,,
-,,Para Resist,66,132,198,264,330,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-61,Experiment No.60 Prototype Omega,Agi,2,5,8,11,14,,,,,
-,,Crit,16,33,50,67,84,,,,,
-,,Crit Resist,96,192,288,384,480,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-62,Little Fairy Queen Lantana,Str,2,5,8,11,14,,,,,
-,,Agi,2,5,8,11,14,,,,,
-,,Paralyze,18,36,54,72,90,,,,,
-,,Para Resist,36,72,108,144,181,,,,,
-,,Max MP,101,202,303,404,506,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-63,Experiment No.665 Giant XXXX,Agi,3,6,9,12,16,,,,,
-,,Vit,1,3,4,6,8,,,,,
-,,Attk Power,4,9,13,18,23,,,,,
-,,Defense,28,57,85,114,143,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-64,Professor K,Str,4,9,14,19,24,,,,,
-,,Vit,4,8,12,16,20,,,,,
-,,Defense,24,48,72,96,120,,,,,
-,,Max HP,147,295,443,591,739,,,,,
-,,Max MP,158,316,475,633,792,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Chaos Resting Place (Tomb Invader),,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-65,Cursed Soul Hero,Vit,3,6,9,12,15,,,,,
-,,Attk Power,1,3,5,7,9,,,,,
-,,Magic Attk,1,3,5,7,9,,,,,
-,,Crit Resist,31,62,94,125,157,,,,,
-,,Max MP,101,202,303,404,506,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-66,Cursed Soul Chemise,Int,3,7,11,15,19,,,,,
-,,Magic Attk,9,18,27,36,45,,,,,
-,,Crit Resist,71,143,214,286,358,,,,,
-,,Max HP,27,54,81,108,135,,,,,
-,,MP Recovery,1,2,3,4,6,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Typhoon Kim Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-67,Gardener Garland,Str,2,5,7,10,13,,,,,
-,,Defense,12,25,37,50,63,,,,,
-,,Magic Def,12,25,37,50,63,,,,,
-,,Crit Resist,20,40,60,80,110,,,,,
-,,Max HP,147,295,442,590,738,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-68,Blacksmith Little John,Vit,1,3,5,7,9,,,,,
-,,Defense,26,52,79,105,132,,,,,
-,,Crit Resist,27,55,83,111,139,,,,,
-,,Max HP,81,163,245,327,409,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-69,Orc Kim Trio,Agi,3,7,11,15,19,,,,,
-,,Magic Def,15,31,46,62,78,,,,,
-,,Crit,22,45,68,91,114,,,,,
-,,Stun Resist,39,78,117,156,196,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-70,Harpy Dark Mage,Int,1,3,5,7,9,,,,,
-,,Magic Attk,4,8,12,16,20,,,,,
-,,Magic Def,24,49,74,99,124,,,,,
-,,Crit Resist,46,92,139,185,232,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-71,Typhoon Kim,Str,4,9,14,19,24,,,,,
-,,Attk Power,9,18,27,36,45,,,,,
-,,Stun,26,52,79,105,132,,,,,
-,,Crit,36,72,108,145,182,,,,,
-,,Paralyze,95,191,286,382,478,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Desert Dragon Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-72,Spitflower Ignis,Str,3,6,9,12,15,,,,,
-,,Agi,1,2,4,5,7,,,,,
-,,Attk Power,10,20,30,40,50,,,,,
-,,Defense,74,148,223,297,372,,,,,
-,,Paralyze,167,334,501,668,836,,,,,
-,,Stun Resist,170,350,520,700,880,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-73,Storm Master Zuu,Agi,4,8,12,16,20,,,,,
-,,Int,4,8,12,16,20,,,,,
-,,Vit,6,12,18,24,31,,,,,
-,,Magic Def,52,104,156,208,261,,,,,
-,,Stun Resist,63,127,190,254,318,,,,,
-,,Max MP,202,405,607,810,1013,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-74,Canyon Guardian Abubbah,Magic Attk,10,21,31,42,53,,,,,
-,,Stun,228,456,684,912,1141,,,,,
-,,Crit,41,82,123,164,205,,,,,
-,,Max HP,80,160,240,320,400,,,,,
-,,Max MP,80,160,240,320,400,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-75,Sandworm Hazal,Str,9,19,28,38,48,,,,,
-,,Agi,9,19,28,38,48,,,,,
-,,Attk Power,13,27,41,55,69,,,,,
-,,Stun Resist,17,34,51,68,85,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-76,Loyal Follower Kajif,Int,9,18,27,36,45,,,,,
-,,Magic Attk,13,27,41,55,69,,,,,
-,,Stun Resist,151,302,454,605,757,,,,,
-,,MP Recovery,1,2,3,4,5,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-77,Desert Dragon Jakard,Attk Power,27,54,81,108,135,,,,,
-,,Magic Attk,27,54,81,108,135,,,,,
-,,Str,25,50,75,100,125,,,,,
-,,Agi,25,50,75,100,125,,,,,
-,,Int,19,38,57,76,95,,,,,
-,,Vit,15,30,45,60,75,,,,,
-,,Final Damage,16,33,49,66,83,,,,,
-,,Crystal of Power,54,108,162,216,270,,,,,
-,,,,,,,,,,,,
-Guardian Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-78,Arch Frogolin Augur,Int,1,2,3,4,6,,,,,
-,,Vit,1,2,3,4,5,,,,,
-,,Magic Def,24,49,74,99,124,,,,,
-,,Max HP,143,287,431,575,719,,,,,
-,,Max MP,66,132,199,265,332,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-79,Furious Aera Venom,Str,1,3,4,6,8,,,,,
-,,Agi,3,7,11,15,19,,,,,
-,,Defense,11,22,33,44,55,,,,,
-,,Stun,11,23,35,47,59,,,,,
-,,Stun Resist,67,134,201,268,335,,,,,
-,,Max MP,66,132,198,264,331,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-80,The Great Dux Arks,Magic Attk,0,0,1,1,2,,,,,
-,,Agi,3,7,11,15,19,,,,,
-,,Int,1,2,3,4,6,,,,,
-,,Magic Def,24,49,74,99,124,,,,,
-,,Crit Resist,77,154,231,308,386,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-81,Ignacio Gigante,Attk Power,0,1,1,2,3,,,,,
-,,Str,1,3,4,6,8,,,,,
-,,Defense,33,66,99,132,166,,,,,
-,,Magic Def,24,49,74,99,124,,,,,
-,,Crit Resist,18,36,54,72,91,,,,,
-,,Max HP,42,84,127,169,212,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-82,Guardian of New Moon Fel Guardian,Int,3,6,9,12,15,,,,,
-,,Magic Attk,7,14,21,28,36,,,,,
-,,Magic Def,25,50,76,101,127,,,,,
-,,Crit Resist,86,172,258,344,430,,,,,
-,,Max HP,32,64,97,129,162,,,,,
-,,MP Recovery,1,2,3,4,6,,,,,
-,,Crit Damage,13,27,40,54,68,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Burning Resting Place (Tomb Invader),,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-83,Burning Soul Hero,Vit,3,6,9,12,15,,,,,
-,,Attk Power,2,4,6,8,11,,,,,
-,,Magic Attk,2,4,6,8,11,,,,,
-,,Crit,9,19,29,39,49,,,,,
-,,Crit Resist,37,75,113,151,189,,,,,
-,,Max MP,66,132,198,264,330,,,,,
-,,Crit Damage,16,33,50,67,84,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-84,Burning Soul Chemise,Str,5,11,17,23,29,,,,,
-,,Attk Power,7,14,21,28,36,,,,,
-,,Stun,31,63,94,126,158,,,,,
-,,Crit,21,43,65,87,109,,,,,
-,,Crit Resist,57,114,172,229,287,,,,,
-,,Paralyze,43,87,131,175,219,,,,,
-,,Stun Resist,57,114,172,229,287,,,,,
-,,Crit Damage,28,57,86,115,144,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Mist Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-85,Rusty Mist Gustcry,Crit,47,95,143,191,239,,,,,
-,,Stun Resist,25,51,77,103,129,,,,,
-,,Max HP,101,202,304,405,507,,,,,
-,,Crit Damage,16,33,50,67,84,,,,,
-,,Crystal of Power,9,18,27,36,45,,,,,
-86,Weeping Mist Queen,Str,5,11,17,23,29,,,,,
-,,Vit,4,9,14,19,24,,,,,
-,,Defense,28,57,86,115,144,,,,,
-,,Stun,88,177,266,355,444,,,,,
-,,Max HP,177,354,532,709,887,,,,,
-,,Crystal of Power,18,36,54,72,90,,,,,
-,,,,,,,,,,,,
-Black Dragon Nest,,,,,,,,,,,,
-Card No.,Monster Card,Status,Value for each Rarity,,,,,,,,,
-87,100-man Leader Ogre Boarba,Attk Power,1,3,4,6,8,,,,,
-,,Defense,93,186,279,372,465,,,,,
-,,Stun,141,282,424,565,707,,,,,
-,,Paralyze,209,418,627,836,1046,,,,,
-,,Stun Resist,22,44,66,88,110,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-88,Anjuta Army Leader Wonbla,Str,5,10,15,20,26,,,,,
-,,Agi,5,10,15,20,26,,,,,
-,,Para Resist,213,426,639,852,1066,,,,,
-,,Max MP,291,582,873,1164,1456,,,,,
-,,Crit Damage,138,276,415,553,692,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-89,Black Ring Punisher Meluka,Agi,5,10,15,20,26,,,,,
-,,Int,5,10,15,20,26,,,,,
-,,Vit,3,6,9,12,15,,,,,
-,,Magic Def,65,130,195,260,326,,,,,
-,,Crit,38,76,114,152,190,,,,,
-,,Stun Resist,79,158,238,317,397,,,,,
-,,Max MP,253,506,759,1012,1266,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-90,Centurion Titanian,Int,3,7,11,15,19,,,,,
-,,Crit,47,94,142,189,237,,,,,
-,,Stun Resist,94,189,283,378,473,,,,,
-,,Max HP,200,400,600,800,1000,,,,,
-,,MP Recovery,1,2,3,4,6,,,,,
-,,Crit Damage,138,276,415,553,692,,,,,
-,,Crystal of Power,27,54,81,108,135,,,,,
-91,Red Dragon Feder(?),Attk Power,33,67,101,135,169,,,,,
-,,Magic Attk,33,67,101,135,169,,,,,
-,,Str,29,59,88,118,148,,,,,
-,,Agi,29,59,88,118,148,,,,,
-,,Int,22,44,66,88,111,,,,,
-,,Vit,17,35,53,71,89,,,,,
-,,Final Damage,20,41,61,82,103,,,,,
-,,Crit Damage,82,165,248,331,414,,,,,
-,,Crystal of Power,54,108,162,216,270,,,,,
+Minotaur Nest
+Card No.,Monster Card,Stats,Value for each Rarity,,,,,,Unidentified XX Monster Card Pack
+1,General Umzaka,Str,1,2,3,4,5,,Card Rarity,%each draw
+1,General Umzaka,Crit Resist,10,21,32,43,54,,Magic,34%
+1,General Umzaka,Crystal of Power,1,2,3,4,5,,Rare,40%
+2,General Umhar,Agi,1,2,3,4,5,,Epic,20%
+2,General Umhar,Stun Resist,10,21,32,43,54,,Unique,5%
+2,General Umhar,Crystal of Power,1,2,3,4,5,,Legend,1%
+3,General Crimson Ummanba,Int,1,2,3,4,5
+3,General Crimson Ummanba,Vit,1,2,3,4,5,,Monster Card Box
+3,General Crimson Ummanba,Para Resist,15,31,46,62,78,,Card Rarity,%each roll,%every 10th rolls
+3,General Crimson Ummanba,Crystal of Power,2,4,6,8,10,,Magic,34%,-
+,,,,,,,,,Rare,40%,-
+Cerberus Nest,,,,,,,,,Epic,20%,-
+Card No.,Monster Card,Status,Value for each Rarity,,,,,,Unique,5%,95%
+4,Minotaur Knight,Magic Def,14,29,43,58,73,,Legend,1%,5%
+4,Minotaur Knight,Paralyze,31,63,95,127,159,,Dragon Card,0.01%,0.1%
+4,Minotaur Knight,Crystal of Power,4,8,12,16,20,,Dragon Card,0.001%,0.01%
+5,Minotaur Commander,Defense,14,29,43,58,73
+5,Minotaur Commander,Stun,31,63,95,127,159
+5,Minotaur Commander,Crystal of Power,4,8,12,16,20,,Mastery LV,Card Stats Increase,Crystal of Power
+6,Crow Hobgoblin,Attk Power,2,4,6,8,10,,1,5%,40
+6,Crow Hobgoblin,Crit,24,48,72,96,120,,2,10%,50
+6,Crow Hobgoblin,Crystal of Power,4,8,12,16,20,,3,15%,63
+7,Brother Summoner,Magic Attk,2,4,6,8,10,,4,20%,78
+7,Brother Summoner,Paralyze,7,15,23,31,39,,5,25%,96
+7,Brother Summoner,Max MP,85,171,256,342,428,,6,30%,117
+7,Brother Summoner,Crystal of Power,4,8,12,16,20,,7,35%,141
+8,Ogre Slave,Str,2,4,6,8,10,,8,40%,168
+8,Ogre Slave,Magic Def,14,28,43,57,72,,9,45%,198
+8,Ogre Slave,Crystal of Power,4,8,12,16,20,,10,50%,232,1183
+9,Ogre Commander,Agi,2,4,6,8,10,,11,55%,269
+9,Ogre Commander,Magic Def,14,28,43,57,72,,12,60%,310
+9,Ogre Commander,Crystal of Power,4,8,12,16,20,,13,65%,355
+10,Cerberus Kakari,Attk Power,4,8,12,16,21,,14,70%,404
+10,Cerberus Kakari,Magic Attk,4,8,12,16,21,,15,75%,458
+10,Cerberus Kakari,Max HP,121,242,363,484,605,,16,80%,516
+10,Cerberus Kakari,Crystal of Power,8,16,24,32,40,,17,85%,579
+,,,,,,,,,18,90%,647
+Manticore Nest,,,,,,,,,19,95%,721
+Card No.,Monster Card,Status,Value for each Rarity,,,,,,20,100%,800,6242
+11,Gargoyle Stinger,Int,1,2,3,4,6,,21,105%,845
+11,Gargoyle Stinger,Max MP,138,276,414,552,691,,22,110%,892
+11,Gargoyle Stinger,Crystal of Power,6,12,18,24,30,,23,115%,941
+12,Lamia Attacker,Agi,1,3,5,7,9,,24,120%,992
+12,Lamia Attacker,Attk Power,2,5,8,11,14,,25,125%,1045,10957
+12,Lamia Attacker,Para Resist,40,81,122,163,204,,the lv cap of Card Mastery is increased to lv25 in Cap70
+12,Lamia Attacker,Crystal of Power,6,12,18,24,30
+13,Giant Stone Half Golem,Vit,1,2,3,4,5
+13,Giant Stone Half Golem,Defense,14,29,44,59,74
+13,Giant Stone Half Golem,Crit Resist,32,64,96,128,160
+13,Giant Stone Half Golem,Crystal of Power,6,12,18,24,30
+14,Manticore Lord Kram,Str,2,4,6,8,10
+14,Manticore Lord Kram,Attk Power,5,11,16,22,28
+14,Manticore Lord Kram,Paralyze,64,129,193,258,323
+14,Manticore Lord Kram,Max HP,81,163,245,327,409
+14,Manticore Lord Kram,Crystal of Power,12,24,36,48,60
+Apocalypse Nest
+Card No.,Monster Card,Status,Value for each Rarity
+15,Fearful Death Ray,Magic Attk,2,5,8,11,14
+15,Fearful Death Ray,Crit,16,33,49,66,83
+15,Fearful Death Ray,Max MP,76,152,228,304,381
+15,Fearful Death Ray,Crystal of Power,6,12,18,24,30
+16,Midnight Death Howl,Str,1,3,4,6,8
+16,Midnight Death Howl,Crit,13,27,40,54,68
+16,Midnight Death Howl,Stun,40,80,120,160,200
+16,Midnight Death Howl,Crystal of Power,6,12,18,24,30
+17,Five Brothers' Specter,Attk Power,2,5,8,11,14
+17,Five Brothers' Specter,Crit,14,28,43,57,72
+17,Five Brothers' Specter,Paralyze,40,80,120,160,200
+17,Five Brothers' Specter,Crystal of Power,6,12,18,24,30
+18,Vengeful Ling,Agi,1,3,4,6,8
+18,Vengeful Ling,Int,1,2,3,4,6
+18,Vengeful Ling,Stun,43,86,129,172,216
+18,Vengeful Ling,Crystal of Power,6,12,18,24,30
+19,Obsessed Grunt,Str,1,3,4,6,8
+19,Obsessed Grunt,Magic Def,12,24,37,49,62
+19,Obsessed Grunt,Stun,40,80,120,160,200
+19,Obsessed Grunt,Crystal of Power,6,12,18,24,30
+20,Wild Hellglaze,Agi,1,3,4,6,8
+20,Wild Hellglaze,Crit,14,28,42,56,70
+20,Wild Hellglaze,Max MP,84,168,252,336,420
+20,Wild Hellglaze,Crystal of Power,6,12,18,24,30
+21,Enraged Umhama,Agi,1,3,4,6,8
+21,Enraged Umhama,Crit,18,36,54,72,91
+21,Enraged Umhama,Stun Resist,30,61,92,123,154
+21,Enraged Umhama,Crystal of Power,6,12,18,24,30
+22,Prideful Levant,Str,1,3,4,6,8
+22,Prideful Levant,Max HP,67,134,201,268,336
+22,Prideful Levant,Max MP,72,144,216,288,360
+22,Prideful Levant,Crystal of Power,6,12,18,24,30
+23,Fanatic Blan,Magic Def,8,17,25,34,43
+23,Fanatic Blan,Crit Resist,72,144,216,288,361
+23,Fanatic Blan,Crystal of Power,6,12,18,24,30
+24,Judge Apocalypse,Agi,2,4,6,8,10
+24,Judge Apocalypse,Int,1,3,4,6,8
+24,Judge Apocalypse,Magic Attk,5,11,16,22,28
+24,Judge Apocalypse,Stun,73,147,220,294,368
+24,Judge Apocalypse,Crystal of Power,12,24,36,48,60
+Sea Dragon Nest
+Card No.,Monster Card,Status,Value for each Rarity
+25,Cyclops Berserker,Vit,3,6,10,13,17
+25,Cyclops Berserker,Attk Power,4,9,14,19,24
+25,Cyclops Berserker,Paralyze,148,296,445,593,742
+25,Cyclops Berserker,Crystal of Power,18,36,54,72,90
+26,Ogre Berserker,Agi,4,9,14,19,24
+26,Ogre Berserker,Magic Def,49,99,148,198,248
+26,Ogre Berserker,Max MP,198,396,594,792,990
+26,Ogre Berserker,Crystal of Power,18,36,54,72,90
+27,Minotaur,Vit,2,5,8,11,14
+27,Minotaur,Int,3,7,10,14,18
+27,Minotaur,Stun,128,256,384,512,641
+27,Minotaur,Crystal of Power,18,36,54,72,90
+28,Rotting One-eyed Orc,Agi,3,6,9,12,16
+28,Rotting One-eyed Orc,Str,4,9,14,19,24
+28,Rotting One-eyed Orc,Magic Def,28,57,86,115,144
+28,Rotting One-eyed Orc,MP Recovery,1,2,3,4,5
+28,Rotting One-eyed Orc,Crystal of Power,18,36,54,72,90
+29,Golem Lava,Vit,1,2,4,5,7
+29,Golem Lava,Magic Attk,4,9,14,19,24
+29,Golem Lava,Defense,39,78,118,157,197
+29,Golem Lava,Stun Resist,111,223,335,447,559
+29,Golem Lava,Crystal of Power,18,36,54,72,90
+30,Revived Kakari,Str,4,9,14,19,24
+30,Revived Kakari,Attk Power,4,9,14,19,24
+30,Revived Kakari,Magic Attk,4,9,14,19,24
+30,Revived Kakari,Crit,42,85,127,170,213
+30,Revived Kakari,Stun,39,79,118,158,198
+30,Revived Kakari,Crystal of Power,18,36,54,72,90
+31,Kakari Returns with Vengeance,Attk Power,4,9,14,19,24
+31,Kakari Returns with Vengeance,Magic Attk,4,9,14,19,24
+31,Kakari Returns with Vengeance,Defense,44,89,134,179,224
+31,Kakari Returns with Vengeance,Magic Def,44,89,134,179,224
+31,Kakari Returns with Vengeance,Crystal of Power,18,36,54,72,90
+32,Lizardman Brother Claw,Str,4,9,14,19,24
+32,Lizardman Brother Claw,Attk Power,4,9,14,19,24
+32,Lizardman Brother Claw,Para Resist,67,135,203,271,339
+32,Lizardman Brother Claw,Crit Resist,67,135,203,271,339
+32,Lizardman Brother Claw,Max HP,54,109,164,219,274
+32,Lizardman Brother Claw,Crystal of Power,18,36,54,72,90
+33,Lizardman Brother Tooth,Agi,4,9,14,19,24
+33,Lizardman Brother Tooth,Magic Attk,4,9,14,19,24
+33,Lizardman Brother Tooth,Para Resist,67,135,203,271,339
+33,Lizardman Brother Tooth,Stun Resist,67,135,203,271,339
+33,Lizardman Brother Tooth,Max HP,54,109,164,219,274
+33,Lizardman Brother Tooth,Crystal of Power,18,36,54,72,90
+34,Lizardman Brother Tail,Int,3,7,10,14,18
+34,Lizardman Brother Tail,Magic Attk,4,9,14,19,24
+34,Lizardman Brother Tail,Crit Resist,67,135,203,271,339
+34,Lizardman Brother Tail,Stun Resist,67,135,203,271,339
+34,Lizardman Brother Tail,Max HP,54,109,164,219,274
+34,Lizardman Brother Tail,Crystal of Power,18,36,54,72,90
+35,Scout Captain Norbak,Agi,3,6,9,12,16
+35,Scout Captain Norbak,Attk Power,7,14,21,28,36
+35,Scout Captain Norbak,Para Resist,78,156,234,312,390
+35,Scout Captain Norbak,MP Recovery,1,2,3,4,5
+35,Scout Captain Norbak,Crystal of Power,18,36,54,72,90
+36,Golem Moltan,Vit,1,2,4,5,7
+36,Golem Moltan,Magic Attk,7,14,21,28,36
+36,Golem Moltan,Defense,28,56,85,113,142
+36,Golem Moltan,Crit Resist,34,69,104,139,174
+36,Golem Moltan,Max MP,175,351,527,703,879
+36,Golem Moltan,Crystal of Power,18,36,54,72,90
+37,Sea Dragon Serpentra,Attk Power,14,28,42,56,70
+37,Sea Dragon Serpentra,Magic Attk,14,28,42,56,70
+37,Sea Dragon Serpentra,Str,9,18,28,37,47
+37,Sea Dragon Serpentra,Agi,9,18,28,37,47
+37,Sea Dragon Serpentra,Int,7,14,21,28,35
+37,Sea Dragon Serpentra,Vit,5,11,17,23,29
+37,Sea Dragon Serpentra,Final Damage,8,16,24,32,40
+37,Sea Dragon Serpentra,Crystal of Power,36,72,108,144,180
+Archbishop Nest
+Card No.,Monster Card,Status,Value for each Rarity
+38,Shaman Lich Andara,Crit,23,47,71,95,119
+38,Shaman Lich Andara,Max HP,89,178,267,356,446
+38,Shaman Lich Andara,Max MP,95,191,286,382,478
+38,Shaman Lich Andara,Crystal of Power,9,18,27,36,45
+39,Golem Toadstool,Vit,1,2,4,5,7
+39,Golem Toadstool,Defense,19,39,59,79,99
+39,Golem Toadstool,Crit Resist,15,31,46,62,78
+39,Golem Toadstool,Max HP,81,163,245,327,409
+39,Golem Toadstool,Crystal of Power,9,18,27,36,45
+40,Treacherous Preacher Adolf,Magic Def,19,39,59,79,99
+40,Treacherous Preacher Adolf,Crit,20,41,61,82,103
+40,Treacherous Preacher Adolf,Para Resist,52,104,156,208,260
+40,Treacherous Preacher Adolf,Crystal of Power,9,18,27,36,45
+41,Vengeful Assassin Bonita,Agi,2,4,6,8,10
+41,Vengeful Assassin Bonita,Crit,26,53,79,106,133
+41,Vengeful Assassin Bonita,Crit Resist,53,107,160,214,268
+41,Vengeful Assassin Bonita,Crystal of Power,9,18,27,36,45
+42,Cold-Blooded Magician Rasputin,Int,1,3,4,6,8
+42,Cold-Blooded Magician Rasputin,Magic Attk,2,5,8,11,14
+42,Cold-Blooded Magician Rasputin,Paralyze,22,44,66,88,110
+42,Cold-Blooded Magician Rasputin,Para Resist,22,44,66,88,110
+42,Cold-Blooded Magician Rasputin,Max MP,88,176,264,352,440
+42,Cold-Blooded Magician Rasputin,Crystal of Power,9,18,27,36,45
+43,Fallen Sage Ballius,Vit,1,2,4,5,7
+43,Fallen Sage Ballius,Attk Power,2,5,8,11,14
+43,Fallen Sage Ballius,Magic Attk,2,5,8,11,14
+43,Fallen Sage Ballius,Crit Resist,28,56,84,112,140
+43,Fallen Sage Ballius,Max MP,58,117,175,234,293
+43,Fallen Sage Ballius,Crystal of Power,9,18,27,36,45
+44,Resurrected Punisher Brass,Str,2,4,6,8,10
+44,Resurrected Punisher Brass,Defense,9,18,28,37,47
+44,Resurrected Punisher Brass,Magic Def,9,18,28,37,47
+44,Resurrected Punisher Brass,Crit Resist,10,20,30,40,50
+44,Resurrected Punisher Brass,Max HP,111,222,333,444,555
+44,Resurrected Punisher Brass,Crystal of Power,9,18,27,36,45
+45,Archbishop Kazalman,Int,2,5,8,11,14
+45,Archbishop Kazalman,Magic Attk,6,13,20,27,34
+45,Archbishop Kazalman,Crit Resist,47,94,141,188,235
+45,Archbishop Kazalman,Max HP,47,94,141,188,235
+45,Archbishop Kazalman,MP Recovery,1,2,3,4,5
+45,Archbishop Kazalman,Crystal of Power,18,36,54,72,90
+46,Golem Fujinorth,Str,3,7,10,14,18
+46,Golem Fujinorth,Attk Power,6,13,20,27,34
+46,Golem Fujinorth,Defense,24,49,74,99,124
+46,Golem Fujinorth,Crit,27,54,82,109,137
+46,Golem Fujinorth,Stun Resist,55,111,166,222,278
+46,Golem Fujinorth,Crystal of Power,18,36,54,72,90
+Gigantes Nest
+Card No.,Monster Card,Status,Value for each Rarity
+47,Gatekeeper Quercus,Agi,1,3,5,7,9
+47,Gatekeeper Quercus,Vit,1,2,3,4,6
+47,Gatekeeper Quercus,Attk Power,3,6,10,13,17
+47,Gatekeeper Quercus,Defense,23,46,70,93,117
+47,Gatekeeper Quercus,Crystal of Power,9,18,27,36,45
+48,Watcher Blanco 04,Int,1,2,4,5,7
+48,Watcher Blanco 04,Magic Def,13,27,40,54,68
+48,Watcher Blanco 04,Max HP,155,310,465,620,775
+48,Watcher Blanco 04,Crystal of Power,9,18,27,36,45
+49,Immoral Ghost,Int,1,2,4,5,7
+49,Immoral Ghost,Magic Attk,3,6,10,13,17
+49,Immoral Ghost,Magic Def,18,37,55,74,93
+49,Immoral Ghost,Crit Resist,39,78,118,157,197
+49,Immoral Ghost,Crystal of Power,9,18,27,36,45
+50,Slave Leader Constan,Agi,2,4,6,8,10
+50,Slave Leader Constan,Magic Def,11,23,35,47,59,,,,t
+50,Slave Leader Constan,Crit,17,34,51,68,86
+50,Slave Leader Constan,Stun Resist,48,96,145,193,242
+50,Slave Leader Constan,Crystal of Power,9,18,27,36,45
+51,Gigantes Maha,Str,3,7,10,14,18
+51,Gigantes Maha,Vit,2,5,8,11,14
+51,Gigantes Maha,Defense,24,49,73,98,123
+51,Gigantes Maha,Max HP,95,190,286,381,477
+51,Gigantes Maha,Max MP,102,204,306,408,511
+51,Gigantes Maha,Crystal of Power,18,36,54,72,90
+Green Dragon Nest
+Card No.,Monster Card,Status,Value for each Rarity
+52,Bishop Gaius,Int,4,8,13,17,22
+52,Bishop Gaius,Vit,3,6,9,12,16
+52,Bishop Gaius,Magic Def,39,78,117,156,196
+52,Bishop Gaius,Paralyze,37,74,112,149,187
+52,Bishop Gaius,Para Resist,37,74,112,149,187
+52,Bishop Gaius,Max MP,175,351,527,703,879
+52,Bishop Gaius,Crystal of Power,27,54,81,108,135
+53,Golem Morgon,Vit,3,6,9,12,16
+53,Golem Morgon,Attk Power,12,25,38,51,64
+53,Golem Morgon,Defense,56,112,168,224,280
+53,Golem Morgon,Stun,101,202,304,405,507
+53,Golem Morgon,Crystal of Power,27,54,81,108,135
+54,White-eyes Krakes,Magic Attk,8,16,24,32,40
+54,White-eyes Krakes,Crit,41,82,123,164,205
+54,White-eyes Krakes,Paralyze,141,282,423,564,706
+54,White-eyes Krakes,Max HP,246,492,738,984,1231
+54,White-eyes Krakes,Crystal of Power,27,54,81,108,135
+55,Swamp Queen Zabel,Str,7,14,21,28,36
+55,Swamp Queen Zabel,Agi,7,14,21,28,36
+55,Swamp Queen Zabel,Attk Power,10,20,31,41,52
+55,Swamp Queen Zabel,Para Resist,111,222,333,444,556
+55,Swamp Queen Zabel,Crystal of Power,27,54,81,108,135
+56,Sorcerer Karahan,Int,6,13,20,27,34
+56,Sorcerer Karahan,Magic Attk,10,20,31,41,52
+56,Sorcerer Karahan,Stun Resist,103,207,311,415,519
+56,Sorcerer Karahan,MP Recovery,1,2,3,4,5
+56,Sorcerer Karahan,Crystal of Power,27,54,81,108,135
+57,Green Dragon Karahan,Attk Power,20,40,60,80,100
+57,Green Dragon Karahan,Magic Attk,20,40,60,80,100
+57,Green Dragon Karahan,Str,14,28,42,56,70
+57,Green Dragon Karahan,Agi,14,28,42,56,70
+57,Green Dragon Karahan,Int,10,20,31,41,52
+57,Green Dragon Karahan,Vit,8,16,25,33,42
+57,Green Dragon Karahan,Final Damage,12,24,36,48,60
+57,Green Dragon Karahan,Crystal of Power,54,108,162,216,270
+Professor K Nest
+Card No.,Monster Card,Status,Value for each Rarity
+58,Experiment No.287 Upgraded Tenakrun,Crit,31,63,94,126,158
+58,Experiment No.287 Upgraded Tenakrun,Max HP,94,188,282,376,471
+58,Experiment No.287 Upgraded Tenakrun,Max MP,101,202,303,404,505
+58,Experiment No.287 Upgraded Tenakrun,Crystal of Power,9,18,27,36,45
+59,Experiment No.171 Kalamari Dienu,Int,1,3,5,7,9
+59,Experiment No.171 Kalamari Dienu,Magic Def,34,68,102,136,170
+59,Experiment No.171 Kalamari Dienu,Max HP,115,231,347,463,579
+59,Experiment No.171 Kalamari Dienu,Crystal of Power,9,18,27,36,45
+60,Experiment No.172 Kalamari Elube,Crit,16,33,50,67,84
+60,Experiment No.172 Kalamari Elube,Magic Def,26,52,79,105,132
+60,Experiment No.172 Kalamari Elube,Para Resist,66,132,198,264,330
+60,Experiment No.172 Kalamari Elube,Crystal of Power,9,18,27,36,45
+61,Experiment No.60 Proto Omega,Agi,2,5,8,11,14
+61,Experiment No.60 Proto Omega,Crit,16,33,50,67,84
+61,Experiment No.60 Proto Omega,Crit Resist,96,192,288,384,480
+61,Experiment No.60 Proto Omega,Crystal of Power,9,18,27,36,45
+62,Little Fairy Queen Lantana,Str,2,5,8,11,14
+62,Little Fairy Queen Lantana,Agi,2,5,8,11,14
+62,Little Fairy Queen Lantana,Paralyze,18,36,54,72,90
+62,Little Fairy Queen Lantana,Para Resist,36,72,108,144,181
+62,Little Fairy Queen Lantana,Max MP,101,202,303,404,506
+62,Little Fairy Queen Lantana,Crystal of Power,9,18,27,36,45
+63,Experiment No.665 Super Strong XXXX,Agi,3,6,9,12,16
+63,Experiment No.665 Super Strong XXXX,Vit,1,3,4,6,8
+63,Experiment No.665 Super Strong XXXX,Attk Power,4,9,13,18,23
+63,Experiment No.665 Super Strong XXXX,Defense,28,57,85,114,143
+63,Experiment No.665 Super Strong XXXX,Crystal of Power,9,18,27,36,45
+64,Professor K,Str,4,9,14,19,24
+64,Professor K,Vit,4,8,12,16,20
+64,Professor K,Defense,24,48,72,96,120
+64,Professor K,Max HP,147,295,443,591,739
+64,Professor K,Max MP,158,316,475,633,792
+64,Professor K,Crystal of Power,18,36,54,72,90
+Chaos Resting Place (Tomb Invader)
+Card No.,Monster Card,Status,Value for each Rarity
+65,Cursed Soul Hero,Vit,3,6,9,12,15
+65,Cursed Soul Hero,Attk Power,1,3,5,7,9
+65,Cursed Soul Hero,Magic Attk,1,3,5,7,9
+65,Cursed Soul Hero,Crit Resist,31,62,94,125,157
+65,Cursed Soul Hero,Max MP,101,202,303,404,506
+65,Cursed Soul Hero,Crystal of Power,9,18,27,36,45
+66,Cursed Soul Chemise,Int,3,7,11,15,19
+66,Cursed Soul Chemise,Magic Attk,9,18,27,36,45
+66,Cursed Soul Chemise,Crit Resist,71,143,214,286,358
+66,Cursed Soul Chemise,Max HP,27,54,81,108,135
+66,Cursed Soul Chemise,MP Recovery,1,2,3,4,6
+66,Cursed Soul Chemise,Crystal of Power,18,36,54,72,90
+Typhoon Kim Nest
+Card No.,Monster Card,Status,Value for each Rarity
+67,Gardener Garland,Str,2,5,7,10,13
+67,Gardener Garland,Defense,12,25,37,50,63
+67,Gardener Garland,Magic Def,12,25,37,50,63
+67,Gardener Garland,Crit Resist,20,40,60,80,110
+67,Gardener Garland,Max HP,147,295,442,590,738
+67,Gardener Garland,Crystal of Power,9,18,27,36,45
+68,Blacksmith Little John,Vit,1,3,5,7,9
+68,Blacksmith Little John,Defense,26,52,79,105,132
+68,Blacksmith Little John,Crit Resist,27,55,83,111,139
+68,Blacksmith Little John,Max HP,81,163,245,327,409
+68,Blacksmith Little John,Crystal of Power,9,18,27,36,45
+69,Orc Kim Trio,Agi,3,7,11,15,19
+69,Orc Kim Trio,Magic Def,15,31,46,62,78
+69,Orc Kim Trio,Crit,22,45,68,91,114
+69,Orc Kim Trio,Stun Resist,39,78,117,156,196
+69,Orc Kim Trio,Crystal of Power,9,18,27,36,45
+70,Harpy Dark Mage,Int,1,3,5,7,9
+70,Harpy Dark Mage,Magic Attk,4,8,12,16,20
+70,Harpy Dark Mage,Magic Def,24,49,74,99,124
+70,Harpy Dark Mage,Crit Resist,46,92,139,185,232
+70,Harpy Dark Mage,Crystal of Power,9,18,27,36,45
+71,Typhoon Kim,Str,4,9,14,19,24
+71,Typhoon Kim,Attk Power,9,18,27,36,45
+71,Typhoon Kim,Stun,26,52,79,105,132
+71,Typhoon Kim,Crit,36,72,108,145,182
+71,Typhoon Kim,Paralyze,95,191,286,382,478
+71,Typhoon Kim,Crystal of Power,18,36,54,72,90
+Desert Dragon Nest
+Card No.,Monster Card,Status,Value for each Rarity
+72,Spitflower Ignis,Str,3,6,9,12,15
+72,Spitflower Ignis,Agi,1,2,4,5,7
+72,Spitflower Ignis,Attk Power,10,20,30,40,50
+72,Spitflower Ignis,Defense,74,148,223,297,372
+72,Spitflower Ignis,Paralyze,167,334,501,668,836
+72,Spitflower Ignis,Stun Resist,170,350,520,700,880
+72,Spitflower Ignis,Crystal of Power,27,54,81,108,135
+73,Storm Master Zuu,Agi,4,8,12,16,20
+73,Storm Master Zuu,Int,4,8,12,16,20
+73,Storm Master Zuu,Vit,6,12,18,24,31
+73,Storm Master Zuu,Magic Def,52,104,156,208,261
+73,Storm Master Zuu,Stun Resist,63,127,190,254,318
+73,Storm Master Zuu,Max MP,202,405,607,810,1013
+73,Storm Master Zuu,Crystal of Power,27,54,81,108,135
+74,Canyon Guardian Abubbah,Magic Attk,10,21,31,42,53
+74,Canyon Guardian Abubbah,Stun,228,456,684,912,1141
+74,Canyon Guardian Abubbah,Crit,41,82,123,164,205
+74,Canyon Guardian Abubbah,Max HP,80,160,240,320,400
+74,Canyon Guardian Abubbah,Max MP,80,160,240,320,400
+74,Canyon Guardian Abubbah,Crystal of Power,27,54,81,108,135
+75,Sandworm Hazal,Str,9,19,28,38,48
+75,Sandworm Hazal,Agi,9,19,28,38,48
+75,Sandworm Hazal,Attk Power,13,27,41,55,69
+75,Sandworm Hazal,Stun Resist,17,34,51,68,85
+75,Sandworm Hazal,Crystal of Power,27,54,81,108,135
+76,Loyal Follower Kajif,Int,9,18,27,36,45
+76,Loyal Follower Kajif,Magic Attk,13,27,41,55,69
+76,Loyal Follower Kajif,Stun Resist,151,302,454,605,757
+76,Loyal Follower Kajif,MP Recovery,1,2,3,4,5
+76,Loyal Follower Kajif,Crystal of Power,27,54,81,108,135
+77,Desert Dragon Jakard,Attk Power,27,54,81,108,135
+77,Desert Dragon Jakard,Magic Attk,27,54,81,108,135
+77,Desert Dragon Jakard,Str,25,50,75,100,125
+77,Desert Dragon Jakard,Agi,25,50,75,100,125
+77,Desert Dragon Jakard,Int,19,38,57,76,95
+77,Desert Dragon Jakard,Vit,15,30,45,60,75
+77,Desert Dragon Jakard,Final Damage,16,33,49,66,83
+77,Desert Dragon Jakard,Crystal of Power,54,108,162,216,270
+Guardian Nest
+Card No.,Monster Card,Status,Value for each Rarity
+78,Arch Frogolin Augur,Int,1,2,3,4,6
+78,Arch Frogolin Augur,Vit,1,2,3,4,5
+78,Arch Frogolin Augur,Magic Def,24,49,74,99,124
+78,Arch Frogolin Augur,Max HP,143,287,431,575,719
+78,Arch Frogolin Augur,Max MP,66,132,199,265,332
+78,Arch Frogolin Augur,Crystal of Power,9,18,27,36,45
+79,Furious Aera Venom,Str,1,3,4,6,8
+79,Furious Aera Venom,Agi,3,7,11,15,19
+79,Furious Aera Venom,Defense,11,22,33,44,55
+79,Furious Aera Venom,Stun,11,23,35,47,59
+79,Furious Aera Venom,Stun Resist,67,134,201,268,335
+79,Furious Aera Venom,Max MP,66,132,198,264,331
+79,Furious Aera Venom,Crystal of Power,9,18,27,36,45
+80,The Great Dux Arks,Magic Attk,0,0,1,1,2
+80,The Great Dux Arks,Agi,3,7,11,15,19
+80,The Great Dux Arks,Int,1,2,3,4,6
+80,The Great Dux Arks,Magic Def,24,49,74,99,124
+80,The Great Dux Arks,Crit Resist,77,154,231,308,386
+80,The Great Dux Arks,Crystal of Power,9,18,27,36,45
+81,Ignacio Gigante,Attk Power,0,1,1,2,3
+81,Ignacio Gigante,Str,1,3,4,6,8
+81,Ignacio Gigante,Defense,33,66,99,132,166
+81,Ignacio Gigante,Magic Def,24,49,74,99,124
+81,Ignacio Gigante,Crit Resist,18,36,54,72,91
+81,Ignacio Gigante,Max HP,42,84,127,169,212
+81,Ignacio Gigante,Crystal of Power,9,18,27,36,45
+84,"Fell Guardian, Keeper of the Forest",Int,3,6,9,12,15
+84,"Fell Guardian, Keeper of the Forest",Magic Attk,7,14,21,28,36
+84,"Fell Guardian, Keeper of the Forest",Magic Def,25,50,76,101,127
+84,"Fell Guardian, Keeper of the Forest",Crit Resist,86,172,258,344,430
+84,"Fell Guardian, Keeper of the Forest",Max HP,32,64,97,129,162
+84,"Fell Guardian, Keeper of the Forest",MP Recovery,1,2,3,4,6
+84,"Fell Guardian, Keeper of the Forest",Crit Damage,13,27,40,54,68
+84,"Fell Guardian, Keeper of the Forest",Crystal of Power,18,36,54,72,90
+Mysterious Resting Place (Tomb Invader)
+Card No.,Monster Card,Status,Value for each Rarity
+83,Devoured Echo Adventurer,Vit,3,6,9,12,15
+83,Devoured Echo Adventurer,Attk Power,2,4,6,8,11
+83,Devoured Echo Adventurer,Magic Attk,2,4,6,8,11
+83,Devoured Echo Adventurer,Crit,9,19,29,39,49
+83,Devoured Echo Adventurer,Crit Resist,37,75,113,151,189
+83,Devoured Echo Adventurer,Max MP,66,132,198,264,330
+83,Devoured Echo Adventurer,Crit Damage,16,33,50,67,84
+83,Devoured Echo Adventurer,Crystal of Power,9,18,27,36,45
+86,Devoured Echo Chemise,Str,5,11,17,23,29
+86,Devoured Echo Chemise,Attk Power,7,14,21,28,36
+86,Devoured Echo Chemise,Stun,31,63,94,126,158
+86,Devoured Echo Chemise,Crit,21,43,65,87,109
+86,Devoured Echo Chemise,Crit Resist,57,114,172,229,287
+86,Devoured Echo Chemise,Paralyze,43,87,131,175,219
+86,Devoured Echo Chemise,Stun Resist,57,114,172,229,287
+86,Devoured Echo Chemise,Crit Damage,28,57,86,115,144
+86,Devoured Echo Chemise,Crystal of Power,18,36,54,72,90
+Mist Nest
+Card No.,Monster Card,Status,Value for each Rarity
+82,Rusty Mist Gustcry,Crit,47,95,143,191,239
+82,Rusty Mist Gustcry,Stun Resist,25,51,77,103,129
+82,Rusty Mist Gustcry,Max HP,101,202,304,405,507
+82,Rusty Mist Gustcry,Crit Damage,16,33,50,67,84
+82,Rusty Mist Gustcry,Crystal of Power,9,18,27,36,45
+85,Weeping Mist Queen,Str,5,11,17,23,29
+85,Weeping Mist Queen,Vit,4,9,14,19,24
+85,Weeping Mist Queen,Defense,28,57,86,115,144
+85,Weeping Mist Queen,Stun,88,177,266,355,444
+85,Weeping Mist Queen,Max HP,177,354,532,709,887
+85,Weeping Mist Queen,Crystal of Power,18,36,54,72,90
+Black Dragon Nest
+Card No.,Monster Card,Status,Value for each Rarity
+87,Centurian Ogre Baopar,Attk Power,1,3,4,6,8
+87,Centurian Ogre Baopar,Defense,93,186,279,372,465
+87,Centurian Ogre Baopar,Stun,141,282,424,565,707
+87,Centurian Ogre Baopar,Paralyze,209,418,627,836,1046
+87,Centurian Ogre Baopar,Stun Resist,22,44,66,88,110
+87,Centurian Ogre Baopar,Crystal of Power,27,54,81,108,135
+88,Engata General Umbala,Str,5,10,15,20,26
+88,Engata General Umbala,Agi,5,10,15,20,26
+88,Engata General Umbala,Para Resist,213,426,639,852,1066
+88,Engata General Umbala,Max MP,291,582,873,1164,1456
+88,Engata General Umbala,Crit Damage,138,276,415,553,692
+88,Engata General Umbala,Crystal of Power,27,54,81,108,135
+89,Black Ring Punisher Meluka,Agi,5,10,15,20,26
+89,Black Ring Punisher Meluka,Int,5,10,15,20,26
+89,Black Ring Punisher Meluka,Vit,3,6,9,12,15
+89,Black Ring Punisher Meluka,Magic Def,65,130,195,260,326
+89,Black Ring Punisher Meluka,Crit,38,76,114,152,190
+89,Black Ring Punisher Meluka,Stun Resist,79,158,238,317,397
+89,Black Ring Punisher Meluka,Max MP,253,506,759,1012,1266
+89,Black Ring Punisher Meluka,Crystal of Power,27,54,81,108,135
+90,Chiliarch Titanion,Int,3,7,11,15,19
+90,Chiliarch Titanion,Crit,47,94,142,189,237
+90,Chiliarch Titanion,Stun Resist,94,189,283,378,473
+90,Chiliarch Titanion,Max HP,200,400,600,800,1000
+90,Chiliarch Titanion,MP Recovery,1,2,3,4,6
+90,Chiliarch Titanion,Crit Damage,138,276,415,553,692
+90,Chiliarch Titanion,Crystal of Power,27,54,81,108,135
+91,Black Dragon Feder,Attk Power,33,67,101,135,169
+91,Black Dragon Feder,Magic Attk,33,67,101,135,169
+91,Black Dragon Feder,Str,29,59,88,118,148
+91,Black Dragon Feder,Agi,29,59,88,118,148
+91,Black Dragon Feder,Int,22,44,66,88,111
+91,Black Dragon Feder,Vit,17,35,53,71,89
+91,Black Dragon Feder,Final Damage,20,41,61,82,103
+91,Black Dragon Feder,Crit Damage,82,165,248,331,414
+91,Black Dragon Feder,Crystal of Power,54,108,162,216,270

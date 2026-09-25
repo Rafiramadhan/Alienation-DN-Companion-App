@@ -1,9 +1,10 @@
 /**
  * Alienation DN Companion App — Google Sheet sync backend
  * ------------------------------------------------------------------
- * One Google Sheet stores BOTH the Character roster and the Guild
- * storage list (in two tabs: "Roster" and "Storage"), so they sync
- * across your devices / your guild.
+ * One Google Sheet stores everything the app tracks, one tab each:
+ * "Roster", "Columns", "Storage", "Blocklist" and "Cards" (each
+ * character's monster-card collection and mastery levels), so it all
+ * syncs across your devices / your guild.
  *
  * SETUP (one time, ~2 minutes):
  *   1. Create a Google Sheet (any blank one).
@@ -25,8 +26,8 @@
  * (Optional: set SECRET below; the app would then need to send it.)
  */
 
-var SCRIPT_VERSION = 3;   // bump when this script changes; the app warns if your deployed copy is older
-var SHEETS = { roster: 'Roster', storage: 'Storage', columns: 'Columns', blocklist: 'Blocklist' };
+var SCRIPT_VERSION = 4;   // bump when this script changes; the app warns if your deployed copy is older
+var SHEETS = { roster: 'Roster', storage: 'Storage', columns: 'Columns', blocklist: 'Blocklist', cards: 'Cards' };
 var SECRET = '';   // leave '' for no password
 
 function sheet_(name) {
@@ -51,7 +52,8 @@ function write_(name, header, rows) {
 
 function all_() {
   return { version: SCRIPT_VERSION, roster: read_(SHEETS.roster), storage: read_(SHEETS.storage),
-           columns: read_(SHEETS.columns), blocklist: read_(SHEETS.blocklist) };
+           columns: read_(SHEETS.columns), blocklist: read_(SHEETS.blocklist),
+           cards: read_(SHEETS.cards) };
 }
 
 function json_(obj) {
@@ -75,6 +77,7 @@ function doPost(e) {
       if (b.storage) write_(SHEETS.storage, b.storage.header || [], b.storage.rows || []);
       if (b.columns) write_(SHEETS.columns, b.columns.header || [], b.columns.rows || []);
       if (b.blocklist) write_(SHEETS.blocklist, b.blocklist.header || [], b.blocklist.rows || []);
+      if (b.cards)     write_(SHEETS.cards,     b.cards.header     || [], b.cards.rows     || []);
       return json_({ ok: true, version: SCRIPT_VERSION });
     }
     if (b.action === 'save') {           // single dataset (which: 'roster' | 'storage' | 'columns')

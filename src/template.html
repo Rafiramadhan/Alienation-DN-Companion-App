@@ -347,6 +347,220 @@
   table.blktable tbody tr:hover .xbtn{opacity:.9}
   .blkcatpill{display:inline-block}
 
+  /* ---------- character card-collection modal ---------- */
+  /* in-game card rarity colours (different from the DB table's tier colours) */
+  :root{
+    --cd-magic:#4fc978; --cd-rare:#4f9dff; --cd-epic:#c0813a;
+    --cd-unique:#a865ea; --cd-legend:#f0503c; --cd-none:#5b5346;
+  }
+  /* the button that opens it, in the roster's first cell */
+  table.ctable td .nickcell .rowcards{opacity:.45;flex:none;display:inline-flex;align-items:center;padding:4px 6px;
+    margin-left:auto;color:var(--gold-deep)}
+  table.ctable td .nickcell .rowcards + .rowdel{margin-left:0}
+  table.ctable tbody tr:hover .nickcell .rowcards{opacity:.95}
+  table.ctable td .nickcell .rowcards:hover{color:#1a1206;background:var(--gold)}
+
+  .cmodal{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;
+    padding:24px 16px}
+  .cmodal[hidden]{display:none}
+  .cmback{position:absolute;inset:0;background:rgba(4,3,2,.78);backdrop-filter:blur(3px)}
+  .cmwin{position:relative;width:min(760px,100%);max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+    border:1px solid var(--line2);border-radius:16px;overflow:hidden;
+    background:linear-gradient(180deg,#191208,#0e0a06);
+    box-shadow:0 26px 70px rgba(0,0,0,.72),0 0 0 1px rgba(231,189,94,.10),inset 0 1px 0 rgba(231,189,94,.10)}
+  .cmwin::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:2;
+    background:linear-gradient(90deg,transparent,var(--gold-deep) 18%,var(--gold2) 50%,var(--gold-deep) 82%,transparent)}
+
+  /* title bar: ? on the left, title centred, x on the right (like the in-game window) */
+  .cmbar{position:relative;display:flex;align-items:center;gap:10px;padding:12px 14px 11px;
+    background:linear-gradient(180deg,#2a1e10,#1a1309);border-bottom:1px solid var(--line)}
+  .cmtitle{flex:1;text-align:center;font-family:var(--serif);font-weight:700;letter-spacing:4px;
+    text-transform:uppercase;font-size:15px;
+    background:linear-gradient(180deg,#f9e9bf,#e7bd5e 52%,#b8892f);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .cmicon{flex:none;width:28px;height:28px;border-radius:50%;cursor:pointer;
+    border:1px solid var(--line2);background:linear-gradient(180deg,#221909,#150f08);
+    color:var(--gold);font-family:var(--serif);font-weight:700;font-size:13px;line-height:1}
+  .cmicon:hover{border-color:var(--gold);color:var(--gold2);box-shadow:0 0 12px rgba(231,189,94,.25)}
+  .cmicon.x:hover{border-color:#7a2a22;color:#ff7a6d;box-shadow:0 0 12px rgba(192,57,43,.28)}
+
+  /* who the collection belongs to */
+  .cmwho{display:flex;align-items:center;gap:9px;padding:9px 16px;border-bottom:1px solid var(--line);
+    background:rgba(231,189,94,.03);font-size:13px;color:var(--mut)}
+  .cmwho img{width:22px;height:22px;object-fit:contain}
+  .cmwho b{color:#f3ead7;font-weight:600}
+  .cmwho .spacer{flex:1}
+  .cmowned{font-family:var(--serif);font-size:12px;letter-spacing:1px;color:var(--gold);white-space:nowrap}
+  .cmowned b{color:var(--gold2)}
+
+  /* the two in-window tabs */
+  .cmtabs{display:flex;gap:6px;padding:12px 16px 0;border-bottom:1px solid var(--line)}
+  .cmtab{font-family:var(--serif);padding:8px 16px;border:1px solid var(--line2);border-bottom:none;
+    border-radius:9px 9px 0 0;background:linear-gradient(180deg,#1a130b,#120d07);color:var(--mut);
+    cursor:pointer;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+    transform:translateY(1px);transition:.15s}
+  .cmtab:hover{color:var(--gold2);border-color:var(--gold-deep)}
+  .cmtab.active{color:#1a1206;border-color:var(--gold-deep);
+    background:linear-gradient(180deg,var(--gold2),var(--gold-deep))}
+
+  .cmbody{flex:1;overflow:auto;padding:12px 16px}
+  .cmtools{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+  .cmtools input{flex:1;min-width:0;background:#120d07;color:var(--txt);border:1px solid var(--line2);
+    border-radius:8px;padding:8px 11px;font-size:13px;outline:none}
+  .cmtools input:focus{border-color:var(--gold)}
+  .cmtools select{background:#120d07;color:var(--txt);border:1px solid var(--line2);border-radius:8px;
+    padding:8px 10px;font-size:12.5px;min-width:0;cursor:pointer}
+
+  /* 4x4 slot grid, same shape as the in-game card window */
+  .cmgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .cmslot{position:relative;display:flex;flex-direction:column;gap:6px;align-items:center;
+    padding:6px 6px 5px;cursor:pointer;border-radius:10px;border:1px solid transparent;
+    background:transparent;font:inherit;color:inherit;text-align:center;transition:.12s}
+  .cmslot:hover{background:rgba(231,189,94,.07)}
+  .cmslot.sel{border-color:var(--gold);background:rgba(231,189,94,.12);
+    box-shadow:0 0 0 1px rgba(231,189,94,.35),0 0 18px rgba(231,189,94,.18)}
+  .cmart{position:relative;width:100%;max-width:104px;aspect-ratio:1/1;border-radius:8px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--cd-none);background:linear-gradient(180deg,#171009,#0d0906);
+    box-shadow:inset 0 0 24px rgba(0,0,0,.7)}
+  .cmart img{width:100%;height:100%;object-fit:cover}
+  .cmart .ini{font-family:var(--serif);font-weight:700;font-size:19px;letter-spacing:1px;
+    color:rgba(236,226,207,.30)}
+  .cmname{font-size:10.5px;line-height:1.25;color:var(--mut);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    min-height:26px;word-break:break-word}
+  .cmslot .cmtier{position:absolute;top:9px;right:calc(50% - 50px);font-size:8.5px;font-family:var(--serif);
+    letter-spacing:.6px;text-transform:uppercase;padding:1px 5px;border-radius:5px;
+    background:rgba(8,6,4,.85);border:1px solid currentColor}
+  .cmslot.owned .cmart{background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.07),transparent 65%),
+    linear-gradient(180deg,#1d1409,#100b06)}
+  .cmslot.owned .cmart .ini{color:rgba(236,226,207,.58)}
+  .cmslot.cd-magic{color:var(--cd-magic)}
+  .cmslot.cd-magic .cmart{border-color:var(--cd-magic);box-shadow:0 0 12px rgba(79,201,120,.30),inset 0 0 22px rgba(0,0,0,.6)}
+  .cmslot.cd-rare{color:var(--cd-rare)}
+  .cmslot.cd-rare .cmart{border-color:var(--cd-rare);box-shadow:0 0 12px rgba(79,157,255,.30),inset 0 0 22px rgba(0,0,0,.6)}
+  .cmslot.cd-epic{color:var(--cd-epic)}
+  .cmslot.cd-epic .cmart{border-color:var(--cd-epic);box-shadow:0 0 12px rgba(192,129,58,.32),inset 0 0 22px rgba(0,0,0,.6)}
+  .cmslot.cd-unique{color:var(--cd-unique)}
+  .cmslot.cd-unique .cmart{border-color:var(--cd-unique);box-shadow:0 0 12px rgba(168,101,234,.32),inset 0 0 22px rgba(0,0,0,.6)}
+  .cmslot.cd-legend{color:var(--cd-legend)}
+  .cmslot.cd-legend .cmart{border-color:var(--cd-legend);box-shadow:0 0 12px rgba(240,80,60,.32),inset 0 0 22px rgba(0,0,0,.6)}
+  .cmslot.owned .cmname{color:currentColor;font-weight:600}
+  .cmslot.unknown .cmname{font-style:italic;opacity:.6}
+  .cmslot.unknown .cmart{border-style:dashed}
+  .cmnone{grid-column:1/-1;padding:38px 10px;text-align:center;color:var(--mut);
+    font-family:var(--serif);letter-spacing:.5px}
+
+  /* pager */
+  .cmpager{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;flex-wrap:wrap}
+  .cmpg{min-width:28px;height:28px;padding:0 7px;border-radius:7px;cursor:pointer;
+    border:1px solid var(--line2);background:linear-gradient(180deg,#1a130b,#120d07);
+    color:var(--mut);font-family:var(--serif);font-size:12px;font-weight:700}
+  .cmpg:hover:not(:disabled){color:var(--gold2);border-color:var(--gold-deep)}
+  .cmpg:disabled{opacity:.3;cursor:default}
+  .cmpg.on{color:#1a1206;border-color:var(--gold-deep);
+    background:linear-gradient(180deg,var(--gold2),var(--gold-deep))}
+
+  /* footer: selected card + rarity setters + Details */
+  .cmfoot[hidden]{display:none}
+  .cmfoot{border-top:1px solid var(--line);padding:11px 16px;
+    background:linear-gradient(180deg,#140e08,#0d0906);display:flex;flex-direction:column;gap:9px}
+  .cmselrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .cmsel{flex:1;min-width:150px;font-size:12.5px;color:var(--mut)}
+  .cmsel b{color:#f3ead7;font-weight:600}
+  .cmsel .nestof{color:var(--gold-deep);font-size:11.5px}
+  .cmtiers{display:flex;gap:5px;flex-wrap:wrap}
+  .cmtierbtn{cursor:pointer;border-radius:7px;padding:5px 10px;font-family:var(--serif);font-size:10.5px;
+    font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+    border:1px solid currentColor;background:rgba(8,6,4,.5);color:var(--cd-none);transition:.12s}
+  .cmtierbtn:hover:not(:disabled){filter:brightness(1.35)}
+  .cmtierbtn:disabled{opacity:.3;cursor:default}
+  .cmtierbtn.t-magic{color:var(--cd-magic)}
+  .cmtierbtn.t-rare{color:var(--cd-rare)}
+  .cmtierbtn.t-epic{color:var(--cd-epic)}
+  .cmtierbtn.t-unique{color:var(--cd-unique)}
+  .cmtierbtn.t-legend{color:var(--cd-legend)}
+  .cmtierbtn.on{background:currentColor;box-shadow:0 0 12px currentColor}
+  .cmtierbtn.on span{color:#0d0906}
+  .cmfootrow{display:flex;align-items:center;gap:10px}
+  .cmhint{flex:1;color:var(--mut);font-size:11px;letter-spacing:.2px}
+
+  /* details / help panels */
+  .cmpanel{border-top:1px solid var(--line);background:#0c0805;padding:12px 16px;max-height:240px;overflow:auto}
+  .cmpanel[hidden]{display:none}
+  .cmpanel table{border-radius:8px}
+  .cmpanel thead th{padding:7px 10px;font-size:10.5px;cursor:default;text-align:center}
+  .cmpanel tbody td{padding:7px 10px;font-size:12.5px;text-align:center}
+  .cmpanel tbody td.lft{text-align:left}
+  .cmpanel td.own{background:rgba(231,189,94,.10);font-weight:700;color:var(--gold2)}
+  .cmpanel .pnote{color:var(--mut);font-size:12px;line-height:1.75}
+  .cmpanel .pnote b{color:var(--gold2)}
+  .cmpanel .ptitle{font-family:var(--serif);color:var(--gold);letter-spacing:1.5px;font-size:11px;
+    text-transform:uppercase;margin-bottom:8px}
+
+  /* mastery tab */
+  .cmmast .mnote{color:var(--mut);font-size:12px;margin-top:10px;line-height:1.7}
+  /* mastery tiles (two per row, like the in-game list) */
+  .cmmast .mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+  .cmmast .mtile{display:flex;align-items:center;gap:9px;padding:7px 9px;cursor:pointer;
+    border:1px solid var(--line);border-radius:10px;
+    background:linear-gradient(180deg,#171009,#110c07);transition:.12s}
+  .cmmast .mtile:hover{border-color:var(--gold-deep);background:rgba(231,189,94,.07)}
+  .cmmast .mtile.sel{border-color:var(--gold);background:rgba(231,189,94,.12);
+    box-shadow:0 0 0 1px rgba(231,189,94,.3),0 0 16px rgba(231,189,94,.14)}
+  .cmmast .micon{flex:none;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;
+    justify-content:center;font-family:var(--serif);font-weight:700;font-size:13px;letter-spacing:.5px;
+    border:1px solid var(--line2);color:rgba(236,226,207,.4);
+    background:radial-gradient(circle at 50% 30%,rgba(90,162,255,.16),transparent 70%),linear-gradient(180deg,#1b1309,#0f0a06)}
+  .cmmast .mtile.up .micon{color:var(--gold2);border-color:var(--gold-deep);
+    background:radial-gradient(circle at 50% 30%,rgba(231,189,94,.28),transparent 70%),linear-gradient(180deg,#221806,#120c06);
+    box-shadow:0 0 10px rgba(231,189,94,.22)}
+  .cmmast .mbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .cmmast .mname{font-size:12px;color:var(--mut);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cmmast .mtile.up .mname{color:#f3ead7;font-weight:600}
+  .cmmast .mlvlrow{display:flex;align-items:center;gap:3px;font-family:var(--serif);font-size:11px;
+    letter-spacing:.8px;color:var(--gold-deep)}
+  .cmmast input.mlvl{width:38px;min-width:0;padding:2px 4px;text-align:center;font-size:12px;
+    font-variant-numeric:tabular-nums;background:#0f0a06;border:1px solid var(--line2);border-radius:5px;
+    color:var(--gold2);font-family:var(--sans)}
+  .cmmast input.mlvl:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(231,189,94,.14)}
+
+  /* the selected mastery's detail box (mirrors the in-game panel) */
+  .cmmast .mdetail{border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+    background:linear-gradient(180deg,#12100a,#0d0906)}
+  .cmmast .mdhead{display:flex;align-items:baseline;gap:10px;margin-bottom:7px}
+  .cmmast .mdname{flex:1;font-family:var(--serif);color:var(--gold2);letter-spacing:1px;font-size:12.5px}
+  .cmmast .mdlvl{font-size:12px;color:var(--mut)}
+  .cmmast .mdlvl b{color:var(--gold2);font-size:13.5px}
+  .cmmast .mdrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:12.5px;
+    color:var(--txt);padding:4px 0}
+  .cmmast .mdrow.next{border-top:1px solid rgba(90,69,38,.35);margin-top:4px;padding-top:7px;color:var(--mut)}
+  .cmmast .mdlbl{flex:1;min-width:130px}
+  .cmmast .mdval{font-family:var(--serif);color:var(--gold);letter-spacing:.5px}
+  .cmmast .mdcalc{color:var(--mut);font-size:12px;font-variant-numeric:tabular-nums}
+  .cmmast .mdcalc b{color:var(--gold2)}
+  @media(max-width:560px){ .cmmast .mgrid{grid-template-columns:1fr} }
+  .cmmast .mtally{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .cmmast .tally{border:1px solid currentColor;border-radius:8px;padding:6px 11px;font-size:11.5px;
+    font-family:var(--serif);letter-spacing:.8px;background:rgba(8,6,4,.5)}
+  .cmmast .tally b{font-size:13px}
+  .cmmast .tally.t-magic{color:var(--cd-magic)}
+  .cmmast .tally.t-rare{color:var(--cd-rare)}
+  .cmmast .tally.t-epic{color:var(--cd-epic)}
+  .cmmast .tally.t-unique{color:var(--cd-unique)}
+  .cmmast .tally.t-legend{color:var(--cd-legend)}
+  .cmmast .tally.t-none{color:var(--cd-none)}
+
+  @media(max-width:560px){
+    .cmodal{padding:10px 8px}
+    .cmgrid{grid-template-columns:repeat(3,1fr)}
+    .cmtabs{padding:10px 10px 0}
+    .cmbody{padding:12px 10px}
+    .cmwho{flex-wrap:wrap}
+  }
+  .cmgrid .cmpad{visibility:hidden;pointer-events:none}
+  .btn:disabled{opacity:.4;cursor:default;filter:none;box-shadow:none}
+
   @media(max-width:560px){ h1{font-size:28px} .tab{padding:10px 15px} }
 </style>
 </head>
@@ -371,7 +585,7 @@
   <div id="syncSection" class="hidden">
     <!-- teaser: shown by default when not connected -->
     <div class="synctease" id="syncTease">
-      <span class="teasetxt">☁ Playing on more than one device? You can sync your roster &amp; guild storage to your own Google Sheet — optional, everything works fine locally without it.</span>
+      <span class="teasetxt">☁ Playing on more than one device? You can sync your roster, card collections &amp; guild storage to your own Google Sheet — optional, everything works fine locally without it.</span>
       <button class="btn ghost" id="syncSetup">Want to use a spreadsheet? →</button>
     </div>
     <!-- compact status bar: shown when connected -->
@@ -412,7 +626,7 @@
         <button class="btn ghost" id="syncCancel">Cancel</button>
       </div>
       <div class="synchelp">
-        One sheet holds both your roster and guild storage. The link lets anyone who has it read/write your
+        One sheet holds everything — roster, card collections, guild storage and blocklist. The link lets anyone who has it read/write your
         data, so share it only with people you trust. To use it on another device, connect there with the same URL
         (tip: the <b>Copy link</b> button once connected).
       </div>
@@ -508,6 +722,69 @@
     </div>
     <div id="blkTableArea"></div>
   </section>
+</div>
+
+<!-- ============ CHARACTER CARD COLLECTION MODAL ============ -->
+<div class="cmodal" id="cardModal" hidden>
+  <div class="cmback" data-cmclose></div>
+  <div class="cmwin" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <div class="cmbar">
+      <button class="cmicon" id="cmHelp" title="How this works" aria-label="Help">?</button>
+      <div class="cmtitle" id="cmTitle">Card</div>
+      <button class="cmicon x" data-cmclose title="Close (Esc)" aria-label="Close">&#10005;</button>
+    </div>
+
+    <div class="cmwho" id="cmWho"></div>
+
+    <div class="cmtabs">
+      <button class="cmtab active" data-ct="cards">Monster Cards</button>
+      <button class="cmtab" data-ct="mastery">The Power of Mastery</button>
+    </div>
+
+    <div class="cmbody">
+      <!-- ---- Monster Cards ---- -->
+      <section id="cmCardsTab">
+        <div class="cmtools">
+          <input id="cmSearch" type="text" placeholder="Search card name…" autocomplete="off">
+          <select id="cmFilter" title="Show">
+            <option value="all">All cards</option>
+            <option value="owned">Owned only</option>
+            <option value="missing">Missing only</option>
+          </select>
+        </div>
+        <div class="cmgrid" id="cmGrid"></div>
+        <div class="cmpager" id="cmPager"></div>
+      </section>
+
+      <!-- ---- The Power of Mastery ---- -->
+      <section id="cmMastTab" class="cmmast" hidden></section>
+    </div>
+
+    <div class="cmfoot" id="cmFoot">
+      <div class="cmselrow">
+        <div class="cmsel" id="cmSel">Pick a card to set its rarity.</div>
+        <div class="cmtiers" id="cmTiers"></div>
+      </div>
+      <div class="cmfootrow">
+        <span class="cmhint">Click a slot to select it · click it again to cycle rarity · right-click to clear.</span>
+        <button class="btn ghost" id="cmDetails">Details</button>
+      </div>
+    </div>
+
+    <div class="cmpanel" id="cmDetailPanel" hidden></div>
+    <div class="cmpanel" id="cmHelpPanel" hidden>
+      <div class="ptitle">How this works</div>
+      <div class="pnote">
+        Each character keeps their own card collection. <b>Click a slot</b> to select it, then pick a rarity
+        below — or click the selected slot again to <b>cycle</b> Magic → Rare → Epic → Unique → Legend → none.
+        <b>Right-click</b> a slot clears it.<br>
+        <b>Details</b> shows what the selected card grants at every rarity, with your tier highlighted.<br>
+        The <b>Power of Mastery</b> tab is where you type the level of each mastery you have upgraded.<br>
+        Collections and mastery levels save with the rest of your roster, and sync to your Google Sheet
+        when one is connected (its <b>Cards</b> tab).
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -849,14 +1126,19 @@ function charHeaderHTML(){
   top += '</tr>'; bottom += '</tr>';
   return `<thead>${top}${bottom}</thead>`;
 }
-function delBtn(i){ return `<button class="xbtn rowdel" data-del="${i}" title="Delete character">✕</button>`; }
+// first-cell row buttons: open the card collection, and delete the character
+function rowActions(i){
+  const n = typeof ownedCount==='function' ? ownedCount(CHARS[i]) : 0;
+  return `<button class="xbtn rowcards" data-cards="${i}" title="Card collection — ${n} collected" aria-label="Card collection"><svg viewBox='0 0 14 18' width='13' height='16' aria-hidden='true'><rect x='.7' y='.7' width='12.6' height='16.6' rx='2.4' fill='none' stroke='currentColor' stroke-width='1.4'/><path d='M7 4.2 10 9 7 13.8 4 9Z' fill='currentColor'/></svg></button>`
+       + `<button class="xbtn rowdel" data-del="${i}" title="Delete character">✕</button>`;
+}
 function charRowHTML(c,i){
   const cols=visCols(); let tds='';
   cols.forEach((f,idx)=>{
     const first=idx===0;
     if(f.type==='check'){
       const box=`<input type="checkbox" data-i="${i}" data-k="${f.k}"${c[f.k]?' checked':''}>`;
-      tds += first ? `<td class="tchk sticky"><div class="nickcell">${box}${delBtn(i)}</div></td>`
+      tds += first ? `<td class="tchk sticky"><div class="nickcell">${box}${rowActions(i)}</div></td>`
                    : `<td class="tchk">${box}</td>`;
       return;
     }
@@ -867,20 +1149,20 @@ function charRowHTML(c,i){
       const opts = ['<option value="">— class —</option>'].concat(
         CLASS_NAMES.map(n=>`<option value="${esc(n)}"${c.cls===n?' selected':''}>${esc(n)}</option>`)).join('');
       const sel=`<select class="clssel" data-i="${i}" data-k="cls">${opts}</select>`;
-      tds += `<td class="tcls${first?' sticky':''}"><div class="${first?'nickcell':'cellflex'}">${icon}${sel}${first?delBtn(i):''}</div></td>`;
+      tds += `<td class="tcls${first?' sticky':''}"><div class="${first?'nickcell':'cellflex'}">${icon}${sel}${first?rowActions(i):''}</div></td>`;
       return;
     }
     if(f.type==='select'){
       const opts=['<option value="">—</option>'].concat(
         (f.options||[]).map(o=>`<option value="${esc(o)}"${c[f.k]===o?' selected':''}>${esc(o)}</option>`)).join('');
       const sel=`<select class="gsel" data-i="${i}" data-k="${f.k}">${opts}</select>`;
-      tds += `<td class="tsel${first?' sticky':''}">${first?`<div class="nickcell">${sel}${delBtn(i)}</div>`:sel}</td>`;
+      tds += `<td class="tsel${first?' sticky':''}">${first?`<div class="nickcell">${sel}${rowActions(i)}</div>`:sel}</td>`;
       return;
     }
     const val=c[f.k]==null?'':c[f.k];
     const input=`<input data-i="${i}" data-k="${f.k}" type="text"${f.type==='num'?' inputmode="decimal"':''} value="${esc(val)}">`;
     const cls=(first?'sticky ':'')+(f.type==='num'?'tnum':'');
-    tds += first ? `<td class="${cls.trim()}"><div class="nickcell">${input}${delBtn(i)}</div></td>`
+    tds += first ? `<td class="${cls.trim()}"><div class="nickcell">${input}${rowActions(i)}</div></td>`
                  : `<td class="${cls.trim()}">${input}</td>`;
   });
   return `<tr class="crow" data-i="${i}">${tds}</tr>`;
@@ -1151,6 +1433,405 @@ $('ctableArea').addEventListener('click',    e=>{ const th=e.target.closest('th[
 document.addEventListener('click',()=>{ tipPinned=false; hideTip(); });
 window.addEventListener('scroll',hideTip,true);
 
+/* ============ CHARACTER CARD COLLECTION (one modal per character) ============
+   Mirrors the in-game Card window: a 4x4 page of monster-card slots, each slot
+   coloured by the rarity that character owns it at, plus the Power of Mastery tab.
+   Card state lives on the character object as c.cards = { "<card name>": "<tier>" }. */
+
+// The in-game Card window's slot order — 95 slots, named as the game names them (build.js
+// renames the handful the community sheet spells differently, so these match the database
+// directly). Four slots nobody has identified yet read "Monster Card"; they are real slots
+// and can still be tracked. Empty the array to fall back to the sheet's own row order.
+const CARD_ORDER = [
+  'Deputy Umzaka', 'Deputy Umhar', 'General Crimson Ummanba', 'Minotaur Knight',
+  'Minotaur Commander', 'Crow Hobgoblin', 'Brother Summoner', 'Ogre Slave',
+  'Ogre Commander', 'Cerberus Kakari', 'Gargoyle Stinger', 'Lamia Attacker',
+  'Giant Stone Half Golem', 'Manticore Lord Kram', 'Fearful Death Ray', 'Midnight Death Howl',
+  "Five Brothers' Specter", 'Vengeful Ling', 'Obsessed Grunt', 'Wild Hellglaze',
+  'Enraged Umhama', 'Prideful Levant', 'Fanatic Blan', 'Judge Apocalypse',
+  'Monster Card', 'Cyclops Berserker', 'Ogre Berserker', 'Minotaur',
+  'Rotting One-eyed Orc', 'Golem Lava', 'Revived Kakari', 'Kakari Returns with Vengeance',
+  'Lizardman Brother Claw', 'Lizardman Brother Tooth', 'Lizardman Brother Tail', 'Scout Captain Norbak',
+  'Golem Moltan', 'Sea Dragon Serpentra', 'Monster Card', 'Shaman Lich Andara',
+  'Golem Toadstool', 'Treacherous Preacher Adolf', 'Vengeful Assassin Bonita', 'Cold-Blooded Magician Rasputin',
+  'Fallen Sage Ballius', 'Resurrected Punisher Brass', 'Archbishop Kazalman', 'Golem Fujinorth',
+  'Monster Card', 'Gatekeeper Quercus', 'Watcher Blanco 04', 'Immoral Ghost',
+  'Slave Leader Constan', 'Gigantes Maha', 'Monster Card', 'Bishop Gaius',
+  'Golem Morgon', 'White-eyes Krakes', 'Swamp Queen Zabel', 'Sorcerer Karahan',
+  'Green Dragon Karahan', 'Experiment No.287 Tenakrun', 'Experiment No.171 Kalamari Dienu', 'Experiment No.172 Kalamari Elube',
+  'Experiment No.60 Prototype Omega', 'Little Fairy Queen Lantana', 'Experiment No.665 Giant XXXX', 'Professor K',
+  'Cursed Soul Hero', 'Cursed Soul Chemise', 'Gardener Garland', 'Blacksmith Little John',
+  'Orc Kim Trio', 'Harpy Dark Mage', 'Typhoon Kim', 'Spitflower Ignis',
+  'Storm Master Zuu', 'Canyon Guardian Abubbah', 'Sandworm Hazal', 'Loyal Follower Kajif',
+  'Desert Dragon Jakard', 'Arch Frogolin Augur', 'Furious Aera Venom', 'The Great Dux Arks',
+  // the tail is not live yet, so these last slots are the community's best guess
+  'Ignacio Gigante', 'Devoured Echo Adventurer', 'Fell Guardian, Keeper of the Forest', 'Devoured Echo Chemise',
+  'Rusty Mist Gustcry', 'Weeping Mist Queen', '100-man Leader Ogre Boarba', 'Anjuta Army Leader Wonbla',
+  'Black Ring Punisher Meluka', 'Centurion Titanian', 'Black Dragon Feder'
+];
+const CARD_ART = __CARDART__;          // { "Card Name": dataURI } from assets/cards/ (optional)
+const CARD_PAGE = 16;                  // 4 x 4, like the in-game window
+
+const CD_TIERS = [
+  { k:'magic',  label:'Magic'  },
+  { k:'rare',   label:'Rare'   },
+  { k:'epic',   label:'Epic'   },
+  { k:'unique', label:'Unique' },
+  { k:'legend', label:'Legend' }
+];
+const CD_KEYS  = CD_TIERS.map(t=>t.k);
+const CD_LABEL = {}; CD_TIERS.forEach(t=>CD_LABEL[t.k]=t.label);
+
+const CARD_BY_NAME = {}; DB.cards.forEach(c=>{ CARD_BY_NAME[c.name]=c; });
+// One entry per in-game slot: { key, name, nest, stats }. `key` is what a character's
+// collection is stored under and is unique even for the repeated "Monster Card" slots.
+const CARD_SLOTS = (()=>{
+  if(!CARD_ORDER.length) return DB.cards.map(c=>({ key:c.name, name:c.name, nest:c.nest, stats:c.stats }));
+  let unknown=0;
+  return CARD_ORDER.map(n=>{
+    const src=CARD_BY_NAME[n];
+    if(src) return { key:n, name:n, nest:src.nest, stats:src.stats };
+    return { key:n+' '+(++unknown), name:n, nest:'', stats:[], unknown:true };
+  });
+})();
+const CARD_BY_KEY = {}; CARD_SLOTS.forEach(s=>{ CARD_BY_KEY[s.key]=s; });
+// A collection saved before build.js renamed a card still uses the old key — move it once.
+const CARD_RENAMES = __NAMEFIX__;    // { "community sheet name": "in-game name" }
+function migrateCards(m){
+  for(const from in CARD_RENAMES){
+    const to=CARD_RENAMES[from];
+    if(m[from]!==undefined){ if(m[to]===undefined) m[to]=m[from]; delete m[from]; }
+  }
+  return m;
+}
+
+let cmChar=-1, cmPage=0, cmSel='', cmTab='cards', cmQuery='', cmFilter='all';
+
+// ---- per-character card state -------------------------------------------------
+function charCards(i){ const c=CHARS[i]; if(!c) return {};
+  if(!c.cards || typeof c.cards!=='object' || Array.isArray(c.cards)) c.cards={};
+  if(!c._cmig){ migrateCards(c.cards); c._cmig=1; }
+  return c.cards; }
+function cardTier(i,name){ const t=charCards(i)[name]; return CD_KEYS.indexOf(t)>=0 ? t : ''; }
+function setCardTier(i,name,tier){
+  const m=charCards(i);
+  if(tier) m[name]=tier; else delete m[name];
+  saveChars();
+}
+function ownedCount(c){
+  if(!c||!c.cards) return 0;
+  let n=0; CARD_SLOTS.forEach(s=>{ if(CD_KEYS.indexOf(c.cards[s.key])>=0) n++; });
+  return n;
+}
+function tierCounts(i){
+  const out={magic:0,rare:0,epic:0,unique:0,legend:0};
+  const m=charCards(i);
+  CARD_SLOTS.forEach(s=>{ const t=m[s.key]; if(t in out) out[t]++; });
+  return out;
+}
+// The sheet only stores the roster's declared columns, so card collections and the mastery
+// level live in this browser only. Carry them across a Pull by nickname, then by row position.
+function mergeLocalOnly(oldArr,newArr){
+  const byNick={};
+  (oldArr||[]).forEach(c=>{ const n=String(c&&c.nickname||'').trim().toLowerCase();
+    if(n && !(n in byNick)) byNick[n]=c; });
+  return (newArr||[]).map((c,i)=>{
+    const n=String(c.nickname||'').trim().toLowerCase();
+    const src=(n && byNick[n]) || (oldArr||[])[i];
+    if(src){ if(src.cards) c.cards=src.cards; if(src.masteries) c.masteries=src.masteries; }
+    return c;
+  });
+}
+
+// ---- The Power of Mastery: 12 upgradable masteries, each boosting one card stat ----
+// Order matches the in-game list (two per row, top to bottom).
+const MASTERIES = [
+  { k:'destruction', label:'Destruction Mastery', stat:'Attk Power', icon:'ATK',   tip:'Physical attack bonus' },
+  { k:'magic',       label:'Magic Mastery',       stat:'Magic Attk', icon:'MAT',   tip:'Magic attack bonus'    },
+  { k:'giantbear',   label:'Giant Bear Mastery',  stat:'Str', icon:'STR',          tip:'Strength bonus'        },
+  { k:'wind',        label:'Wind Mastery',        stat:'Agi', icon:'AGI',          tip:'Agility bonus'         },
+  { k:'wisdom',      label:'Wisdom Mastery',      stat:'Int', icon:'INT',          tip:'Intellect bonus'       },
+  { k:'health',      label:'Health Mastery',      stat:'Vit', icon:'VIT',          tip:'Vitality bonus'        },
+  { k:'lethal',      label:'Lethal Mastery',      stat:'Crit', icon:'CRI',         tip:'Critical bonus'        },
+  { k:'final',       label:'Final Mastery',       stat:'Final Damage', icon:'FD', tip:'Final damage bonus'    },
+  { k:'ironwall',    label:'Iron Wall Mastery',   stat:'Defense', icon:'DEF',      tip:'Defense bonus'         },
+  { k:'curtain',     label:'Curtain Mastery',     stat:'Magic Def', icon:'MDF',    tip:'Magic defense bonus'   },
+  { k:'life',        label:'Life Mastery',        stat:'Max HP', icon:'HP',       tip:'Max HP bonus'          },
+  { k:'mana',        label:'Mana Mastery',        stat:'Max MP', icon:'MP',       tip:'Max MP bonus'          }
+];
+const MAST_CAP = REF.mastery.length;          // 25 at Cap 70
+let cmMastSel = MASTERIES[0].k;
+
+function charMast(i){ const c=CHARS[i]; if(!c) return {};
+  if(!c.masteries || typeof c.masteries!=='object' || Array.isArray(c.masteries)) c.masteries={};
+  return c.masteries; }
+function mastLvl(i,k){ const n=parseInt(charMast(i)[k],10); return isNaN(n)?0:Math.max(0,Math.min(MAST_CAP,n)); }
+function setMastLvl(i,k,v){ const m=charMast(i); const n=Math.max(0,Math.min(MAST_CAP,parseInt(v,10)||0));
+  if(n) m[k]=n; else delete m[k]; saveChars(); return n; }
+function mastPct(l){ const r=REF.mastery[l-1]; return r?r[1]:'0%'; }
+function mastPctNum(l){ return parseFloat(mastPct(l))||0; }
+function mastCrystal(l){ const r=REF.mastery[l-1]; return r?r[2]:'—'; }
+function mastIni(label){ const w=String(label).split(/\s+/); return (w[0]||'?').slice(0,2).toUpperCase(); }
+// what this character's collected cards give for one stat, at the rarity each is owned at
+function cardStatTotal(i,stat){
+  const m=charCards(i); let sum=0;
+  CARD_SLOTS.forEach(c=>{
+    const ti=CD_KEYS.indexOf(m[c.key]); if(ti<0 || !c.stats) return;
+    c.stats.forEach(s=>{ if(s.stat===stat && s.values[ti]!=null) sum+=s.values[ti]; });
+  });
+  return sum;
+}
+
+// ---- open / close -------------------------------------------------------------
+function openCardModal(i){
+  if(!CHARS[i]) return;
+  cmChar=i; cmPage=0; cmSel=''; cmTab='cards'; cmQuery=''; cmFilter='all';
+  $('cmSearch').value=''; $('cmFilter').value='all';
+  $('cmDetailPanel').hidden=true; $('cmHelpPanel').hidden=true;
+  document.querySelectorAll('.cmtab').forEach(t=>t.classList.toggle('active', t.dataset.ct==='cards'));
+  $('cardModal').hidden=false;
+  document.body.style.overflow='hidden';
+  renderCardModal();
+}
+function closeCardModal(){
+  $('cardModal').hidden=true;
+  document.body.style.overflow='';
+  cmChar=-1;
+  renderChars();            // refresh the roster's per-row owned counts
+}
+
+// ---- rendering ----------------------------------------------------------------
+function cardIni(name){
+  const w=String(name).replace(/[^A-Za-z0-9 ]/g,' ').split(/\s+/).filter(Boolean);
+  return (((w[0]||'?')[0]) + ((w[1]||'')[0]||'')).toUpperCase();
+}
+function cmVisible(){
+  const q=cmQuery.trim().toLowerCase();
+  return CARD_SLOTS.filter(c=>{
+    if(q && String(c.name).toLowerCase().indexOf(q)<0 && String(c.nest||'').toLowerCase().indexOf(q)<0) return false;
+    const t=cardTier(cmChar,c.key);
+    if(cmFilter==='owned'   && !t) return false;
+    if(cmFilter==='missing' &&  t) return false;
+    return true;
+  });
+}
+function cmSlotHTML(c){
+  const t=cardTier(cmChar,c.key);
+  const art = CARD_ART[c.name]
+    ? `<img src="${CARD_ART[c.name]}" alt="">`
+    : `<span class="ini">${c.unknown?'?':esc(cardIni(c.name))}</span>`;
+  const cls = 'cmslot' + (t?' owned cd-'+t:'') + (c.unknown?' unknown':'') + (c.key===cmSel?' sel':'');
+  const badge = t ? `<span class="cmtier">${CD_LABEL[t]}</span>` : '';
+  const tip = c.unknown ? 'Slot the community has not identified yet' : esc(c.name)+(c.nest?' — '+esc(c.nest):'');
+  return `<button type="button" class="${cls}" data-card="${esc(c.key)}" title="${tip}">`
+       + `<span class="cmart">${art}</span>${badge}<span class="cmname">${esc(c.name)}</span></button>`;
+}
+function renderCardModal(){
+  const ch=CHARS[cmChar]; if(!ch){ closeCardModal(); return; }
+
+  // who
+  const icon = ch.cls && CLASS_ICONS[ch.cls] ? `<img src="${CLASS_ICONS[ch.cls]}" alt="">` : '';
+  const nick = String(ch.nickname||'').trim() || 'Unnamed character';
+  const owned = ownedCount(ch);
+  $('cmWho').innerHTML = `${icon}<b>${esc(nick)}</b>${ch.cls?`<span>· ${esc(ch.cls)}</span>`:''}`
+    + `<span class="spacer"></span>`
+    + `<span class="cmowned"><b>${owned}</b> / ${CARD_SLOTS.length} collected</span>`;
+
+  $('cmCardsTab').hidden = cmTab!=='cards';
+  $('cmMastTab').hidden  = cmTab!=='mastery';
+  if(cmTab==='mastery'){ renderMasteryTab(); renderCardFooter(); return; }
+
+  // grid
+  const list=cmVisible();
+  const pages=Math.max(1, Math.ceil(list.length/CARD_PAGE));
+  if(cmPage>=pages) cmPage=pages-1;
+  if(cmPage<0) cmPage=0;
+  const slice=list.slice(cmPage*CARD_PAGE, cmPage*CARD_PAGE+CARD_PAGE);
+  let grid = slice.map(cmSlotHTML).join('');
+  if(!list.length) grid = `<div class="cmnone">No cards match that filter.</div>`;
+  else for(let n=slice.length;n<CARD_PAGE;n++) grid += `<span class="cmslot cmpad" aria-hidden="true"></span>`;
+  $('cmGrid').innerHTML = grid;
+
+  // pager
+  let pg='';
+  pg += `<button class="cmpg" data-pg="first"${cmPage===0?' disabled':''}>&#171;</button>`;
+  pg += `<button class="cmpg" data-pg="prev"${cmPage===0?' disabled':''}>&#8249;</button>`;
+  const from=Math.max(0, Math.min(cmPage-2, pages-5)), to=Math.min(pages, from+5);
+  for(let p=from;p<to;p++) pg += `<button class="cmpg${p===cmPage?' on':''}" data-pg="${p}">${p+1}</button>`;
+  pg += `<button class="cmpg" data-pg="next"${cmPage>=pages-1?' disabled':''}>&#8250;</button>`;
+  pg += `<button class="cmpg" data-pg="last"${cmPage>=pages-1?' disabled':''}>&#187;</button>`;
+  $('cmPager').innerHTML = pages>1 ? pg : '';
+
+  renderCardFooter();
+  if(!$('cmDetailPanel').hidden) renderCardDetails();
+}
+function renderCardFooter(){
+  $('cmFoot').hidden = cmTab!=='cards';   // the selection row only applies to the card grid
+  const card = cmSel ? (CARD_BY_KEY[cmSel] || { name:cmSel, nest:'' }) : null;
+  const t = cmSel ? cardTier(cmChar,cmSel) : '';
+  $('cmSel').innerHTML = card
+    ? `<b>${esc(card.name)}</b>${card.nest?` <span class="nestof">${esc(card.nest)}</span>`:''}`
+    : 'Pick a card to set its rarity.';
+  const dis = cmSel ? '' : ' disabled';
+  let b = `<button type="button" class="cmtierbtn${!t?' on':''}" data-tier=""${dis}><span>None</span></button>`;
+  CD_TIERS.forEach(x=>{
+    b += `<button type="button" class="cmtierbtn t-${x.k}${t===x.k?' on':''}" data-tier="${x.k}"${dis}><span>${x.label}</span></button>`;
+  });
+  $('cmTiers').innerHTML = b;
+  $('cmDetails').disabled = !cmSel;
+}
+function renderCardDetails(){
+  const p=$('cmDetailPanel');
+  const card = cmSel ? CARD_BY_KEY[cmSel] : null;
+  if(!card){ p.innerHTML=`<div class="pnote">Select a card to see what it grants.</div>`; return; }
+  const t=cardTier(cmChar,card.key), ti=CD_KEYS.indexOf(t);
+  if(!card.stats || !card.stats.length){
+    p.innerHTML=`<div class="ptitle">${esc(card.name)}</div><div class="pnote">`
+      + (card.unknown ? 'The community has not identified this slot yet — you can still record the rarity you own it at.'
+                      : 'No stat data for this card in the database.') + `</div>`;
+    return;
+  }
+  const head = `<tr><th class="lft">Stat</th>` + CD_TIERS.map((x,i)=>`<th${i===ti?' class="own"':''}>${x.label}</th>`).join('') + `</tr>`;
+  const rows = card.stats.map(s=>`<tr><td class="lft">${esc(s.stat)}</td>`
+    + s.values.map((v,i)=>`<td${i===ti?' class="own"':''}>${v==null?'—':v}</td>`).join('') + `</tr>`).join('');
+  p.innerHTML = `<div class="ptitle">${esc(card.name)}${card.nest?' · '+esc(card.nest):''}`
+    + `${t?` · you own it at <span style="color:var(--cd-${t})">${CD_LABEL[t]}</span>`:' · not collected'}</div>`
+    + `<table><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+}
+function renderMasteryTab(){
+  const ch=CHARS[cmChar]; if(!ch) return;
+  const cnt=tierCounts(cmChar), owned=ownedCount(ch);
+  const tally = CD_TIERS.map(x=>`<span class="tally t-${x.k}"><b>${cnt[x.k]}</b> ${x.label}</span>`).join('')
+    + `<span class="tally t-none"><b>${CARD_SLOTS.length-owned}</b> Missing</span>`;
+
+  const tiles = MASTERIES.map(m=>{
+    const l=mastLvl(cmChar,m.k);
+    return `<div class="mtile${m.k===cmMastSel?' sel':''}${l?' up':''}" data-m="${m.k}" title="${esc(m.tip)}">`
+      + `<span class="micon">${esc(m.icon)}</span>`
+      + `<span class="mbody"><span class="mname">${esc(m.label)}</span>`
+      + `<span class="mlvlrow">Lv.<input class="mlvl" type="text" inputmode="numeric" maxlength="2" `
+      + `data-m="${m.k}" value="${l}" aria-label="${esc(m.label)} level"></span></span></div>`;
+  }).join('');
+
+  $('cmMastTab').innerHTML = `<div class="mtally">${tally}</div><div class="mgrid">${tiles}</div>`
+    + `<div id="cmMastDetail"></div>`
+    + `<div class="mnote">Type the level you have upgraded each mastery to (0–${MAST_CAP}). `
+    + `The arrow shows what this character's collected cards give for that stat, before and after the mastery bonus.</div>`;
+  renderMastDetail();
+}
+// only the detail box — so typing a level never re-renders (and un-focuses) the field
+function renderMastDetail(){
+  const box=$('cmMastDetail'); if(!box || !CHARS[cmChar]) return;
+  const m = MASTERIES.find(x=>x.k===cmMastSel) || MASTERIES[0];
+  const l = mastLvl(cmChar,m.k);
+  const base = cardStatTotal(cmChar,m.stat);
+  const now  = l ? Math.floor(base*(1+mastPctNum(l)/100)) : base;
+  const next = l<MAST_CAP ? l+1 : 0;
+  const nextVal = next ? Math.floor(base*(1+mastPctNum(next)/100)) : 0;
+  box.innerHTML =
+      `<div class="mdetail">`
+    + `<div class="mdhead"><span class="mdname">${esc(m.label)}</span><span class="mdlvl">Level: <b>${l}</b></span></div>`
+    + `<div class="mdrow"><span class="mdlbl">Card ${esc(m.tip)}</span>`
+      + `<span class="mdval">${l?'+'+mastPct(l):'—'}</span>`
+      + `<span class="mdcalc">${base?`${base} → <b>${now}</b>`:'no cards collected yet'}</span></div>`
+    + (next
+        ? `<div class="mdrow next"><span class="mdlbl">Next Level</span>`
+          + `<span class="mdval">+${mastPct(next)}</span>`
+          + `<span class="mdcalc">${base?`${base} → <b>${nextVal}</b> · `:''}Crystal of Power <b>${mastCrystal(next)}</b></span></div>`
+        : `<div class="mdrow next"><span class="mdlbl">Maxed</span><span class="mdval"></span>`
+          + `<span class="mdcalc">Lv.${MAST_CAP} is the Cap 70 ceiling.</span></div>`)
+    + `</div>`;
+}
+
+// ---- wiring -------------------------------------------------------------------
+$('ctableArea').addEventListener('click', e=>{
+  const b=e.target.closest('[data-cards]'); if(!b) return;
+  e.stopPropagation();
+  openCardModal(+b.dataset.cards);
+});
+$('cardModal').addEventListener('click', e=>{
+  if(e.target.closest('[data-cmclose]')){ closeCardModal(); return; }
+
+  const tab=e.target.closest('.cmtab');
+  if(tab){ cmTab=tab.dataset.ct;
+    document.querySelectorAll('.cmtab').forEach(t=>t.classList.toggle('active', t===tab));
+    renderCardModal(); return; }
+
+  const slot=e.target.closest('.cmslot[data-card]');
+  if(slot){
+    const name=slot.dataset.card;
+    if(cmSel===name){                                   // click again to cycle the rarity
+      const cur=cardTier(cmChar,name), next=CD_KEYS[CD_KEYS.indexOf(cur)+1] || '';
+      setCardTier(cmChar,name,next);
+    } else cmSel=name;
+    renderCardModal(); return;
+  }
+
+  const tier=e.target.closest('.cmtierbtn');
+  if(tier){ if(!cmSel) return; setCardTier(cmChar,cmSel,tier.dataset.tier); renderCardModal(); return; }
+
+  const pg=e.target.closest('.cmpg');
+  if(pg){
+    const v=pg.dataset.pg, pages=Math.max(1,Math.ceil(cmVisible().length/CARD_PAGE));
+    if(v==='first') cmPage=0;
+    else if(v==='prev') cmPage=Math.max(0,cmPage-1);
+    else if(v==='next') cmPage=Math.min(pages-1,cmPage+1);
+    else if(v==='last') cmPage=pages-1;
+    else cmPage=+v;
+    renderCardModal(); return;
+  }
+
+  if(e.target.closest('#cmDetails')){
+    const p=$('cmDetailPanel'); p.hidden=!p.hidden;
+    if(!p.hidden){ $('cmHelpPanel').hidden=true; renderCardDetails(); }
+    return;
+  }
+  if(e.target.closest('#cmHelp')){
+    const p=$('cmHelpPanel'); p.hidden=!p.hidden;
+    if(!p.hidden) $('cmDetailPanel').hidden=true;
+    return;
+  }
+});
+// right-click a slot to clear it
+$('cmGrid').addEventListener('contextmenu', e=>{
+  const slot=e.target.closest('.cmslot[data-card]'); if(!slot) return;
+  e.preventDefault();
+  cmSel=slot.dataset.card; setCardTier(cmChar,cmSel,''); renderCardModal();
+});
+$('cmSearch').addEventListener('input', e=>{ cmQuery=e.target.value; cmPage=0; renderCardModal(); });
+$('cmFilter').addEventListener('change', e=>{ cmFilter=e.target.value; cmPage=0; renderCardModal(); });
+$('cmMastTab').addEventListener('click', e=>{
+  if(e.target.closest('input.mlvl')) return;                 // let the field take the click
+  const tile=e.target.closest('.mtile'); if(!tile) return;
+  cmMastSel=tile.dataset.m;
+  $('cmMastTab').querySelectorAll('.mtile').forEach(x=>x.classList.toggle('sel', x===tile));
+  renderMastDetail();
+});
+$('cmMastTab').addEventListener('input', e=>{
+  const inp=e.target.closest('input.mlvl'); if(!inp) return;
+  const n=setMastLvl(cmChar, inp.dataset.m, inp.value);
+  cmMastSel=inp.dataset.m;
+  const tile=inp.closest('.mtile');
+  $('cmMastTab').querySelectorAll('.mtile').forEach(x=>x.classList.toggle('sel', x===tile));
+  if(tile) tile.classList.toggle('up', n>0);
+  renderMastDetail();                      // the field itself is left alone, so focus stays
+});
+// leaving the field normalises whatever was typed (blank, 99, letters…)
+$('cmMastTab').addEventListener('focusout', e=>{
+  const inp=e.target.closest('input.mlvl'); if(!inp) return;
+  const n=mastLvl(cmChar, inp.dataset.m);
+  if(inp.value !== String(n)){ inp.value=n; renderMastDetail(); }
+});
+document.addEventListener('keydown', e=>{
+  if($('cardModal').hidden) return;
+  if(e.key==='Escape'){ closeCardModal(); return; }
+  if(e.key==='ArrowLeft'  && cmTab==='cards'){ cmPage=Math.max(0,cmPage-1); renderCardModal(); }
+  if(e.key==='ArrowRight' && cmTab==='cards'){
+    const pages=Math.max(1,Math.ceil(cmVisible().length/CARD_PAGE));
+    cmPage=Math.min(pages-1,cmPage+1); renderCardModal();
+  }
+});
+
 // ===== Guild Storage: a simple 2-column (Item / Amount) list, add/remove rows =====
 const STORE_KEY='dn-guild-storage-v1';
 let STORE=loadStore();
@@ -1297,7 +1978,7 @@ $('blkTableArea').addEventListener('click',e=>{
 // ===== optional Google Sheet sync (Apps Script web app) — local stays the default =====
 // Explicit control: Pull (sheet -> this device) and Push (this device -> sheet). No auto-sync.
 const SHEET_KEY='dn-sheet-url';
-const SHEET_SCRIPT_VERSION=3;   // the Apps Script version this app expects
+const SHEET_SCRIPT_VERSION=4;   // the Apps Script version this app expects
 let SHEET_URL=''; try{ SHEET_URL=localStorage.getItem(SHEET_KEY)||''; }catch(e){}
 let syncDirty=false, lastSync='', scriptOutdated=false, syncSnapshot=null;
 
@@ -1324,8 +2005,8 @@ function canonRoster(arr){ return JSON.stringify((arr||[]).map(c=>COLUMNS.map(co
   : (c[col.k]==null?'':String(c[col.k]))))); }
 function canonStore(arr){ return JSON.stringify((arr||[]).map(r=>[String(r.item==null?'':r.item), String(r.amount==null?'':r.amount)])); }
 function canonBlock(arr){ return JSON.stringify((arr||[]).map(b=>[String(b.nick||""),String(b.cls||""),String(b.cat||""),String(b.ctx||""),String(b.reason||""),String(b.ts||"")])); }
-function localCanon(){ return canonRoster(CHARS)+''+canonStore(STORE)+''+canonBlock(BLOCK); }
-function remoteCanon(data){ return canonRoster(payloadToChars(data&&data.roster)||[])+''+canonStore(payloadToStore(data&&data.storage)||[])+''+canonBlock(payloadToBlock(data&&data.blocklist)||[]); }
+function localCanon(){ return canonRoster(CHARS)+''+canonStore(STORE)+''+canonBlock(BLOCK)+''+canonCards(CHARS); }
+function remoteCanon(data){ return canonRoster(payloadToChars(data&&data.roster)||[])+''+canonStore(payloadToStore(data&&data.storage)||[])+''+canonBlock(payloadToBlock(data&&data.blocklist)||[])+''+canonCards(payloadToCards(data&&data.cards)||[]); }
 function setSnapshotLocal(){ syncSnapshot=localCanon(); }
 function setSnapshotRemote(data){ syncSnapshot=remoteCanon(data); }
 function recomputeDirty(){ if(!SHEET_URL||syncSnapshot==null) return; syncDirty=(localCanon()!==syncSnapshot); updateSyncUI(); }
@@ -1369,6 +2050,57 @@ function payloadToColumns(data){
   })).filter(c=>c.k);
   return normColumns(arr);
 }
+// Card collections + mastery levels <-> sheet table (its own "Cards" tab).
+// One row per character; one column per card slot, then one per mastery. Wide, but it
+// stays readable in the sheet like the other tabs, and it round-trips by column name so
+// a renamed card or a reordered roster can't scramble it.
+const MAST_COL = 'Mastery: ';
+function cardsToPayload(){
+  return {
+    header: ['#','Nickname'].concat(CARD_SLOTS.map(s=>s.key), MASTERIES.map(m=>MAST_COL+m.label)),
+    rows: CHARS.map((ch,i)=>{
+      const cards=(ch.cards&&typeof ch.cards==='object')?ch.cards:{};
+      const mast =(ch.masteries&&typeof ch.masteries==='object')?ch.masteries:{};
+      return [i+1, ch.nickname==null?'':ch.nickname]
+        .concat(CARD_SLOTS.map(s=>{ const t=cards[s.key]; return CD_KEYS.indexOf(t)>=0 ? CD_LABEL[t] : ''; }),
+                MASTERIES.map(m=>{ const n=parseInt(mast[m.k],10); return n>0 ? n : ''; }));
+    })
+  };
+}
+// -> [{ cards:{}, masteries:{} }, …] in roster order, or null when the tab is absent/empty
+function payloadToCards(data){
+  if(!data || !Array.isArray(data.rows) || !Array.isArray(data.header)) return null;
+  const tierOf={}; CD_TIERS.forEach(x=>{ tierOf[x.label.toLowerCase()]=x.k; tierOf[x.k]=x.k; });
+  const mastOf={}; MASTERIES.forEach(m=>{ mastOf[(MAST_COL+m.label).toLowerCase()]=m.k; });
+  const slot=[], mast=[];
+  data.header.forEach((h,idx)=>{
+    const s=String(h==null?'':h).trim();
+    if(!s || s==='#' || s==='Nickname') return;
+    const mk=mastOf[s.toLowerCase()];
+    if(mk){ mast.push([idx,mk]); return; }
+    if(CARD_BY_KEY[s] || CARD_RENAMES[s]) slot.push([idx, CARD_RENAMES[s] || s]);
+  });
+  return data.rows.map(row=>{
+    const cards={}, masteries={};
+    slot.forEach(([idx,key])=>{
+      const t=tierOf[String(row[idx]==null?'':row[idx]).trim().toLowerCase()];
+      if(t) cards[key]=t;
+    });
+    mast.forEach(([idx,k])=>{
+      const n=parseInt(row[idx],10);
+      if(n>0) masteries[k]=Math.min(n, MAST_CAP);
+    });
+    return { cards, masteries };
+  });
+}
+// order-stable signature, so ticking a card marks the sheet as behind
+function canonCards(arr){
+  return JSON.stringify((arr||[]).map(ch=>{
+    const c=(ch&&ch.cards)||{}, m=(ch&&ch.masteries)||{};
+    return [CARD_SLOTS.map(s=>CD_KEYS.indexOf(c[s.key])>=0?c[s.key]:''),
+            MASTERIES.map(x=>{ const n=parseInt(m[x.k],10); return n>0?n:0; })];
+  }));
+}
 // Guild storage <-> sheet table (Item / Amount)
 function storeToPayload(){
   return { header:['Item','Amount'], rows: STORE.map(r=>[r.item==null?'':r.item, r.amount==null?'':r.amount]) };
@@ -1397,7 +2129,12 @@ function applyPulled(data){
   const cols=payloadToColumns(data&&data.columns);   // schema first so roster types are known
   if(cols){ COLUMNS=cols; try{localStorage.setItem(COL_KEY,JSON.stringify(COLUMNS));}catch(e){} }
   const cr=payloadToChars(data&&data.roster);
-  if(cr){ CHARS=cr; try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){} }
+  if(cr){
+    CHARS=mergeLocalOnly(CHARS,cr);                  // keeps collections if the sheet has no Cards tab
+    const cd=payloadToCards(data&&data.cards);       // …and the sheet's version wins when it does
+    if(cd) CHARS.forEach((ch,i)=>{ const r=cd[i]; if(r){ ch.cards=r.cards; ch.masteries=r.masteries; ch._cmig=1; } });
+    try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){}
+  }
   const st=payloadToStore(data&&data.storage);
   if(st){ STORE=st; try{localStorage.setItem(STORE_KEY,JSON.stringify(STORE));}catch(e){} }
   const bl=payloadToBlock(data&&data.blocklist);
@@ -1413,7 +2150,7 @@ function sheetPost(body){ // text/plain avoids a CORS preflight Apps Script can'
 function errMsg(e){ return (e && e.message) ? e.message : 'unknown error'; }
 function pushNow(){ if(!SHEET_URL) return Promise.resolve();
   setSync('busy','Pushing to sheet…');
-  return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload(), columns:columnsToPayload(), blocklist:blockToPayload()})
+  return sheetPost({action:'saveAll', roster:charsToPayload(), storage:storeToPayload(), columns:columnsToPayload(), blocklist:blockToPayload(), cards:cardsToPayload()})
     .then(r=>{ checkScriptVersion(r); setSnapshotLocal(); syncDirty=false; lastSync=timeStr(); updateSyncUI(); setSync('ok','Connected & Synced · pushed '+lastSync); })
     .catch(e=>setSync('err','Push failed: '+errMsg(e)+' — data is still saved locally.'));
 }
@@ -1463,6 +2200,29 @@ function diffSectionHTML(title, d, unit){
   if(!parts.length) parts.push('<div class="diffnone">No '+unit+' differences.</div>');
   return '<div class="diffsec"><div class="diffsectitle">'+title+'</div>'+parts.join('')+'</div>';
 }
+// collections are too wide to list cell by cell — summarise per character
+function diffCards(local, remote){
+  if(!remote) return [];
+  const out=[], n=Math.max(local.length, remote.length);
+  for(let i=0;i<n;i++){
+    const lc=(local[i]&&local[i].cards)||{}, rc=(remote[i]&&remote[i].cards)||{};
+    const lm=(local[i]&&local[i].masteries)||{}, rm=(remote[i]&&remote[i].masteries)||{};
+    let cards=0, mast=0;
+    CARD_SLOTS.forEach(s=>{ const a=CD_KEYS.indexOf(lc[s.key])>=0?lc[s.key]:'', b=CD_KEYS.indexOf(rc[s.key])>=0?rc[s.key]:''; if(a!==b) cards++; });
+    MASTERIES.forEach(m=>{ const a=parseInt(lm[m.k],10)||0, b=parseInt(rm[m.k],10)||0; if(a!==b) mast++; });
+    if(cards||mast) out.push({ name:(local[i]&&local[i].nickname)||'(row '+(i+1)+')', cards, mast });
+  }
+  return out;
+}
+function cardDiffHTML(d, remote){
+  let body;
+  if(!remote) body='<div class="diffadd"><b>The sheet has no Cards tab yet</b> — Push creates it and saves every collection.</div>';
+  else if(!d.length) body='<div class="diffnone">No card collection differences.</div>';
+  else body='<div class="diffchg"><b>Changed ('+d.length+')</b> — sheet → your device<ul>'+d.map(x=>
+    '<li><b>'+esc(x.name)+'</b> — '+[x.cards?x.cards+' card'+(x.cards===1?'':'s'):'', x.mast?x.mast+' mastery level'+(x.mast===1?'':'s'):'']
+      .filter(Boolean).join(', ')+'</li>').join('')+'</ul></div>';
+  return '<div class="diffsec"><div class="diffsectitle">Card Collections</div>'+body+'</div>';
+}
 function reviewChanges(){ if(!SHEET_URL) return;
   setSync('busy','Comparing with sheet…');
   sheetGet().then(data=>{
@@ -1470,15 +2230,20 @@ function reviewChanges(){ if(!SHEET_URL) return;
     const remStore=payloadToStore(data&&data.storage)||[];
     const cf=COLUMNS.map(c=>({k:c.k,label:c.label}));
     const remBlock=payloadToBlock(data&&data.blocklist)||[];
+    const remCards=payloadToCards(data&&data.cards);
     const dc=diffLists(CHARS, remChars, c=>String(c.nickname||'').trim().toLowerCase(), cf, c=>c.nickname||'(unnamed)');
     const ds=diffLists(STORE, remStore, r=>String(r.item||'').trim().toLowerCase(), [{k:'amount',label:'Amount'}], r=>r.item||'(unnamed)');
     const db=diffLists(BLOCK, remBlock, b=>String(b.id||''), [{k:'nick',label:'Nick'},{k:'cls',label:'Class'},{k:'cat',label:'Category'},{k:'ctx',label:'Context'},{k:'reason',label:'Reason'}], b=>b.nick||'(unnamed)');
+    const dcards=diffCards(CHARS, remCards);
+    // an old script has no Cards tab at all — that is a difference if we hold any collection
+    const cardsMissing = !remCards && CHARS.some(c=>ownedCount(c)>0 || (c.masteries && Object.keys(c.masteries).length>0));
     const any=dc.added.length+dc.removed.length+dc.changed.length+ds.added.length+ds.removed.length+ds.changed.length
-             +db.added.length+db.removed.length+db.changed.length;
+             +db.added.length+db.removed.length+db.changed.length+dcards.length+(cardsMissing?1:0);
     const head = any
       ? '<div class="diffhead">Your local data differs from the sheet. <b>⭱ Push</b> saves your device\'s version to the sheet; <b>⭳ Pull</b> discards these and takes the sheet\'s version.</div>'
       : '<div class="diffhead">✓ Your local data matches the sheet — nothing to push.</div>';
-    $('diffBody').innerHTML = head + diffSectionHTML('Characters', dc, 'character') + diffSectionHTML('Guild Storage', ds, 'storage') + diffSectionHTML('Blocklist', db, 'blocklist');
+    $('diffBody').innerHTML = head + diffSectionHTML('Characters', dc, 'character') + diffSectionHTML('Guild Storage', ds, 'storage')
+      + diffSectionHTML('Blocklist', db, 'blocklist') + cardDiffHTML(dcards, remCards);
     $('diffPanel').hidden=false;
     setSnapshotRemote(data); syncDirty=(any>0); updateSyncUI();   // reconcile the status with what we found
   }).catch(e=>setSync('err','Compare failed: '+errMsg(e)));
