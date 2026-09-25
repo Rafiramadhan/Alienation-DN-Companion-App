@@ -372,7 +372,7 @@
     background:linear-gradient(90deg,transparent,var(--gold-deep) 18%,var(--gold2) 50%,var(--gold-deep) 82%,transparent)}
 
   /* title bar: ? on the left, title centred, x on the right (like the in-game window) */
-  .cmbar{position:relative;display:flex;align-items:center;gap:10px;padding:12px 14px 11px;
+  .cmbar{position:relative;display:flex;align-items:center;gap:10px;padding:9px 14px 8px;
     background:linear-gradient(180deg,#2a1e10,#1a1309);border-bottom:1px solid var(--line)}
   .cmtitle{flex:1;text-align:center;font-family:var(--serif);font-weight:700;letter-spacing:4px;
     text-transform:uppercase;font-size:15px;
@@ -385,7 +385,7 @@
   .cmicon.x:hover{border-color:#7a2a22;color:#ff7a6d;box-shadow:0 0 12px rgba(192,57,43,.28)}
 
   /* who the collection belongs to */
-  .cmwho{display:flex;align-items:center;gap:9px;padding:9px 16px;border-bottom:1px solid var(--line);
+  .cmwho{display:flex;align-items:center;gap:9px;padding:7px 16px;border-bottom:1px solid var(--line);
     background:rgba(231,189,94,.03);font-size:13px;color:var(--mut)}
   .cmwho img{width:22px;height:22px;object-fit:contain}
   .cmwho b{color:#f3ead7;font-weight:600}
@@ -394,7 +394,7 @@
   .cmowned b{color:var(--gold2)}
 
   /* the two in-window tabs */
-  .cmtabs{display:flex;gap:6px;padding:12px 16px 0;border-bottom:1px solid var(--line)}
+  .cmtabs{display:flex;gap:6px;padding:9px 16px 0;border-bottom:1px solid var(--line)}
   .cmtab{font-family:var(--serif);padding:8px 16px;border:1px solid var(--line2);border-bottom:none;
     border-radius:9px 9px 0 0;background:linear-gradient(180deg,#1a130b,#120d07);color:var(--mut);
     cursor:pointer;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
@@ -403,33 +403,33 @@
   .cmtab.active{color:#1a1206;border-color:var(--gold-deep);
     background:linear-gradient(180deg,var(--gold2),var(--gold-deep))}
 
-  .cmbody{flex:1;overflow:auto;padding:12px 16px}
-  .cmtools{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+  .cmbody{flex:1;overflow:auto;padding:10px 16px}
+  .cmtools{display:flex;gap:10px;align-items:center;margin-bottom:8px}
   .cmtools input{flex:1;min-width:0;background:#120d07;color:var(--txt);border:1px solid var(--line2);
-    border-radius:8px;padding:8px 11px;font-size:13px;outline:none}
+    border-radius:8px;padding:6px 11px;font-size:12.5px;outline:none}
   .cmtools input:focus{border-color:var(--gold)}
   .cmtools select{background:#120d07;color:var(--txt);border:1px solid var(--line2);border-radius:8px;
-    padding:8px 10px;font-size:12.5px;min-width:0;cursor:pointer}
+    padding:6px 10px;font-size:12.5px;min-width:0;cursor:pointer}
 
   /* 4x4 slot grid, same shape as the in-game card window */
-  .cmgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-  .cmslot{position:relative;display:flex;flex-direction:column;gap:6px;align-items:center;
-    padding:6px 6px 5px;cursor:pointer;border-radius:10px;border:1px solid transparent;
+  .cmgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+  .cmslot{position:relative;display:flex;flex-direction:column;gap:4px;align-items:center;
+    padding:4px 4px 3px;cursor:pointer;border-radius:10px;border:1px solid transparent;
     background:transparent;font:inherit;color:inherit;text-align:center;transition:.12s}
   .cmslot:hover{background:rgba(231,189,94,.07)}
   .cmslot.sel{border-color:var(--gold);background:rgba(231,189,94,.12);
     box-shadow:0 0 0 1px rgba(231,189,94,.35),0 0 18px rgba(231,189,94,.18)}
-  .cmart{position:relative;width:100%;max-width:104px;aspect-ratio:1/1;border-radius:8px;overflow:hidden;
+  .cmart{position:relative;width:100%;max-width:var(--cmart,80px);aspect-ratio:1/1;border-radius:8px;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
     border:2px solid var(--cd-none);background:linear-gradient(180deg,#171009,#0d0906);
     box-shadow:inset 0 0 24px rgba(0,0,0,.7)}
   .cmart img{width:100%;height:100%;object-fit:cover}
-  .cmart .ini{font-family:var(--serif);font-weight:700;font-size:19px;letter-spacing:1px;
-    color:rgba(236,226,207,.30)}
-  .cmname{font-size:10.5px;line-height:1.25;color:var(--mut);
+  .cmart .ini{font-family:var(--serif);font-weight:700;letter-spacing:1px;
+    font-size:calc(var(--cmart,80px) * .24);color:rgba(236,226,207,.30)}
+  .cmname{font-size:9.5px;line-height:1.15;color:var(--mut);
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-    min-height:26px;word-break:break-word}
-  .cmslot .cmtier{position:absolute;top:9px;right:calc(50% - 50px);font-size:8.5px;font-family:var(--serif);
+    min-height:21px;word-break:break-word}
+  .cmslot .cmtier{position:absolute;top:5px;right:calc(50% - var(--cmart,80px)/2 + 1px);font-size:8.5px;font-family:var(--serif);
     letter-spacing:.6px;text-transform:uppercase;padding:1px 5px;border-radius:5px;
     background:rgba(8,6,4,.85);border:1px solid currentColor}
   .cmslot.owned .cmart{background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.07),transparent 65%),
@@ -452,8 +452,8 @@
     font-family:var(--serif);letter-spacing:.5px}
 
   /* pager */
-  .cmpager{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;flex-wrap:wrap}
-  .cmpg{min-width:28px;height:28px;padding:0 7px;border-radius:7px;cursor:pointer;
+  .cmpager{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px;flex-wrap:wrap}
+  .cmpg{min-width:26px;height:25px;padding:0 7px;border-radius:7px;cursor:pointer;
     border:1px solid var(--line2);background:linear-gradient(180deg,#1a130b,#120d07);
     color:var(--mut);font-family:var(--serif);font-size:12px;font-weight:700}
   .cmpg:hover:not(:disabled){color:var(--gold2);border-color:var(--gold-deep)}
@@ -463,8 +463,8 @@
 
   /* footer: selected card + rarity setters + Details */
   .cmfoot[hidden]{display:none}
-  .cmfoot{border-top:1px solid var(--line);padding:11px 16px;
-    background:linear-gradient(180deg,#140e08,#0d0906);display:flex;flex-direction:column;gap:9px}
+  .cmfoot{border-top:1px solid var(--line);padding:9px 16px;
+    background:linear-gradient(180deg,#140e08,#0d0906);display:flex;flex-direction:column;gap:7px}
   .cmselrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .cmsel{flex:1;min-width:150px;font-size:12.5px;color:var(--mut)}
   .cmsel b{color:#f3ead7;font-weight:600}
@@ -558,7 +558,45 @@
     .cmbody{padding:12px 10px}
     .cmwho{flex-wrap:wrap}
   }
-  .cmgrid .cmpad{visibility:hidden;pointer-events:none}
+  /* a slot is now the card button plus its price field */
+  .cmcell{display:flex;flex-direction:column;align-items:stretch;gap:2px}
+  .cmcell.cmpad{visibility:hidden;pointer-events:none}
+  .cmprice{width:100%;min-width:0;padding:2px 4px;text-align:center;font-size:10.5px;
+    font-variant-numeric:tabular-nums;background:#0f0a06;color:var(--gold2);
+    border:1px solid rgba(90,69,38,.55);border-radius:5px;outline:none;font-family:var(--sans)}
+  .cmprice::placeholder{color:#5b5346}
+  .cmprice:hover{border-color:var(--gold-deep)}
+  .cmprice:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(231,189,94,.14)}
+  .cmprice.paid{border-color:rgba(231,189,94,.45);background:rgba(231,189,94,.07)}
+
+  /* summary strip above the grid */
+  .cmsummary{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;
+    padding-bottom:7px;border-bottom:1px solid rgba(90,69,38,.35)}
+  .cmsummary .mtally{flex:1;display:flex;gap:6px;flex-wrap:wrap;margin:0;min-width:0}
+  .cmsummary .tally{border:1px solid currentColor;border-radius:7px;padding:4px 7px;font-size:10.5px;
+    font-family:var(--serif);letter-spacing:.6px;background:rgba(8,6,4,.5);white-space:nowrap}
+  .cmsummary .tally b{font-size:12.5px}
+  .cmsummary .tally i{font-style:normal;opacity:.75;font-size:10px;margin-left:5px;
+    padding-left:5px;border-left:1px solid currentColor}
+  .cmsummary .tally.t-magic{color:var(--cd-magic)}
+  .cmsummary .tally.t-rare{color:var(--cd-rare)}
+  .cmsummary .tally.t-epic{color:var(--cd-epic)}
+  .cmsummary .tally.t-unique{color:var(--cd-unique)}
+  .cmsummary .tally.t-legend{color:var(--cd-legend)}
+  .cmsummary .tally.t-none{color:var(--cd-none)}
+  .cmspend{display:flex;align-items:baseline;gap:6px;font-size:10.5px;text-transform:uppercase;
+    color:var(--mut);font-family:var(--serif);letter-spacing:.8px;white-space:nowrap}
+  .cmspend b{color:var(--gold2);font-size:14px;font-family:var(--sans);letter-spacing:0;
+    text-transform:none;font-variant-numeric:tabular-nums}
+  .cmspend .spendsub{font-family:var(--sans);font-size:10px;letter-spacing:0;text-transform:none;opacity:.7}
+
+  /* price of the selected card, in the footer */
+  .cmpricebox{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--mut)}
+  .cmpricebox input{width:96px;padding:5px 8px;text-align:right;font-size:12px;
+    font-variant-numeric:tabular-nums;background:#0f0a06;color:var(--gold2);
+    border:1px solid var(--line2);border-radius:7px;outline:none}
+  .cmpricebox input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(231,189,94,.14)}
+  @media(max-width:560px){ .cmspend{align-items:flex-start} }
   .btn:disabled{opacity:.4;cursor:default;filter:none;box-shadow:none}
 
   @media(max-width:560px){ h1{font-size:28px} .tab{padding:10px 15px} }
@@ -752,6 +790,7 @@
             <option value="missing">Missing only</option>
           </select>
         </div>
+        <div id="cmSummary"></div>
         <div class="cmgrid" id="cmGrid"></div>
         <div class="cmpager" id="cmPager"></div>
       </section>
@@ -766,6 +805,7 @@
         <div class="cmtiers" id="cmTiers"></div>
       </div>
       <div class="cmfootrow">
+        <div class="cmpricebox" id="cmPrice"></div>
         <span class="cmhint">Click a slot to select it · click it again to cycle rarity · right-click to clear.</span>
         <button class="btn ghost" id="cmDetails">Details</button>
       </div>
@@ -779,6 +819,8 @@
         below — or click the selected slot again to <b>cycle</b> Magic → Rare → Epic → Unique → Legend → none.
         <b>Right-click</b> a slot clears it.<br>
         <b>Details</b> shows what the selected card grants at every rarity, with your tier highlighted.<br>
+        The box under each card is what you <b>paid</b> for it — the strip above the grid totals your spend
+        and counts how many you hold at each rarity.<br>
         The <b>Power of Mastery</b> tab is where you type the level of each mastery you have upgraded.<br>
         Collections and mastery levels save with the rest of your roster, and sync to your Google Sheet
         when one is connected (its <b>Cards</b> tab).
@@ -1538,7 +1580,7 @@ function mergeLocalOnly(oldArr,newArr){
   return (newArr||[]).map((c,i)=>{
     const n=String(c.nickname||'').trim().toLowerCase();
     const src=(n && byNick[n]) || (oldArr||[])[i];
-    if(src){ if(src.cards) c.cards=src.cards; if(src.masteries) c.masteries=src.masteries; }
+    if(src){ if(src.cards) c.cards=src.cards; if(src.masteries) c.masteries=src.masteries; if(src.prices) c.prices=src.prices; }
     return c;
   });
 }
@@ -1582,6 +1624,48 @@ function cardStatTotal(i,stat){
   return sum;
 }
 
+// ---- what each card cost, per character (gold paid at the trading house) ----
+function charPrices(i){ const c=CHARS[i]; if(!c) return {};
+  if(!c.prices || typeof c.prices!=='object' || Array.isArray(c.prices)) c.prices={};
+  return c.prices; }
+function cardPrice(i,key){ const n=parseFloat(charPrices(i)[key]); return isNaN(n)||n<0 ? 0 : n; }
+function setCardPrice(i,key,v){
+  const p=charPrices(i);
+  const n=parseFloat(String(v==null?'':v).replace(/[^0-9.]/g,''));
+  if(isNaN(n) || n<=0) delete p[key]; else p[key]=n;
+  saveChars();
+  return isNaN(n)||n<=0 ? 0 : n;
+}
+function gold(n){ return Number(n).toLocaleString(); }
+// short form for the tight space under a slot: 1.2m / 450k / 900
+function goldShort(n){
+  if(n>=1e6) return (n/1e6).toFixed(n>=1e7?0:1).replace(/\.0$/,'')+'m';
+  if(n>=1e3) return (n/1e3).toFixed(n>=1e5?0:1).replace(/\.0$/,'')+'k';
+  return String(n);
+}
+function totalSpent(i){ const p=charPrices(i); let s=0; CARD_SLOTS.forEach(c=>{ s+=cardPrice(i,c.key); }); return s; }
+function spentByTier(i){
+  const out={magic:0,rare:0,epic:0,unique:0,legend:0,none:0};
+  const m=charCards(i);
+  CARD_SLOTS.forEach(c=>{ const v=cardPrice(i,c.key); if(!v) return;
+    const t=m[c.key]; out[CD_KEYS.indexOf(t)>=0?t:'none']+=v; });
+  return out;
+}
+// the strip above the grid: how many of each rarity, and what they cost
+function cardSummaryHTML(){
+  const cnt=tierCounts(cmChar), owned=ownedCount(CHARS[cmChar]), spend=spentByTier(cmChar);
+  const chips = CD_TIERS.map(x=>`<span class="tally t-${x.k}" title="${x.label} — ${cnt[x.k]} card${cnt[x.k]===1?'':'s'}`
+      + `${spend[x.k]?', '+gold(spend[x.k])+' gold spent':''}">`
+      + `<b>${cnt[x.k]}</b> ${x.label}</span>`).join('')
+    + `<span class="tally t-none"><b>${CARD_SLOTS.length-owned}</b> Missing</span>`;
+  const total=totalSpent(cmChar);
+  const priced=CARD_SLOTS.filter(c=>cardPrice(cmChar,c.key)>0).length;
+  return `<div class="cmsummary"><div class="mtally">${chips}</div>`
+    + `<div class="cmspend" title="Sum of every price you have entered for this character">`
+    + `Spent <b>${gold(total)}</b>`
+    + `<span class="spendsub">${priced?`${priced} priced`:'none priced'}</span></div></div>`;
+}
+
 // ---- open / close -------------------------------------------------------------
 function openCardModal(i){
   if(!CHARS[i]) return;
@@ -1623,8 +1707,13 @@ function cmSlotHTML(c){
   const cls = 'cmslot' + (t?' owned cd-'+t:'') + (c.unknown?' unknown':'') + (c.key===cmSel?' sel':'');
   const badge = t ? `<span class="cmtier">${CD_LABEL[t]}</span>` : '';
   const tip = c.unknown ? 'Slot the community has not identified yet' : esc(c.name)+(c.nest?' — '+esc(c.nest):'');
-  return `<button type="button" class="${cls}" data-card="${esc(c.key)}" title="${tip}">`
-       + `<span class="cmart">${art}</span>${badge}<span class="cmname">${esc(c.name)}</span></button>`;
+  const paid=cardPrice(cmChar,c.key);
+  return `<div class="cmcell">`
+       + `<button type="button" class="${cls}" data-card="${esc(c.key)}" title="${tip}">`
+       + `<span class="cmart">${art}</span>${badge}<span class="cmname">${esc(c.name)}</span></button>`
+       + `<input class="cmprice${paid?' paid':''}" type="text" inputmode="numeric" data-price="${esc(c.key)}" `
+       + `value="${paid?gold(paid):''}" placeholder="price" title="What you paid for ${esc(c.name)}" `
+       + `aria-label="Price paid for ${esc(c.name)}"></div>`;
 }
 function renderCardModal(){
   const ch=CHARS[cmChar]; if(!ch){ closeCardModal(); return; }
@@ -1649,8 +1738,9 @@ function renderCardModal(){
   const slice=list.slice(cmPage*CARD_PAGE, cmPage*CARD_PAGE+CARD_PAGE);
   let grid = slice.map(cmSlotHTML).join('');
   if(!list.length) grid = `<div class="cmnone">No cards match that filter.</div>`;
-  else for(let n=slice.length;n<CARD_PAGE;n++) grid += `<span class="cmslot cmpad" aria-hidden="true"></span>`;
+  else for(let n=slice.length;n<CARD_PAGE;n++) grid += `<span class="cmcell cmpad" aria-hidden="true"></span>`;
   $('cmGrid').innerHTML = grid;
+  $('cmSummary').innerHTML = cardSummaryHTML();
 
   // pager
   let pg='';
@@ -1664,11 +1754,37 @@ function renderCardModal(){
 
   renderCardFooter();
   if(!$('cmDetailPanel').hidden) renderCardDetails();
+  scheduleFit();
 }
+// Pick the biggest art size that still lets a whole page fit without scrolling. Runs on
+// open, on every page/filter change and on resize; the loop is at most ~12 short steps.
+const CMART_MAX=92, CMART_MIN=28;
+function fitCardGrid(){
+  const win=document.querySelector('.cmwin'), body=document.querySelector('.cmbody');
+  if(!win || !body || $('cardModal').hidden || cmTab!=='cards') return;
+  let art=CMART_MAX;
+  win.style.setProperty('--cmart', art+'px');
+  // body.scrollHeight only exceeds clientHeight when the page would scroll
+  while(art>CMART_MIN && body.scrollHeight>body.clientHeight+1){
+    art-=4;
+    win.style.setProperty('--cmart', art+'px');
+  }
+}
+// the web fonts land after the first pass and change every row height, so fit again
+// once they are ready (and on the next frame, after layout settles)
+function scheduleFit(){
+  fitCardGrid();
+  requestAnimationFrame(fitCardGrid);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitCardGrid).catch(()=>{});
+}
+let cmFitTimer=null;
+window.addEventListener('resize', ()=>{ clearTimeout(cmFitTimer); cmFitTimer=setTimeout(fitCardGrid,120); });
+
 function renderCardFooter(){
   $('cmFoot').hidden = cmTab!=='cards';   // the selection row only applies to the card grid
   const card = cmSel ? (CARD_BY_KEY[cmSel] || { name:cmSel, nest:'' }) : null;
   const t = cmSel ? cardTier(cmChar,cmSel) : '';
+  const t2 = cmSel ? cardPrice(cmChar,cmSel) : 0;
   $('cmSel').innerHTML = card
     ? `<b>${esc(card.name)}</b>${card.nest?` <span class="nestof">${esc(card.nest)}</span>`:''}`
     : 'Pick a card to set its rarity.';
@@ -1678,6 +1794,10 @@ function renderCardFooter(){
     b += `<button type="button" class="cmtierbtn t-${x.k}${t===x.k?' on':''}" data-tier="${x.k}"${dis}><span>${x.label}</span></button>`;
   });
   $('cmTiers').innerHTML = b;
+  $('cmPrice').innerHTML = cmSel
+    ? `<label for="cmPriceInput">Paid</label><input id="cmPriceInput" type="text" inputmode="numeric" `
+      + `data-price="${esc(cmSel)}" value="${t2?gold(t2):''}" placeholder="0" aria-label="Price paid">`
+    : '';
   $('cmDetails').disabled = !cmSel;
 }
 function renderCardDetails(){
@@ -1694,16 +1814,14 @@ function renderCardDetails(){
   const head = `<tr><th class="lft">Stat</th>` + CD_TIERS.map((x,i)=>`<th${i===ti?' class="own"':''}>${x.label}</th>`).join('') + `</tr>`;
   const rows = card.stats.map(s=>`<tr><td class="lft">${esc(s.stat)}</td>`
     + s.values.map((v,i)=>`<td${i===ti?' class="own"':''}>${v==null?'—':v}</td>`).join('') + `</tr>`).join('');
+  const paid=cardPrice(cmChar,card.key);
   p.innerHTML = `<div class="ptitle">${esc(card.name)}${card.nest?' · '+esc(card.nest):''}`
-    + `${t?` · you own it at <span style="color:var(--cd-${t})">${CD_LABEL[t]}</span>`:' · not collected'}</div>`
+    + `${t?` · you own it at <span style="color:var(--cd-${t})">${CD_LABEL[t]}</span>`:' · not collected'}`
+    + `${paid?` · paid <b style="color:var(--gold2)">${gold(paid)}</b> gold`:''}</div>`
     + `<table><thead>${head}</thead><tbody>${rows}</tbody></table>`;
 }
 function renderMasteryTab(){
   const ch=CHARS[cmChar]; if(!ch) return;
-  const cnt=tierCounts(cmChar), owned=ownedCount(ch);
-  const tally = CD_TIERS.map(x=>`<span class="tally t-${x.k}"><b>${cnt[x.k]}</b> ${x.label}</span>`).join('')
-    + `<span class="tally t-none"><b>${CARD_SLOTS.length-owned}</b> Missing</span>`;
-
   const tiles = MASTERIES.map(m=>{
     const l=mastLvl(cmChar,m.k);
     return `<div class="mtile${m.k===cmMastSel?' sel':''}${l?' up':''}" data-m="${m.k}" title="${esc(m.tip)}">`
@@ -1713,7 +1831,7 @@ function renderMasteryTab(){
       + `data-m="${m.k}" value="${l}" aria-label="${esc(m.label)} level"></span></span></div>`;
   }).join('');
 
-  $('cmMastTab').innerHTML = `<div class="mtally">${tally}</div><div class="mgrid">${tiles}</div>`
+  $('cmMastTab').innerHTML = `<div class="mgrid">${tiles}</div>`
     + `<div id="cmMastDetail"></div>`
     + `<div class="mnote">Type the level you have upgraded each mastery to (0–${MAST_CAP}). `
     + `The arrow shows what this character's collected cards give for that stat, before and after the mastery bonus.</div>`;
@@ -1784,11 +1902,13 @@ $('cardModal').addEventListener('click', e=>{
   if(e.target.closest('#cmDetails')){
     const p=$('cmDetailPanel'); p.hidden=!p.hidden;
     if(!p.hidden){ $('cmHelpPanel').hidden=true; renderCardDetails(); }
+    fitCardGrid();
     return;
   }
   if(e.target.closest('#cmHelp')){
     const p=$('cmHelpPanel'); p.hidden=!p.hidden;
     if(!p.hidden) $('cmDetailPanel').hidden=true;
+    fitCardGrid();
     return;
   }
 });
@@ -1797,6 +1917,22 @@ $('cmGrid').addEventListener('contextmenu', e=>{
   const slot=e.target.closest('.cmslot[data-card]'); if(!slot) return;
   e.preventDefault();
   cmSel=slot.dataset.card; setCardTier(cmChar,cmSel,''); renderCardModal();
+});
+// price fields (in the grid and in the footer) — never re-render the field being typed in
+$('cardModal').addEventListener('input', e=>{
+  const inp=e.target.closest('[data-price]'); if(!inp) return;
+  const key=inp.dataset.price;
+  setCardPrice(cmChar, key, inp.value);
+  const cell=inp.closest('.cmcell');
+  if(cell) inp.classList.toggle('paid', cardPrice(cmChar,key)>0);
+  $('cmSummary').innerHTML = cardSummaryHTML();
+  if(!$('cmDetailPanel').hidden && key===cmSel) renderCardDetails();
+});
+// leaving a price field normalises it (strips stray text, adds thousand separators)
+$('cardModal').addEventListener('focusout', e=>{
+  const inp=e.target.closest('[data-price]'); if(!inp) return;
+  const n=cardPrice(cmChar, inp.dataset.price);
+  inp.value = n ? gold(n) : '';
 });
 $('cmSearch').addEventListener('input', e=>{ cmQuery=e.target.value; cmPage=0; renderCardModal(); });
 $('cmFilter').addEventListener('change', e=>{ cmFilter=e.target.value; cmPage=0; renderCardModal(); });
@@ -2061,8 +2197,13 @@ function cardsToPayload(){
     rows: CHARS.map((ch,i)=>{
       const cards=(ch.cards&&typeof ch.cards==='object')?ch.cards:{};
       const mast =(ch.masteries&&typeof ch.masteries==='object')?ch.masteries:{};
+      const paid=(ch.prices&&typeof ch.prices==='object')?ch.prices:{};
       return [i+1, ch.nickname==null?'':ch.nickname]
-        .concat(CARD_SLOTS.map(s=>{ const t=cards[s.key]; return CD_KEYS.indexOf(t)>=0 ? CD_LABEL[t] : ''; }),
+        .concat(CARD_SLOTS.map(s=>{
+                  const t=cards[s.key], lbl=CD_KEYS.indexOf(t)>=0 ? CD_LABEL[t] : '';
+                  const n=parseFloat(paid[s.key]);
+                  return (!isNaN(n)&&n>0) ? (lbl+' | '+n) : lbl;
+                }),
                 MASTERIES.map(m=>{ const n=parseInt(mast[m.k],10); return n>0 ? n : ''; }));
     })
   };
@@ -2081,24 +2222,28 @@ function payloadToCards(data){
     if(CARD_BY_KEY[s] || CARD_RENAMES[s]) slot.push([idx, CARD_RENAMES[s] || s]);
   });
   return data.rows.map(row=>{
-    const cards={}, masteries={};
+    const cards={}, masteries={}, prices={};
     slot.forEach(([idx,key])=>{
-      const t=tierOf[String(row[idx]==null?'':row[idx]).trim().toLowerCase()];
+      const cell=String(row[idx]==null?'':row[idx]);
+      const bar=cell.indexOf('|');
+      const t=tierOf[(bar<0?cell:cell.slice(0,bar)).trim().toLowerCase()];
       if(t) cards[key]=t;
+      if(bar>=0){ const n=parseFloat(cell.slice(bar+1).replace(/[^0-9.]/g,'')); if(!isNaN(n)&&n>0) prices[key]=n; }
     });
     mast.forEach(([idx,k])=>{
       const n=parseInt(row[idx],10);
       if(n>0) masteries[k]=Math.min(n, MAST_CAP);
     });
-    return { cards, masteries };
+    return { cards, masteries, prices };
   });
 }
 // order-stable signature, so ticking a card marks the sheet as behind
 function canonCards(arr){
   return JSON.stringify((arr||[]).map(ch=>{
-    const c=(ch&&ch.cards)||{}, m=(ch&&ch.masteries)||{};
+    const c=(ch&&ch.cards)||{}, m=(ch&&ch.masteries)||{}, p=(ch&&ch.prices)||{};
     return [CARD_SLOTS.map(s=>CD_KEYS.indexOf(c[s.key])>=0?c[s.key]:''),
-            MASTERIES.map(x=>{ const n=parseInt(m[x.k],10); return n>0?n:0; })];
+            MASTERIES.map(x=>{ const n=parseInt(m[x.k],10); return n>0?n:0; }),
+            CARD_SLOTS.map(s=>{ const n=parseFloat(p[s.key]); return !isNaN(n)&&n>0?n:0; })];
   }));
 }
 // Guild storage <-> sheet table (Item / Amount)
@@ -2132,7 +2277,7 @@ function applyPulled(data){
   if(cr){
     CHARS=mergeLocalOnly(CHARS,cr);                  // keeps collections if the sheet has no Cards tab
     const cd=payloadToCards(data&&data.cards);       // …and the sheet's version wins when it does
-    if(cd) CHARS.forEach((ch,i)=>{ const r=cd[i]; if(r){ ch.cards=r.cards; ch.masteries=r.masteries; ch._cmig=1; } });
+    if(cd) CHARS.forEach((ch,i)=>{ const r=cd[i]; if(r){ ch.cards=r.cards; ch.masteries=r.masteries; ch.prices=r.prices||{}; ch._cmig=1; } });
     try{localStorage.setItem(CHAR_KEY,JSON.stringify(CHARS));}catch(e){}
   }
   const st=payloadToStore(data&&data.storage);
@@ -2207,10 +2352,14 @@ function diffCards(local, remote){
   for(let i=0;i<n;i++){
     const lc=(local[i]&&local[i].cards)||{}, rc=(remote[i]&&remote[i].cards)||{};
     const lm=(local[i]&&local[i].masteries)||{}, rm=(remote[i]&&remote[i].masteries)||{};
-    let cards=0, mast=0;
-    CARD_SLOTS.forEach(s=>{ const a=CD_KEYS.indexOf(lc[s.key])>=0?lc[s.key]:'', b=CD_KEYS.indexOf(rc[s.key])>=0?rc[s.key]:''; if(a!==b) cards++; });
+    const lp=(local[i]&&local[i].prices)||{},    rp=(remote[i]&&remote[i].prices)||{};
+    let cards=0, mast=0, price=0;
+    CARD_SLOTS.forEach(s=>{
+      const a=CD_KEYS.indexOf(lc[s.key])>=0?lc[s.key]:'', b=CD_KEYS.indexOf(rc[s.key])>=0?rc[s.key]:''; if(a!==b) cards++;
+      const x=parseFloat(lp[s.key])||0, y=parseFloat(rp[s.key])||0; if(x!==y) price++;
+    });
     MASTERIES.forEach(m=>{ const a=parseInt(lm[m.k],10)||0, b=parseInt(rm[m.k],10)||0; if(a!==b) mast++; });
-    if(cards||mast) out.push({ name:(local[i]&&local[i].nickname)||'(row '+(i+1)+')', cards, mast });
+    if(cards||mast||price) out.push({ name:(local[i]&&local[i].nickname)||'(row '+(i+1)+')', cards, mast, price });
   }
   return out;
 }
@@ -2219,7 +2368,9 @@ function cardDiffHTML(d, remote){
   if(!remote) body='<div class="diffadd"><b>The sheet has no Cards tab yet</b> — Push creates it and saves every collection.</div>';
   else if(!d.length) body='<div class="diffnone">No card collection differences.</div>';
   else body='<div class="diffchg"><b>Changed ('+d.length+')</b> — sheet → your device<ul>'+d.map(x=>
-    '<li><b>'+esc(x.name)+'</b> — '+[x.cards?x.cards+' card'+(x.cards===1?'':'s'):'', x.mast?x.mast+' mastery level'+(x.mast===1?'':'s'):'']
+    '<li><b>'+esc(x.name)+'</b> — '+[x.cards?x.cards+' card'+(x.cards===1?'':'s'):'',
+                                      x.mast?x.mast+' mastery level'+(x.mast===1?'':'s'):'',
+                                      x.price?x.price+' price'+(x.price===1?'':'s'):'']
       .filter(Boolean).join(', ')+'</li>').join('')+'</ul></div>';
   return '<div class="diffsec"><div class="diffsectitle">Card Collections</div>'+body+'</div>';
 }
@@ -2236,7 +2387,8 @@ function reviewChanges(){ if(!SHEET_URL) return;
     const db=diffLists(BLOCK, remBlock, b=>String(b.id||''), [{k:'nick',label:'Nick'},{k:'cls',label:'Class'},{k:'cat',label:'Category'},{k:'ctx',label:'Context'},{k:'reason',label:'Reason'}], b=>b.nick||'(unnamed)');
     const dcards=diffCards(CHARS, remCards);
     // an old script has no Cards tab at all — that is a difference if we hold any collection
-    const cardsMissing = !remCards && CHARS.some(c=>ownedCount(c)>0 || (c.masteries && Object.keys(c.masteries).length>0));
+    const cardsMissing = !remCards && CHARS.some(c=>ownedCount(c)>0 || (c.masteries && Object.keys(c.masteries).length>0)
+                                                     || (c.prices && Object.keys(c.prices).length>0));
     const any=dc.added.length+dc.removed.length+dc.changed.length+ds.added.length+ds.removed.length+ds.changed.length
              +db.added.length+db.removed.length+db.changed.length+dcards.length+(cardsMissing?1:0);
     const head = any
